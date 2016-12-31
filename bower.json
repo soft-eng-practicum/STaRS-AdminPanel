@@ -1,0 +1,13 @@
+{
+  "name": "stars-web",
+  "private": "true",
+  "devDependencies": {},
+  "dependencies": {
+    "angular": "^1.6.1",
+    "angular-ui-router": "^0.3.2",
+    "pouchdb": "^6.1.0",
+    "bootstrap": "^3.3.7",
+    "angular-animate": "^1.6.1",
+    "angular-toastr": "^2.1.1"
+  }
+}
