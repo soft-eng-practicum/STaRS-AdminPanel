@@ -173,5 +173,11 @@ app.controller('HomeCtrl', function($scope, $cookies, pouchService) {
       }, 0);
     });
   };
+});
+
+app.controller('DashboardCtrl', function($scope, pouchService, $servie) {
+  $scope.pouchService = pouchService.retryReplication();
+  var localPouch = pouchService.localDB;
+  var remoteDB = pouchService.remoteDB;
 
 });
