@@ -6,6 +6,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
     controller: 'HomeCtrl',
     templateUrl: 'templates/home.html'
   });
+  $stateProvider.state('dashboard', {
+    url: '/dashboard',
+    controller: 'DashboardCtrl',
+    templateUrl: 'templates/dashboard.html'
+  });
   $urlRouterProvider.otherwise('/');
 });
 
@@ -19,7 +24,6 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
       retry: true,
       continuous: true
     };
-
     self.localDB = pouchDB('judges');
     self.remoteDB = pouchDB('http://127.0.0.1:5984/judges');
     self.localDB.sync('http://127.0.0.1:5984/judges', opts)
@@ -35,11 +39,10 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
       console.log(err);
       console.log('ERROR');
     });
-
   };
 });
 
-app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchService) {
+app.factory('$service', function($http, $q, md5, $rootScope, pouchService) {
   var pouch = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
@@ -61,7 +64,6 @@ app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchServ
               deferred.resolve(row.doc.hash);
               hasHash = true;
             } else {
-
               var hash = md5.createHash(row.doc.username || '');
               deferred.resolve(hash);
               var doc = row.doc;
@@ -100,6 +102,22 @@ app.factory('$service', function($http, $pouchDB, $q, md5, $rootScope, pouchServ
       authorized = {};
       deferred.resolve(authorized);
       return deferred.promise;
+    },
+    getSurveysByJudges: function(id) {
+      var deferred = $q.defer();
+      var resultSurvey = [];
+      localPouch.get(id).then(function(doc) {
+        doc.surveys.forEach(function(survey) {
+          if(doc.survey.groupId !== '') {
+            resultSurvey.push(survey);
+          }
+        });
+        deferred.resolve(resultSurvey);
+      }).catch(function(err) {
+        deferred.reject(err);
+        console.log(err);
+      });
+      return deferred.promise;
     }
   };
 });
@@ -109,7 +127,7 @@ app.controller('NavbarCtrl', function() {
 
 });
 
-app.controller('HomeCtrl', function($scope, $cookies, pouchService) {
+app.controller('HomeCtrl', function($scope, $cookies, pouchService, $service, $rootScope, $timeout, $state) {
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
@@ -137,12 +155,13 @@ app.controller('HomeCtrl', function($scope, $cookies, pouchService) {
 
 
   $scope.updateSelection = function(name) {
+    $('#active').focus();
     $scope.user.username = name;
   };
 
 
-  $scope.submitForm = function() {
-    $service.login($scope.user.username, $scope.user.password).then(function(res) {
+  $scope.submitForm = function(user) {
+    $service.login(user.username, user.password).then(function(res) {
       console.log(res);
       var id;
       if(res.id === undefined) {
@@ -166,7 +185,7 @@ app.controller('HomeCtrl', function($scope, $cookies, pouchService) {
         $cookies.put(res.id, res.promise.$$state.value);
       }
       $timeout(function() {
-        $state.go('tabs.home');
+        $state.go('dashboard');
         $scope.user.username = '';
         $scope.user.password = '';
         $scope.search.value = '';
@@ -175,9 +194,34 @@ app.controller('HomeCtrl', function($scope, $cookies, pouchService) {
   };
 });
 
-app.controller('DashboardCtrl', function($scope, pouchService, $servie) {
+app.controller('DashboardCtrl', function($scope, pouchService, $service) {
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
+  $scope.items = [];
 
+  $scope.getSurveys = function(id) {
+    $service.getSurveysByJudges(id).then(function(res) {
+      console.log(res);
+    });
+  };
+
+  $scope.getJudges = function() {
+    localPouch.allDocs({
+      include_docs: true,
+      attachments: true
+    }).then(function(res) {
+      res.rows.forEach(function(row) {
+        var doc = {};
+        doc.username = row.doc.username;
+        doc.surveys = row.doc.surveys;
+        $scope.items.push(doc);
+      });
+      console.log($scope.items);
+    }).catch(function(err) {
+      console.log(err);
+    });
+  };
+
+  $scope.getJudges();
 });

@@ -4,30 +4,30 @@
       Login
     </div>
     <div class="card-block">
-
       <div class="md-form">
         <i class="ion-search prefix"></i>
         <input type="text" id="search" class="form-control" ng-model="search.value">
         <label for="search">Username Search</label>
       </div>
-      <ul class="list-group" ng-repeat="item in items | filter: search.value track by $index" ng-if="search.value">
-        <li class="list-group-item">
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" ng-model="user.username" ng-true-value="'{{item.name}}'" ng-click="updateSelection(item.name)">{{item.name}}
-            </label>
-          </div>
-        </li>
-      </ul>
+      <div class="list-group" ng-if="search.value">
+        <button type="button" class="list-group-item list-group-item-action active">Found Usernames:</button>
+        <div ng-repeat="item in items | filter: search.value">
+          <button type="button" class="list-group-item list-group-item-action" ng-click="updateSelection(item.name)">{{item.name}}</button>
+        </div>
+        <button type="button" class="list-group-item list-group-item-action disabled">If your username is not found, you may not be registered within the system</button>
+      </div>
+    </div>
+    <div class="card-block">
       <div class="md-form">
-        <i class="ion-at prefix"></i>
+        <i class="ion-person prefix"></i>
         <input type="text" id="username" class="form-control" ng-model="user.username">
-        <label for="username">Username</label>
+        <label id="active" for="username">Username</label>
       </div>
       <div class="md-form">
         <i class="ion-key prefix"></i>
-        <input type="text" id="password" class="form-control" ng-model="user.password">
+        <input type="password" id="password" class="form-control" ng-model="user.password">
         <label for="password">Password</label>
       </div>
+      <button type="button" class="btn btn-green btn-lg btn-block" ng-click="submitForm(user)">Submit</button>
     </div>
   </div>

@@ -9,3 +9,7 @@ header {
 .success-color-dark: {
   background-color: #00704a !important;
 }
+
+.btn-green {
+  background-color: #00704a;
+}
