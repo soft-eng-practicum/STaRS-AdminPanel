@@ -11,6 +11,42 @@ app.config(function($stateProvider, $urlRouterProvider) {
     controller: 'DashboardCtrl',
     templateUrl: 'templates/dashboard.html'
   });
+  $stateProvider.state('posterList', {
+    url: '/posterList',
+    controller: 'PosterListCtrl',
+    templateUrl: 'templates/posterList.html'
+  });
+  $stateProvider.state('judgesList', {
+    url: '/judgeList',
+    controller: 'JudgeListCtrl',
+    templateUrl: 'templates/judgeList.html'
+  });
+  $stateProvider.state('poster', {
+    url: '/poster/{id}',
+    controller: 'PosterCtrl',
+    templateUrl: 'templates/poster.html',
+    resolve: {
+      poster: [
+        '$stateParms', '$service',
+        function($stateParms, $service) {
+          return $service.getPoster($stateParms.id);
+        }
+      ]
+    }
+  });
+  $stateProvider.state('judge', {
+    url: '/judge/{id}',
+    controller: 'JudgeCtrl',
+    templateUrl: 'templates/judge.html',
+    resolve: {
+      judge: [
+        '$stateParams', '$service',
+        function($stateParms, $service) {
+          return $service.getJudge($stateParams.id);
+        }
+      ]
+    }
+  });
   $urlRouterProvider.otherwise('/');
 });
 
@@ -48,6 +84,18 @@ app.factory('$service', function($http, $q, md5, $rootScope, pouchService) {
   var remoteDB = pouchService.remoteDB;
   var authorized = {};
   return {
+    getJudge: function(id) {
+      var deferred = $q.defer();
+      localPouch.get(id).then(function(res) {
+        deferred.resolve(res);
+      }).catch(function(err) {
+        deferred.reject(res);
+      });
+      return deferred.promise;
+    },
+    getPoster: function() {
+      return $http.get('./posters.json');
+    },
     login: function(username, password) {
       var deferred = $q.defer();
       var hasHash = false;
@@ -56,7 +104,6 @@ app.factory('$service', function($http, $q, md5, $rootScope, pouchService) {
         include_docs: true,
         attachments: true
       }).then(function(res) {
-        console.log(res);
         res.rows.forEach(function(row) {
           if(angular.equals(row.doc.username,username) && angular.equals(row.doc.password,password)) {
             id = row.doc._id;
@@ -90,12 +137,10 @@ app.factory('$service', function($http, $q, md5, $rootScope, pouchService) {
       });
     },
     getAuthorized: function() {
-      console.log(authorized);
       return authorized;
     },
     setAuthorized: function(id, hash) {
       authorized = {id, hash};
-      console.log(authorized);
     },
     logout: function() {
       var deferred = $q.defer();
@@ -213,6 +258,7 @@ app.controller('DashboardCtrl', function($scope, pouchService, $service) {
     }).then(function(res) {
       res.rows.forEach(function(row) {
         var doc = {};
+        doc.id = row.id;
         doc.username = row.doc.username;
         doc.surveys = row.doc.surveys;
         $scope.items.push(doc);
@@ -224,4 +270,23 @@ app.controller('DashboardCtrl', function($scope, pouchService, $service) {
   };
 
   $scope.getJudges();
+});
+
+app.controller('PosterListCtrl', function($scope, $service) {
+  $scope.posters = [];
+  $service.getPoster().then(function(res) {
+    $scope.posters = res.data.posters;
+  });
+});
+
+app.controller('PosterCtrl', function() {
+
+});
+
+app.controller('JudgeListCtrl', function() {
+
+});
+
+app.controller('JudgeCtrl', function() {
+
 });

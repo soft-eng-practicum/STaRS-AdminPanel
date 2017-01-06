@@ -1,0 +1,23 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header ggc-green white-text">
+      Please select one of the following posters to continue
+    </div>
+    <div class="card-block">
+      <div class="list-group">
+        <button type="button" class="list-group-item list-group-item-action active-custom">
+          <div class="col-xs-2" align="center">Group</div>
+          <div class="col-xs-2" align="center">Surveys</div>
+          <div class="col-xs-8" align="center">Students</div>
+        </button>
+        <div ng-repeat="poster in posters">
+          <button type="button" class="list-group-item list-group-item-action">
+            <div class="col-xs-2 list-group-divider" align="center">{{poster.group}}</div>
+            <div class="col-xs-2 list-group-divider" align="center">{{poster.countJudges}}</div>
+            <div class="col-xs-8 list-group-divider" align="center">{{poster.students}}</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

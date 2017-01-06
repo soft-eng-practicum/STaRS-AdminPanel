@@ -10,11 +10,11 @@
         <label for="search">Username Search</label>
       </div>
       <div class="list-group" ng-if="search.value">
-        <button type="button" class="list-group-item list-group-item-action active">Found Usernames:</button>
+        <div class="list-group-item list-group-item-action active">Found Usernames:</div>
         <div ng-repeat="item in items | filter: search.value">
           <button type="button" class="list-group-item list-group-item-action" ng-click="updateSelection(item.name)">{{item.name}}</button>
         </div>
-        <button type="button" class="list-group-item list-group-item-action disabled">If your username is not found, you may not be registered within the system</button>
+        <div class="list-group-item list-group-item-action disabled">If your username is not found, you may not be registered within the system</div>
       </div>
     </div>
     <div class="card-block">
@@ -24,10 +24,11 @@
         <label id="active" for="username">Username</label>
       </div>
       <div class="md-form">
-        <i class="ion-key prefix"></i>
+        <i class="ion-lock-combination prefix"></i>
         <input type="password" id="password" class="form-control" ng-model="user.password">
         <label for="password">Password</label>
       </div>
       <button type="button" class="btn btn-green btn-lg btn-block" ng-click="submitForm(user)">Submit</button>
     </div>
   </div>
+</div>

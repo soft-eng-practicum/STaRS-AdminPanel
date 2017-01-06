@@ -1,0 +1,11 @@
+{
+	"posters": [
+		{
+			"group": "BIO",
+			"students": ["John Doe", "Jane Doe"],
+			"id": "1",
+			"judgedBy": [],
+			"countJudges": 0
+		}
+	]
+}
