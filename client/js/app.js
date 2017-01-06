@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngAnimate', 'toastr', 'ui.router', 'ngCookies', 'angular-md5', 'pouchdb']);
+var app = angular.module('app', ['ngAnimate', 'toastr', 'ui.router', 'ngCookies', 'angular-md5', 'pouchdb', 'toastr']);
 
 app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider.state('home', {
@@ -27,9 +27,17 @@ app.config(function($stateProvider, $urlRouterProvider) {
     templateUrl: 'templates/poster.html',
     resolve: {
       poster: [
-        '$stateParms', '$service',
-        function($stateParms, $service) {
-          return $service.getPoster($stateParms.id);
+      '$stateParams', '$http', '$q',
+        function($stateParams, $http, $q) {
+          return $http.get('./posters.json').then(function(res) {
+            var deferred = $q.defer();
+            res.data.posters.forEach(function(poster) {
+              if(poster.id == $stateParams.id) {
+                deferred.resolve(poster);
+              }
+            });
+            return deferred.promise;
+          });
         }
       ]
     }
@@ -41,7 +49,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
     resolve: {
       judge: [
         '$stateParams', '$service',
-        function($stateParms, $service) {
+        function($stateParams, $service) {
           return $service.getJudge($stateParams.id);
         }
       ]
@@ -98,43 +106,37 @@ app.factory('$service', function($http, $q, md5, $rootScope, pouchService) {
     },
     login: function(username, password) {
       var deferred = $q.defer();
-      var hasHash = false;
       var id;
-      return localPouch.allDocs({
+      localPouch.allDocs({
         include_docs: true,
         attachments: true
       }).then(function(res) {
         res.rows.forEach(function(row) {
           if(angular.equals(row.doc.username,username) && angular.equals(row.doc.password,password)) {
-            id = row.doc._id;
-            if(row.doc.hash !== '') {
-              deferred.resolve(row.doc.hash);
-              hasHash = true;
-            } else {
-              var hash = md5.createHash(row.doc.username || '');
-              deferred.resolve(hash);
-              var doc = row.doc;
-              localPouch.put({
-                _id: doc._id,
-                _rev: doc._rev,
-                hash: hash,
-                username: doc.username,
-                password: doc.password,
-                surveys: doc.surveys
-              }).catch(function(err) {
-                console.log(err);
-              });
-            }
+            var doc = row.doc;
+            id = doc._id;
+            localPouch.put({
+              _id: doc._id,
+              _rev: doc._rev,
+              username: doc.username,
+              password: doc.password,
+              surveys: doc.surveys
+            }).catch(function(err) {
+              console.log(err);
+            });
           }
         });
-        return {
-          promise: deferred.promise,
-          value: hasHash,
-          id: id
-        };
+      }).then(function() {
+        localPouch.get(id).then(function(res) {
+          deferred.resolve(res);
+        }).catch(function(err) {
+          deferred.reject(err);
+          console.log(err);
+        });
       }).catch(function(err) {
         console.log(err);
       });
+      return deferred.promise;
     },
     getAuthorized: function() {
       return authorized;
@@ -169,13 +171,14 @@ app.factory('$service', function($http, $q, md5, $rootScope, pouchService) {
 
 
 app.controller('NavbarCtrl', function() {
-
+  $rootScope.isAuth = false;
 });
 
-app.controller('HomeCtrl', function($scope, $cookies, pouchService, $service, $rootScope, $timeout, $state) {
+app.controller('HomeCtrl', function($scope, $cookies, pouchService, $service, $rootScope, $timeout, $state, toastr) {
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
+  $rootScope.isAuth = false;
 
   $scope.items = [];
   $scope.user = {};
@@ -206,44 +209,32 @@ app.controller('HomeCtrl', function($scope, $cookies, pouchService, $service, $r
 
 
   $scope.submitForm = function(user) {
-    $service.login(user.username, user.password).then(function(res) {
-      console.log(res);
-      var id;
-      if(res.id === undefined) {
-        $rootScope.isAuth = false;
-        $ionicPopup.alert({
-          title: 'Error',
-          template: '<p style=\'text-align:center\'>Invalid username or password</p>'
-        });
-        return;
-      } else if(res.value === false) {
-        id = res.id;
+    $service.login(user.username, user.password)
+    .then(
+      function(res) {
+        $cookies.put('user', res._id);
         $rootScope.isAuth = true;
-        // set the user's auto generated id as the key within localstorage to maintain the login state
-        window.localStorage.setItem(res.id, JSON.stringify(res.promise.$$state.value));
-        $service.setAuthorized(res.id, res.promise.$$state.value);
-        $cookies.put(res.id, res.promise.$$state.value);
-      } else if(res.value === true) {
-        id = res.id;
-        $rootScope.isAuth = true;
-        $service.setAuthorized(res.id, res.promise.$$state.value);
-        $cookies.put(res.id, res.promise.$$state.value);
-      }
-      $timeout(function() {
         $state.go('dashboard');
-        $scope.user.username = '';
-        $scope.user.password = '';
-        $scope.search.value = '';
-      }, 0);
-    });
+        toastr.success('You are now logged in!');
+      },
+      function(err) {
+        toastr.error('Invalid login credientials');
+        return;
+      });
   };
 });
 
-app.controller('DashboardCtrl', function($scope, pouchService, $service) {
+app.controller('DashboardCtrl', function($scope, pouchService, $service, $cookies, $rootScope) {
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
   $scope.items = [];
+  if($cookies.get('user') === undefined) {
+    $rootScope.isAuth = false;
+    $state.go('home');
+  } else {
+    $rootScope.isAuth = true;
+  }
 
   $scope.getSurveys = function(id) {
     $service.getSurveysByJudges(id).then(function(res) {
@@ -263,7 +254,6 @@ app.controller('DashboardCtrl', function($scope, pouchService, $service) {
         doc.surveys = row.doc.surveys;
         $scope.items.push(doc);
       });
-      console.log($scope.items);
     }).catch(function(err) {
       console.log(err);
     });
@@ -272,21 +262,47 @@ app.controller('DashboardCtrl', function($scope, pouchService, $service) {
   $scope.getJudges();
 });
 
-app.controller('PosterListCtrl', function($scope, $service) {
+app.controller('PosterListCtrl', function($scope, $service, $cookies, $rootScope) {
+  if($cookies.get('user') === undefined) {
+    $rootScope.isAuth = false;
+    $state.go('home');
+  } else {
+    $rootScope.isAuth = true;
+  }
+
   $scope.posters = [];
   $service.getPoster().then(function(res) {
     $scope.posters = res.data.posters;
   });
 });
 
-app.controller('PosterCtrl', function() {
+app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope) {
+  if($cookies.get('user') === undefined) {
+    $rootScope.isAuth = false;
+    $state.go('home');
+  } else {
+    $rootScope.isAuth = true;
+  }
+
+  console.log(poster);
+});
+
+app.controller('JudgeListCtrl', function($scope, $cookies, $rootScope) {
+  if($cookies.get('user') === undefined) {
+    $rootScope.isAuth = false;
+    $state.go('home');
+  } else {
+    $rootScope.isAuth = true;
+  }
 
 });
 
-app.controller('JudgeListCtrl', function() {
-
-});
-
-app.controller('JudgeCtrl', function() {
+app.controller('JudgeCtrl', function($scope, $cookies, $rootScope) {
+  if($cookies.get('user') === undefined) {
+    $rootScope.isAuth = false;
+    $state.go('home');
+  } else {
+    $rootScope.isAuth = true;
+  }
 
 });
