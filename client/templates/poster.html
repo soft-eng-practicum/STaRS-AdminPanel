@@ -1,8 +1,27 @@
 <div class="container">
   <div class="card">
     <div class="card-header ggc-green white-text">
-      {{poster}}
+      Judge Information and Survey Results for {{poster.group}} Poster
     </div>
     <div class="card-block">
+      <table class="table table-bordered table-responsive">
+        <thead>
+          <tr>
+            <th>Judge</th>
+            <th ng-repeat="question in questions">
+              {{question.information}}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="judge in judges track by $index">
+            <td>{{judge.name}}</td>
+            <td ng-repeat="answer in judge.answers track by $index">
+              {{answer}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
+</div>

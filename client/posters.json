@@ -4,7 +4,7 @@
 			"group": "BIO",
 			"students": ["John Doe", "Jane Doe"],
 			"id": "1",
-			"judgedBy": [],
+			"judges": [],
 			"countJudges": 0
 		}
 	]

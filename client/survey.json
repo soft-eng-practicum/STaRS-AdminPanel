@@ -1,0 +1,68 @@
+{"questions": [
+            {
+              "id": 1,
+              "information": "Information and Background",
+              "value": 0,
+              "required": true
+            },
+            {
+              "id": 2,
+              "information": "Question, Problem, and Hypothesis",
+              "value": 0,
+              "required": true
+            },
+            {
+              "id": 3,
+              "information": "Experimental Approach and Design",
+              "value": 0,
+              "required": true
+            },
+            {
+              "id": 4,
+              "information": "Data and Results",
+              "value": 0,
+              "required": true
+            },
+            {
+              "id": 5,
+              "information": "Discussions and Conclusion",
+              "value": 0,
+              "required": true
+            },
+            {
+              "id": 6,
+              "information": "Research Originality/Novelty",
+              "value": 0,
+              "required": true
+            },
+            {
+              "id": 7,
+              "information": "Poster Organization, Style, Visual Appeal",
+              "value": 0,
+              "required": true
+            },
+            {
+              "id": 8,
+              "information": "Oral Presentation of Research",
+              "value": 0,
+              "required": false
+            },
+            {
+              "id": 9,
+              "information": "Ability to Answer Questions",
+              "value": 0,
+              "required": false
+            },
+            {
+              "id": 10,
+              "information": "Overall Presentation",
+              "value": 0,
+              "required": true
+            },
+            {
+              "id": 11,
+              "information": "Additional Comments",
+              "value": "",
+              "required": false
+            }
+]}

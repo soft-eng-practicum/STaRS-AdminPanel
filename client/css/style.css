@@ -25,3 +25,6 @@ header {
 .text-custom {
   font-size: 12px;
 }
+.table thead th, .table tbody td {
+  text-align: center;
+}
