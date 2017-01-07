@@ -14,10 +14,17 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="judge in judges track by $index">
+          <tr ng-repeat="judge in judges track by $index" ng-if="!empty">
             <td>{{judge.name}}</td>
             <td ng-repeat="answer in judge.answers track by $index">
               {{answer}}
+            </td>
+          </tr>
+          <tr ng-if="empty">
+            <td colspan="12">
+              <div class="card card-block bg-faded">
+                No surveys have been submitted by {{judge.username}}
+              </div>
             </td>
           </tr>
         </tbody>

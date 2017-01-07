@@ -61,6 +61,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
       ]
     }
   });
+  $stateProvider.state('logout', {
+    url: '/logout',
+    controller: 'LogoutCtrl',
+    templateUrl: null
+  });
   $urlRouterProvider.otherwise('/');
 });
 
@@ -345,6 +350,8 @@ app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $ser
 
   $scope.poster = poster;
   $scope.judges = [];
+  $scope.questions = [];
+  $scope.empty = false;
   var judge = {};
 
   $service.getQuestions().then(function(res) {
@@ -358,6 +365,9 @@ app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $ser
         judge.answers = doc.answers;
         $scope.judges.push(judge);
       });
+      if($scope.judges.length == 0) {
+        $scope.empty = true;
+      }
     },
     function(err) {
       toastr.error('There was an error retrieving the poster information');
@@ -417,7 +427,15 @@ app.controller('JudgeListCtrl', function($scope, $cookies, $rootScope, pouchServ
 /**
  * JudgeCtrl: controller fot the template that displays an individual judge
  */
-app.controller('JudgeCtrl', function($scope, $cookies, $rootScope) {
+app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService, judge, $service) {
+  $scope.pouchService = pouchService.retryReplication();
+  var localPouch = pouchService.localDB;
+  var remoteDB = pouchService.remoteDB;
+  $scope.judge = judge;
+  $scope.questions = [];
+  $scope.surveys = [];
+  $scope.empty = false;
+
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
     $state.go('home');
@@ -425,4 +443,24 @@ app.controller('JudgeCtrl', function($scope, $cookies, $rootScope) {
     $rootScope.isAuth = true;
   }
 
+  $service.getQuestions().then(function(res) {
+    $scope.questions = res.data.questions;
+  });
+
+  $scope.getSurveysByJudge = function() {
+    $scope.judge.surveys.forEach(function(survey) {
+      $scope.surveys.push(survey);
+    });
+    if($scope.surveys.length == 0) {
+      $scope.empty = true;
+    }
+  };
+
+  $scope.getSurveysByJudge();
+});
+
+app.controller('LogoutCtrl', function($rootScope, $cookies, $state) {
+  $cookies.remove('user');
+  $rootScope.isAuth = false;
+  $state.go('home');
 });
