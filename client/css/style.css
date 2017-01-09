@@ -25,6 +25,18 @@ header {
 .text-custom {
   font-size: 12px;
 }
-.table thead th, .table tbody td {
+.table thead th, .table tbody td, .ui-grid-cell-contents {
   text-align: center;
+}
+.ui-grid-header-cell-label, .ui-grid-header-cell {
+    display:inline-block;
+    white-space:initial;
+    text-align: center !important;
+    vertical-align: middle;
+}
+/**.ui-grid-render-container {
+  pointer-events: none;
+}*/
+.ui-grid, .ui-grid-viewport {
+    height: auto !important;
 }

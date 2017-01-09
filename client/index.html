@@ -11,8 +11,9 @@
     <link href="lib/MDBootstrap/css/mdb.css" rel="stylesheet">
     <link href="lib/Ionicons/css/ionicons.css" rel="stylesheet">
     <link href="css/w3.css" rel="stylesheet">
+    <link href="lib/angular-ui-grid/ui-grid.css" rel="stylesheet">
     <link href="lib/angular-toastr/dist/angular-toastr.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
+
   </head>
   <body ng-app="app">
     <header>
@@ -37,7 +38,7 @@
                 <a class="nav-link" ui-sref="finalReport">Combined Reports</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" ui-sref="logout">Logout</a>
+                <a class="nav-link" ui-sref="logout" ng-if="$root.isAuth">Logout</a>
               </li>
             </ul>
             <form class="form-inline">
@@ -50,7 +51,6 @@
     <main>
       <div ui-view></div>
     </main>
-
     <script src="lib/MDBootstrap/js/jquery-2.2.3.js"></script>
     <script src="lib/MDBootstrap/js/tether.js"></script>
     <script src="lib/MDBootstrap/js/bootstrap.js"></script>
@@ -63,6 +63,11 @@
     <script src="lib/angular-md5/angular-md5.js"></script>
     <script src="lib/pouchdb/dist/pouchdb.js"></script>
     <script src="lib/angular-toastr/dist/angular-toastr.tpls.js"></script>
+    <script src="https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.js"></script>
     <script src="lib/angular-pouchdb/angular-pouchdb.js"></script>
+    <script src="http://ui-grid.info/docs/grunt-scripts/csv.js"></script>
+    <script src="http://ui-grid.info/docs/grunt-scripts/pdfmake.js"></script>
+    <script src="http://ui-grid.info/docs/grunt-scripts/vfs_fonts.js"></script>
+    <script src="lib/angular-touch/angular-touch.js"></script>
     <script src="js/app.js"></script>
 </html>

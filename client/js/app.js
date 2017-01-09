@@ -1,5 +1,11 @@
-var app = angular.module('app', ['ngAnimate', 'toastr', 'ui.router', 'ngCookies', 'angular-md5', 'pouchdb', 'toastr']);
+var app = angular.module('app', ['ngAnimate', 'toastr', 'ui.router', 'ui.grid', 'ngTouch', 'ui.grid.autoResize', 'ui.grid.exporter', 'ngCookies', 'angular-md5', 'pouchdb', 'toastr']);
 
+/* ==========================================================================
+   Config
+   ========================================================================== */
+/**
+ * config: handles application routing and data feed through specific url's
+ */
 app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider.state('home', {
     url: '/',
@@ -73,7 +79,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
    Services
    ========================================================================== */
 /**
- * pouchService: establishes and maintains connection with Couchdb
+ * pouchService: establishes and maintains connection with Couchdb and Pouchdb
  */
 app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorators) {
   this.retryReplication = function() {
@@ -192,20 +198,19 @@ app.factory('$service', function($http, $q, md5, $rootScope, pouchService) {
     getSurveysForGroup: function(id) {
       var deferred = $q.defer();
       var result = [];
-      var resultObj = {};
       localPouch.allDocs({
         include_docs: true,
         attachments: true
       }).then(function(res) {
         res.rows.forEach(function(row) {
-          console.log(row.doc.surveys.length);
-          for(var i = 0; i < row.doc.surveys.length; i++) {
-            if(row.doc.surveys[i].groupId == id) {
+          row.doc.surveys.forEach(function(survey) {
+            if(survey.groupId === id) {
+              var resultObj = {};
               resultObj.judgeName = row.doc.username;
-              resultObj.answers = row.doc.surveys[i].answers;
+              resultObj.answers = survey.answers;
               result.push(resultObj);
             }
-          }
+          });
         });
         deferred.resolve(result);
       }).catch(function(err) {
@@ -282,7 +287,7 @@ app.controller('HomeCtrl', function($scope, $cookies, pouchService, $service, $r
 /**
  * DashboardCtrl: controller for the main page
  */
-app.controller('DashboardCtrl', function($scope, pouchService, $service, $cookies, $rootScope) {
+app.controller('DashboardCtrl', function($scope, pouchService, $service, $cookies, $rootScope, $state) {
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
@@ -323,7 +328,7 @@ app.controller('DashboardCtrl', function($scope, pouchService, $service, $cookie
 /**
  * PosterListCtrl: controller for the template that lists all of the posters
  */
-app.controller('PosterListCtrl', function($scope, $service, $cookies, $rootScope) {
+app.controller('PosterListCtrl', function($scope, $service, $cookies, $rootScope, $state) {
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
     $state.go('home');
@@ -338,9 +343,9 @@ app.controller('PosterListCtrl', function($scope, $service, $cookies, $rootScope
 });
 
 /**
- * PosterCtrl: controller fot the template that displays an individual poster
+ * PosterCtrl: controller for the template that displays an individual poster
  */
-app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $service, toastr) {
+app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $service, toastr, $timeout, $interval, $state) {
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
     $state.go('home');
@@ -351,23 +356,65 @@ app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $ser
   $scope.poster = poster;
   $scope.judges = [];
   $scope.questions = [];
-  $scope.empty = false;
-  var judge = {};
+  $scope.loading = true;
 
   $service.getQuestions().then(function(res) {
     $scope.questions = res.data.questions;
   });
 
+  $scope.gridOptions = {
+    columnDefs: [
+      { field: "name" , name: "Name"},
+      { field: "answers[0]", name: "Information and Background" },
+      { field: "answers[1]", name: "Question, Problem, and Hypothesis" },
+      { field: "answers[2]", name: "Experimental Approach and Design" },
+      { field: "answers[3]", name: "Data and Results" },
+      { field: "answers[4]", name: "Discussion and Conclusion" },
+      { field: "answers[5]", name: "Research Originality, Novelty" },
+      { field: "answers[6]", name: "Poster Organization, Style, Visual Appeal" },
+      { field: "answers[7]", name: "Oral Presentation of Research" },
+      { field: "answers[8]", name: "Ability to Answer Questions" },
+      { field: "answers[9]", name: "Overall Presentation" },
+      { field: "answers[10]", name: "Additional Comments", cellTemplate:'<div class="ui-grid-cell-contents">...</div>' }
+    ],
+    exporterCsvFilename: 'PosterResults.csv',
+    exporterPdfDefaultStyle: {fontSize: 9},
+    exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
+    exporterPdfTableHeaderStyle: {fontSize: 8, bold: true, italics: true, color: '#000000'},
+    exporterPdfHeader: { text: "GGC STaRS", style: 'headerStyle' },
+    exporterPdfFooter: function ( currentPage, pageCount ) {
+      return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+    },
+    exporterPdfCustomFormatter: function ( docDefinition ) {
+      docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+      docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
+      return docDefinition;
+    },
+    exporterPdfOrientation: 'landscape',
+    exporterPdfPageSize: 'LETTER',
+    exporterPdfMaxGridWidth: 500,
+    exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+    onRegisterApi: function(gridApi){
+      $scope.gridApi = gridApi;
+    }
+  };
+
+  //grid.appScope.showMe(row.entity.answers[10]) --- popover of additional comment TODO
+  $scope.showMe = function(info){
+    console.log(info);
+  };
+
   $service.getSurveysForGroup($scope.poster.id).then(
     function(res) {
       res.forEach(function(doc) {
+        var judge = {};
         judge.name = doc.judgeName;
         judge.answers = doc.answers;
         $scope.judges.push(judge);
       });
-      if($scope.judges.length == 0) {
-        $scope.empty = true;
-      }
+      $scope.gridOptions.data = $scope.judges;
+      $scope.loading = false;
+      $scope.gridOptions.enableGridMenu = true;
     },
     function(err) {
       toastr.error('There was an error retrieving the poster information');
@@ -375,12 +422,22 @@ app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $ser
     }
   );
 
+  $scope.export = function(){
+    if ($scope.export_format == 'csv') {
+      var myElement = angular.element(document.querySelectorAll(".custom-csv-link-location"));
+      $scope.gridApi.exporter.csvExport( 'all', 'all' );
+    } else if ($scope.export_format == 'pdf') {
+      $scope.gridApi.exporter.pdfExport( 'all', 'all' );
+    }
+  };
+
+
 });
 
 /**
  * JudgeListCtrl: controller for the template that lists all of the judges
  */
-app.controller('JudgeListCtrl', function($scope, $cookies, $rootScope, pouchService) {
+app.controller('JudgeListCtrl', function($scope, $cookies, $rootScope, pouchService, $state) {
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
@@ -425,9 +482,9 @@ app.controller('JudgeListCtrl', function($scope, $cookies, $rootScope, pouchServ
 });
 
 /**
- * JudgeCtrl: controller fot the template that displays an individual judge
+ * JudgeCtrl: controller for the template that displays an individual judge
  */
-app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService, judge, $service) {
+app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService, judge, $service, $state) {
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
@@ -451,7 +508,7 @@ app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService,
     $scope.judge.surveys.forEach(function(survey) {
       $scope.surveys.push(survey);
     });
-    if($scope.surveys.length == 0) {
+    if($scope.surveys.length === 0) {
       $scope.empty = true;
     }
   };
@@ -459,6 +516,9 @@ app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService,
   $scope.getSurveysByJudge();
 });
 
+/**
+ * LogoutCtrl: controller to handle logout state
+ */
 app.controller('LogoutCtrl', function($rootScope, $cookies, $state) {
   $cookies.remove('user');
   $rootScope.isAuth = false;
