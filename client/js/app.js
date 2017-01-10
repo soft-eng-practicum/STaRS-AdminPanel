@@ -6,7 +6,18 @@ var app = angular.module('app', ['ngAnimate', 'toastr', 'ui.router', 'ui.grid', 
 /**
  * config: handles application routing and data feed through specific url's
  */
-app.config(function($stateProvider, $urlRouterProvider) {
+app.config(function($stateProvider, $urlRouterProvider, toastrConfig) {
+  angular.extend(toastrConfig, {
+    autoDismiss: false,
+    containerId: 'toast-container',
+    maxOpened: 1,
+    newestOnTop: true,
+    positionClass: 'toast-top-right',
+    preventDuplicates: false,
+    preventOpenDuplicates: true,
+    target: 'body'
+  });
+
   $stateProvider.state('home', {
     url: '/',
     controller: 'HomeCtrl',
@@ -227,8 +238,15 @@ app.factory('$service', function($http, $q, md5, $rootScope, pouchService) {
 /**
  * NavbarCtrl: controller for the navbar (header)
  */
-app.controller('NavbarCtrl', function() {
+app.controller('NavbarCtrl', function($rootScope, $scope, toastr) {
   $rootScope.isAuth = false;
+
+  $scope.checkAuth = function() {
+    if($rootScope.isAuth === false) {
+      toastr.warning('You must sign in to access the application');
+    }
+  };
+
 });
 
 /**

@@ -17,33 +17,30 @@
   </head>
   <body ng-app="app">
     <header>
-      <nav class="navbar navbar-dark ggc-green">
+      <nav class="navbar navbar-dark ggc-green" ng-controller="NavbarCtrl">
         <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#collapseEx2">
-          <i class="fa fa-bars"></i>
+          <i class="ion-navicon-round"></i>
         </button>
         <div class="container">
           <div class="collapse navbar-toggleable-xs" id="collapseEx2">
             <a class="navbar-brand" href="javascript:void(0)">GGC STaRS</a>
             <ul class="nav navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" ui-sref="dashboard">Dashboard</a>
+                <a class="nav-link" ui-sref="dashboard" ng-click="checkAuth()">Dashboard</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" ui-sref="posterList">Poster Reports</a>
+                <a class="nav-link" ui-sref="posterList" ng-click="checkAuth()">Poster Reports</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" ui-sref="judgeList">Judge Reports</a>
+                <a class="nav-link" ui-sref="judgeList" ng-click="checkAuth()">Judge Reports</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" ui-sref="finalReport">Combined Reports</a>
+                <a class="nav-link" ui-sref="finalReport" ng-click="checkAuth()">Combined Reports</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" ui-sref="logout" ng-if="$root.isAuth">Logout</a>
+                <a class="nav-link" ui-sref="logout" ng-show="$root.isAuth">Logout</a>
               </li>
             </ul>
-            <form class="form-inline">
-              <input class="form-control" type="text" placeholder="Search">
-            </form>
           </div>
         </div>
       </nav>
