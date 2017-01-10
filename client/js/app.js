@@ -345,7 +345,7 @@ app.controller('PosterListCtrl', function($scope, $service, $cookies, $rootScope
 /**
  * PosterCtrl: controller for the template that displays an individual poster
  */
-app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $service, toastr, $timeout, $interval, $state) {
+app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $service, toastr, $timeout, $state) {
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
     $state.go('home');
@@ -363,8 +363,10 @@ app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $ser
   });
 
   $scope.gridOptions = {
+    enableColumnMenus: false,
+    enableGridMenu: false,
     columnDefs: [
-      { field: "name" , name: "Name"},
+      { field: "name" , name: "Judge Name"},
       { field: "answers[0]", name: "Information and Background" },
       { field: "answers[1]", name: "Question, Problem, and Hypothesis" },
       { field: "answers[2]", name: "Experimental Approach and Design" },
@@ -381,7 +383,7 @@ app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $ser
     exporterPdfDefaultStyle: {fontSize: 9},
     exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
     exporterPdfTableHeaderStyle: {fontSize: 8, bold: true, italics: true, color: '#000000'},
-    exporterPdfHeader: { text: "GGC STaRS", style: 'headerStyle' },
+    exporterPdfHeader: { text: "GGC STaRS - Poster Report for " + $scope.poster.group + " / Students: " + $scope.poster.students, style: {fontSize: 14, alignment: 'center', bold: true} },
     exporterPdfFooter: function ( currentPage, pageCount ) {
       return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
     },
@@ -393,7 +395,7 @@ app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $ser
     exporterPdfOrientation: 'landscape',
     exporterPdfPageSize: 'LETTER',
     exporterPdfMaxGridWidth: 500,
-    exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+    exporterCsvLinkElement: angular.element(document.querySelectorAll(".poster-csv-location")),
     onRegisterApi: function(gridApi){
       $scope.gridApi = gridApi;
     }
@@ -413,8 +415,6 @@ app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $ser
         $scope.judges.push(judge);
       });
       $scope.gridOptions.data = $scope.judges;
-      $scope.loading = false;
-      $scope.gridOptions.enableGridMenu = true;
     },
     function(err) {
       toastr.error('There was an error retrieving the poster information');
@@ -424,7 +424,7 @@ app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $ser
 
   $scope.export = function(){
     if ($scope.export_format == 'csv') {
-      var myElement = angular.element(document.querySelectorAll(".custom-csv-link-location"));
+      var myElement = angular.element(document.querySelectorAll(".poster-csv-location"));
       $scope.gridApi.exporter.csvExport( 'all', 'all' );
     } else if ($scope.export_format == 'pdf') {
       $scope.gridApi.exporter.pdfExport( 'all', 'all' );
@@ -505,15 +505,63 @@ app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService,
   });
 
   $scope.getSurveysByJudge = function() {
-    $scope.judge.surveys.forEach(function(survey) {
-      $scope.surveys.push(survey);
-    });
+    $scope.gridOptions.data = $scope.judge.surveys;
+
     if($scope.surveys.length === 0) {
       $scope.empty = true;
     }
   };
 
+  $scope.gridOptions = {
+    enableColumnMenus: false,
+    enableGridMenu: false,
+    columnDefs: [
+      { field: "groupName" , name: "Poster Name"},
+      { field: "answers[0]", name: "Information and Background" },
+      { field: "answers[1]", name: "Question, Problem, and Hypothesis" },
+      { field: "answers[2]", name: "Experimental Approach and Design" },
+      { field: "answers[3]", name: "Data and Results" },
+      { field: "answers[4]", name: "Discussion and Conclusion" },
+      { field: "answers[5]", name: "Research Originality, Novelty" },
+      { field: "answers[6]", name: "Poster Organization, Style, Visual Appeal" },
+      { field: "answers[7]", name: "Oral Presentation of Research" },
+      { field: "answers[8]", name: "Ability to Answer Questions" },
+      { field: "answers[9]", name: "Overall Presentation" },
+      { field: "answers[10]", name: "Additional Comments", cellTemplate:'<div class="ui-grid-cell-contents">...</div>' }
+    ],
+    exporterCsvFilename: 'JudgeResults.csv',
+    exporterPdfDefaultStyle: {fontSize: 9},
+    exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
+    exporterPdfTableHeaderStyle: {fontSize: 8, bold: true, italics: true, color: '#000000'},
+    exporterPdfHeader: { text: "GGC STaRS - Judge Report for " + $scope.judge.username, style: {fontSize: 14, alignment: 'center', bold: true} },
+    exporterPdfFooter: function ( currentPage, pageCount ) {
+      return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+    },
+    exporterPdfCustomFormatter: function ( docDefinition ) {
+      docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+      docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
+      return docDefinition;
+    },
+    exporterPdfOrientation: 'landscape',
+    exporterPdfPageSize: 'LETTER',
+    exporterPdfMaxGridWidth: 500,
+    exporterCsvLinkElement: angular.element(document.querySelectorAll(".judge-csv-location")),
+    onRegisterApi: function(gridApi){
+      $scope.gridApi = gridApi;
+    }
+  };
+
+  $scope.export = function(){
+    if ($scope.export_format == 'csv') {
+      var myElement = angular.element(document.querySelectorAll(".judge-csv-location"));
+      $scope.gridApi.exporter.csvExport( 'all', 'all' );
+    } else if ($scope.export_format == 'pdf') {
+      $scope.gridApi.exporter.pdfExport( 'all', 'all' );
+    }
+  };
+
   $scope.getSurveysByJudge();
+
 });
 
 /**

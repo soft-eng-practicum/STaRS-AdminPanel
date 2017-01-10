@@ -4,31 +4,17 @@
       Poster Information and Survey Results for {{judge.username}}
     </div>
     <div class="card-block">
-      <table class="table table-bordered table-responsive">
-        <thead>
-          <tr>
-            <th>Poster</th>
-            <th ng-repeat="question in questions">
-              {{question.information}}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="survey in surveys track by $index" ng-if="!empty">
-            <td>{{survey.groupName}}</td>
-            <td ng-repeat="answer in survey.answers track by $index">
-              {{answer}}
-            </td>
-          </tr>
-          <tr ng-if="empty">
-            <td colspan="12">
-              <div class="card card-block bg-faded">
-                No surveys have been submitted by {{judge.username}}
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <label>What format would you like to export?</label>
+      <select ng-model="export_format"</select>
+        <option value='csv'>CSV</option>
+        <option value='pdf'>PDF</option>
+      </select>
+      <button ng-click="export()">Export</button>
+      <div class="judge-csv-location">
+        <label>Your CSV will show below:</label>
+        <span class="ui-grid-exporter-csv-link">&nbsp</span>
+      </div>
+      <div ui-grid="gridOptions" class="grid" ui-grid-auto-resize ui-grid-exporter></div>
     </div>
   </div>
 </div>

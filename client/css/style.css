@@ -34,9 +34,9 @@ header {
     text-align: center !important;
     vertical-align: middle;
 }
-/**.ui-grid-render-container {
+.ui-grid-render-container {
   pointer-events: none;
-}*/
+}
 .ui-grid, .ui-grid-viewport {
     height: auto !important;
 }
