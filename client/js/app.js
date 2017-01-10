@@ -113,6 +113,12 @@ app.service('pouchService', function($rootScope, pouchDB, $log, pouchDBDecorator
     }).on('active', function(info) {
       console.log(info);
       console.log('ACTIVE');
+    }).on('denied', function (err) {
+      console.log(err);
+      console.log('DENIED');
+    }).on('complete', function (info) {
+      console.log(info);
+      console.log('COMPLETE');
     }).on('error', function(err) {
       console.log(err);
       console.log('ERROR');
@@ -178,18 +184,6 @@ app.factory('$service', function($http, $q, md5, $rootScope, pouchService) {
       });
       return deferred.promise;
     },
-    getAuthorized: function() {
-      return authorized;
-    },
-    setAuthorized: function(id, hash) {
-      authorized = {id, hash};
-    },
-    logout: function() {
-      var deferred = $q.defer();
-      authorized = {};
-      deferred.resolve(authorized);
-      return deferred.promise;
-    },
     getSurveysByJudges: function(id) {
       var deferred = $q.defer();
       var resultSurvey = [];
@@ -203,6 +197,19 @@ app.factory('$service', function($http, $q, md5, $rootScope, pouchService) {
       }).catch(function(err) {
         deferred.reject(err);
         console.log(err);
+      });
+      return deferred.promise;
+    },
+    getAllSurveys: function() {
+      var deferred = $q.defer();
+      localPouch.allDocs({
+        include_docs: true,
+        attachments: true
+      }).then(function(res) {
+        deferred.resolve(res.rows);
+      }).catch(function(err) {
+        console.log(err);
+        deferred.reject(err);
       });
       return deferred.promise;
     },
@@ -256,6 +263,7 @@ app.controller('HomeCtrl', function($scope, $cookies, pouchService, $service, $r
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
+
   $rootScope.isAuth = false;
 
   $scope.items = [];
@@ -309,13 +317,15 @@ app.controller('DashboardCtrl', function($scope, pouchService, $service, $cookie
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
-  $scope.items = [];
+
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
     $state.go('home');
   } else {
     $rootScope.isAuth = true;
   }
+
+  $scope.items = [];
 
   $scope.getSurveys = function(id) {
     $service.getSurveysByJudges(id).then(function(res) {
@@ -363,7 +373,11 @@ app.controller('PosterListCtrl', function($scope, $service, $cookies, $rootScope
 /**
  * PosterCtrl: controller for the template that displays an individual poster
  */
-app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $service, toastr, $timeout, $state) {
+app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $service, toastr, $timeout, $state, pouchService) {
+  $scope.pouchService = pouchService.retryReplication();
+  var localPouch = pouchService.localDB;
+  var remoteDB = pouchService.remoteDB;
+
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
     $state.go('home');
@@ -459,7 +473,6 @@ app.controller('JudgeListCtrl', function($scope, $cookies, $rootScope, pouchServ
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
-  $scope.judges = [];
 
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
@@ -467,6 +480,8 @@ app.controller('JudgeListCtrl', function($scope, $cookies, $rootScope, pouchServ
   } else {
     $rootScope.isAuth = true;
   }
+
+  $scope.judges = [];
 
   $scope.getJudges = function() {
     localPouch.allDocs({
@@ -506,10 +521,6 @@ app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService,
   $scope.pouchService = pouchService.retryReplication();
   var localPouch = pouchService.localDB;
   var remoteDB = pouchService.remoteDB;
-  $scope.judge = judge;
-  $scope.questions = [];
-  $scope.surveys = [];
-  $scope.empty = false;
 
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
@@ -517,6 +528,11 @@ app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService,
   } else {
     $rootScope.isAuth = true;
   }
+
+  $scope.judge = judge;
+  $scope.questions = [];
+  $scope.surveys = [];
+  $scope.empty = false;
 
   $service.getQuestions().then(function(res) {
     $scope.questions = res.data.questions;
@@ -579,6 +595,92 @@ app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService,
   };
 
   $scope.getSurveysByJudge();
+});
+
+/**
+ * LogoutCtrl: controller to handle logout state
+ */
+app.controller('FinalReportCtrl', function($scope, pouchService, $rootScope, $cookies, $state, $service) {
+  $scope.pouchService = pouchService.retryReplication();
+  var localPouch = pouchService.localDB;
+  var remoteDB = pouchService.remoteDB;
+
+  if($cookies.get('user') === undefined) {
+    $rootScope.isAuth = false;
+    $state.go('home');
+  } else {
+    $rootScope.isAuth = true;
+  }
+
+  $scope.surveys = [];
+
+  $service.getAllSurveys()
+  .then(
+    function(res) {
+      res.forEach(function(row) {
+        row.doc.surveys.forEach(function(survey) {
+          var tempSurvey = {};
+          tempSurvey.judgeName = row.doc.username;
+          tempSurvey.groupName = survey.groupName;
+          tempSurvey.answers = survey.answers;
+          $scope.surveys.push(tempSurvey);
+        });
+      });
+      $scope.gridOptions.data = $scope.surveys;
+    },
+    function(err) {
+      console.log(err);
+    }
+  );
+
+  $scope.gridOptions = {
+    enableColumnMenus: false,
+    enableGridMenu: false,
+    columnDefs: [
+      { field: "judgeName" , name: "Judge Name"},
+      { field: "groupName", name: "Poster Name" },
+      { field: "answers[0]", name: "Information and Background" },
+      { field: "answers[1]", name: "Question, Problem, and Hypothesis" },
+      { field: "answers[2]", name: "Experimental Approach and Design" },
+      { field: "answers[3]", name: "Data and Results" },
+      { field: "answers[4]", name: "Discussion and Conclusion" },
+      { field: "answers[5]", name: "Research Originality, Novelty" },
+      { field: "answers[6]", name: "Poster Organization, Style, Visual Appeal" },
+      { field: "answers[7]", name: "Oral Presentation of Research" },
+      { field: "answers[8]", name: "Ability to Answer Questions" },
+      { field: "answers[9]", name: "Overall Presentation" },
+      { field: "answers[10]", name: "Additional Comments", cellTemplate:'<div class="ui-grid-cell-contents">...</div>' }
+    ],
+    exporterCsvFilename: 'FinalReport.csv',
+    exporterPdfDefaultStyle: {fontSize: 9},
+    exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
+    exporterPdfTableHeaderStyle: {fontSize: 8, bold: true, italics: true, color: '#000000'},
+    exporterPdfHeader: { text: "GGC STaRS - Final Report", style: {fontSize: 14, alignment: 'center', bold: true} },
+    exporterPdfFooter: function ( currentPage, pageCount ) {
+      return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+    },
+    exporterPdfCustomFormatter: function ( docDefinition ) {
+      docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+      docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
+      return docDefinition;
+    },
+    exporterPdfOrientation: 'landscape',
+    exporterPdfPageSize: 'LETTER',
+    exporterPdfMaxGridWidth: 500,
+    exporterCsvLinkElement: angular.element(document.querySelectorAll(".finalReport-csv-location")),
+    onRegisterApi: function(gridApi){
+      $scope.gridApi = gridApi;
+    }
+  };
+
+  $scope.export = function(){
+    if ($scope.export_format == 'csv') {
+      var myElement = angular.element(document.querySelectorAll(".finalReport-csv-location"));
+      $scope.gridApi.exporter.csvExport( 'all', 'all' );
+    } else if ($scope.export_format == 'pdf') {
+      $scope.gridApi.exporter.pdfExport( 'all', 'all' );
+    }
+  };
 
 });
 
