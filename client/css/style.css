@@ -33,10 +33,15 @@ header {
     white-space:initial;
     text-align: center !important;
     vertical-align: middle;
+    font-size: 10px;
 }
 .ui-grid-render-container {
   pointer-events: none;
 }
 .ui-grid, .ui-grid-viewport {
     height: auto !important;
+}
+.ui-grid-cell-contents {
+  text-wrap: normal !important;
+  word-wrap: break-word !important;
 }
