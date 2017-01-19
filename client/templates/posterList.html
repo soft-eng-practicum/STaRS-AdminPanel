@@ -4,18 +4,26 @@
       Poster Reports: Please select one of the following posters to continue
     </div>
     <div class="card-block">
+      <div class="md-form">
+        <i class="ion-search prefix"></i>
+        <input type="text" id="search" class="form-control" ng-model="search.value">
+        <label for="search">Search: Poster, Student, or Judge</label>
+      </div>
+      <br />
       <div class="list-group">
         <button type="button" class="list-group-item list-group-item-action active-custom">
           <div class="col-xs-2" align="center">Group</div>
           <div class="col-xs-2" align="center">Surveys</div>
-          <div class="col-xs-8" align="center">Students</div>
+          <div class="col-xs-4" align="center">Students</div>
+          <div class="col-xs-4" align="center">Judges Surveyed</div>
         </button>
-        <div ng-repeat="poster in posters">
+        <div ng-repeat="poster in posters | filter: search.value">
           <a ui-sref="poster({id: poster.id})">
             <button type="button" class="list-group-item list-group-item-action" >
               <div class="col-xs-2" align="center">{{poster.group}}</div>
               <div class="col-xs-2 list-group-divider" align="center">{{poster.countJudges}}</div>
-              <div class="col-xs-8 list-group-divider" align="center">{{poster.students}}</div>
+              <div class="col-xs-4 list-group-divider" align="center">{{poster.students | clearText}}</div>
+              <div class="col-xs-4 list-group-divider" align="center">{{poster.judges | clearText}}</div>
             </button>
           </a>
         </div>

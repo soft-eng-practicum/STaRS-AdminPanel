@@ -402,7 +402,7 @@ app.controller('DashboardCtrl', function($scope, pouchService, $service, $cookie
 /**
  * PosterListCtrl: controller for the template that lists all of the posters
  */
-app.controller('PosterListCtrl', function($scope, $service, $cookies, $rootScope, $state) {
+app.controller('PosterListCtrl', function($scope, $service, $cookies, $rootScope, $state, pouchService) {
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
     $state.go('home');
@@ -411,8 +411,16 @@ app.controller('PosterListCtrl', function($scope, $service, $cookies, $rootScope
   }
 
   $scope.posters = [];
+  $scope.search = {};
+
   $service.getPoster().then(function(res) {
     $scope.posters = res.data.posters;
+    $scope.posters.forEach(function(poster) {
+      pouchService.countCompletedSurveys(poster.id).then(function(res) {
+        poster.countJudges = res.length;
+        poster.judges = res;
+      });
+    });
   });
 });
 
@@ -477,13 +485,6 @@ app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $ser
     }
   };
 
-  //grid.appScope.showMe(row.entity.answers[10]) --- popover of additional comment TODO
-  $scope.showMe = function(info){
-    console.log(info);
-  };
-
-
-
   pouchService.getGroupSurveys($scope.poster.id)
   .then(
     function(res) {
@@ -525,6 +526,7 @@ app.controller('JudgeListCtrl', function($scope, $cookies, $rootScope, pouchServ
   }
 
   $scope.judges = [];
+  $scope.search = {};
 
   $scope.getJudges = function() {
     pouchService.getJudges()
@@ -715,4 +717,12 @@ app.controller('LogoutCtrl', function($rootScope, $cookies, $state) {
   $cookies.remove('user');
   $rootScope.isAuth = false;
   $state.go('home');
+});
+
+app.filter('clearText', function() {
+  return function(text) {
+    var result = text ? String(text).replace(/"<[^>]+>/gm , '') : '';
+    result = result.replace(/,/g, ', ');
+    return result;
+  };
 });
