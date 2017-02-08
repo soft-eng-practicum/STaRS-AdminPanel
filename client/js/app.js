@@ -86,10 +86,43 @@ app.config(function($stateProvider, $urlRouterProvider, toastrConfig) {
   $urlRouterProvider.otherwise('/');
 });
 
-app.run(function(pouchService) {
-  pouchService.setDatabase('judges');
-  pouchService.sync('http://127.0.0.1:5984/judges');
+app.service('$pouchdb', function($rootScope, pouchDB, $http) {
+  this.retryReplication = function() {
+    var self = this;
+    var replicate;
+    var status;
+    var opts = {
+      live: true,
+      retry: true,
+      continuous: true,
+      back_off_function: function (delay) {
+        if (delay === 0) {
+          return 1000;
+        }
+        return delay * 3;
+        }
+      };
+
+    self.localDB = pouchDB('judges');
+    self.localDB.sync('http://192.168.1.14:5984/judges', opts)
+    .on('change', function(change) {
+      $rootScope.$broadcast('changes');
+      console.log('yo something changed');
+      console.log(change);
+    }).on('paused', function(info) {
+      $rootScope.$broadcast('paused');
+      console.log('PAUSED');
+    }).on('active', function(info) {
+      console.log(info);
+      console.log('ACTIVE');
+    }).on('error', function(err) {
+      console.log(err);
+      console.log('ERROR');
+    });
+
+  };
 });
+
 
 /* ==========================================================================
    Services
@@ -97,9 +130,10 @@ app.run(function(pouchService) {
 /**
  * pouchService: establishes and maintains connection with Couchdb and Pouchdb
  */
-app.service('pouchService', function($rootScope, pouchDB, $q) {
-  var database;
-  var changeListener;
+app.service('pouchService', function($rootScope, pouchDB, $q, $pouchdb) {
+  var pouch = $pouchdb.retryReplication();
+  var database = $pouchdb.localDB;
+  var remoteDB = $pouchdb.remoteDB;
 
   this.getUsers = function() {
     var deferred = $q.defer();
@@ -113,48 +147,6 @@ app.service('pouchService', function($rootScope, pouchDB, $q) {
       deferred.reject(err);
     });
     return deferred.promise;
-  };
-
-  this.setDatabase = function(dbName) {
-    database = new PouchDB(dbName);
-    database.setMaxListeners(30);
-  };
-
-  this.startListening = function() {
-    changeListener = database.changes({
-      since: 'now',
-      live: true,
-      include_docs: true
-    }).on("change", function(change) {
-      if(!change.deleted) {
-        $rootScope.$broadcast("pouchService: change", change);
-      } else {
-        $rootScope.$broadcast("$pouchDB:delete", change);
-      }
-    });
-  };
-
-  this.stopListening = function() {
-    changeListener.cancel();
-  };
-
-  this.sync = function(remoteDatabase) {
-    database.sync(remoteDatabase, {
-      live: true,
-      retry: true
-    }).on('change', function (change) {
-      console.log('change');
-      console.log(change);
-    }).on('paused', function (info) {
-      // replication was paused, usually because of a lost connection
-      console.log('paused');
-    }).on('active', function (info) {
-      console.log('active');
-      console.log(info);
-    }).on('error', function (err) {
-      console.log('error');
-      console.log(err);
-    });
   };
 
   this.login = function(username, password) {
@@ -313,14 +305,22 @@ app.controller('NavbarCtrl', function($rootScope, $scope, toastr) {
 /**
  * HomeCtrl: controller for the login page (initial page)
  */
-app.controller('HomeCtrl', function($scope, $cookies, pouchService, $service, $rootScope, $timeout, $state, toastr) {
-  pouchService.startListening();
+app.controller('HomeCtrl', function($http, $scope, $cookies, $pouchdb, pouchService, $service, $rootScope, $timeout, $state, toastr) {
+  var pouch = $pouchdb.retryReplication();
+  var localPouch = $pouchdb.localDB;
+  var remoteDB = $pouchdb.remoteDB;
 
   $rootScope.isAuth = false;
 
   $scope.items = [];
   $scope.user = {};
   $scope.search = {};
+
+  $scope.test = function() {
+    $http.get('/api').success(function(res) {
+      console.log(res);
+    });
+  };
 
   $scope.getItems = function() {
     pouchService.getUsers()
@@ -366,8 +366,10 @@ app.controller('HomeCtrl', function($scope, $cookies, pouchService, $service, $r
 /**
  * DashboardCtrl: controller for the main page
  */
-app.controller('DashboardCtrl', function($scope, pouchService, $service, $cookies, $rootScope, $state) {
-  pouchService.startListening();
+app.controller('DashboardCtrl', function($scope, pouchService, $service, $cookies, $rootScope, $state, $pouchdb) {
+  var pouch = $pouchdb.retryReplication();
+  var localPouch = $pouchdb.localDB;
+  var remoteDB = $pouchdb.remoteDB;
 
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
@@ -394,15 +396,16 @@ app.controller('DashboardCtrl', function($scope, pouchService, $service, $cookie
 
   $scope.getJudges();
 
-  $scope.$on('$destroy', function() {
-    pouchService.stopListening();
-  });
 });
 
 /**
  * PosterListCtrl: controller for the template that lists all of the posters
  */
-app.controller('PosterListCtrl', function($scope, $service, $cookies, $rootScope, $state, pouchService) {
+app.controller('PosterListCtrl', function($scope, $service, $cookies, $rootScope, $state, pouchService, $pouchdb) {
+  var pouch = $pouchdb.retryReplication();
+  var localPouch = $pouchdb.localDB;
+  var remoteDB = $pouchdb.remoteDB;
+
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
     $state.go('home');
@@ -427,9 +430,10 @@ app.controller('PosterListCtrl', function($scope, $service, $cookies, $rootScope
 /**
  * PosterCtrl: controller for the template that displays an individual poster
  */
-app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $service, toastr, $timeout, $state, pouchService) {
-  pouchService.startListening();
-
+app.controller('PosterCtrl', function($scope, poster, uiGridConstants, $cookies, $rootScope, $service, $pouchdb, toastr, $timeout, $state, pouchService) {
+  var pouch = $pouchdb.retryReplication();
+  var localPouch = $pouchdb.localDB;
+  var remoteDB = $pouchdb.remoteDB;
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
     $state.go('home');
@@ -449,19 +453,17 @@ app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $ser
   $scope.gridOptions = {
     enableColumnMenus: false,
     enableGridMenu: false,
+    enableHorizontalScrollbar : uiGridConstants.scrollbars.NEVER,
+    enableVerticalScrollbar   : uiGridConstants.scrollbars.NEVER,
     columnDefs: [
-      { field: "name" , name: "Judge Name"},
-      { field: "answers[0]", name: "Information and Background" },
-      { field: "answers[1]", name: "Question, Problem, and Hypothesis" },
-      { field: "answers[2]", name: "Experimental Approach and Design" },
-      { field: "answers[3]", name: "Data and Results" },
-      { field: "answers[4]", name: "Discussion and Conclusion" },
-      { field: "answers[5]", name: "Research Originality, Novelty" },
-      { field: "answers[6]", name: "Poster Organization, Style, Visual Appeal" },
-      { field: "answers[7]", name: "Oral Presentation of Research" },
-      { field: "answers[8]", name: "Ability to Answer Questions" },
-      { field: "answers[9]", name: "Overall Presentation" },
-      { field: "answers[10]", name: "Additional Comments", cellTemplate:'<div class="ui-grid-cell-contents">...</div>' }
+      { field: "name", name: "Judge Name", width: 100},
+      { field: "answers[0]", name: "Statement of Problem", width: 100},
+      { field: "answers[1]", name: "Methodology", width: 100},
+      { field: "answers[2]", name: "Results/Solution", width: 100},
+      { field: "answers[3]", name: "Oral Presentation", width: 100},
+      { field: "answers[4]", name: "Poster Layout", width: 100},
+      { field: "answers[5]", name: "Impact", width: 100},
+      { field: "answers[6]", name: "Additional Comments", cellTemplate:'<div class="ui-grid-cell-contents">{{grid.getCellValue(row, col)}}</div>', width: '*'}
     ],
     exporterCsvFilename: 'PosterResults.csv',
     exporterPdfDefaultStyle: {fontSize: 9},
@@ -515,9 +517,10 @@ app.controller('PosterCtrl', function($scope, poster, $cookies, $rootScope, $ser
 /**
  * JudgeListCtrl: controller for the template that lists all of the judges
  */
-app.controller('JudgeListCtrl', function($scope, $cookies, $rootScope, pouchService, $state) {
-  pouchService.startListening();
-
+app.controller('JudgeListCtrl', function($scope, $cookies, $rootScope, pouchService, $state, $pouchdb) {
+  var pouch = $pouchdb.retryReplication();
+  var localPouch = $pouchdb.localDB;
+  var remoteDB = $pouchdb.remoteDB;
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
     $state.go('home');
@@ -547,8 +550,10 @@ app.controller('JudgeListCtrl', function($scope, $cookies, $rootScope, pouchServ
 /**
  * JudgeCtrl: controller for the template that displays an individual judge
  */
-app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService, judge, $service, $state) {
-  pouchService.startListening();
+app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService, judge, $service, $state, $pouchdb, uiGridConstants) {
+  var pouch = $pouchdb.retryReplication();
+  var localPouch = $pouchdb.localDB;
+  var remoteDB = $pouchdb.remoteDB;
 
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
@@ -577,19 +582,17 @@ app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService,
   $scope.gridOptions = {
     enableColumnMenus: false,
     enableGridMenu: false,
+    enableHorizontalScrollbar : uiGridConstants.scrollbars.NEVER,
+    enableVerticalScrollbar   : uiGridConstants.scrollbars.NEVER,
     columnDefs: [
-      { field: "groupName" , name: "Poster Name"},
-      { field: "answers[0]", name: "Information and Background" },
-      { field: "answers[1]", name: "Question, Problem, and Hypothesis" },
-      { field: "answers[2]", name: "Experimental Approach and Design" },
-      { field: "answers[3]", name: "Data and Results" },
-      { field: "answers[4]", name: "Discussion and Conclusion" },
-      { field: "answers[5]", name: "Research Originality, Novelty" },
-      { field: "answers[6]", name: "Poster Organization, Style, Visual Appeal" },
-      { field: "answers[7]", name: "Oral Presentation of Research" },
-      { field: "answers[8]", name: "Ability to Answer Questions" },
-      { field: "answers[9]", name: "Overall Presentation" },
-      { field: "answers[10]", name: "Additional Comments", cellTemplate:'<div class="ui-grid-cell-contents">...</div>' }
+      { field: "groupName", name: "Poster Name", width: 100},
+      { field: "answers[0]", name: "Statement of Problem", width: 100},
+      { field: "answers[1]", name: "Methodology", width: 100},
+      { field: "answers[2]", name: "Results/Solution", width: 100},
+      { field: "answers[3]", name: "Oral Presentation", width: 100},
+      { field: "answers[4]", name: "Poster Layout", width: 100},
+      { field: "answers[5]", name: "Impact", width: 100},
+      { field: "answers[6]", name: "Additional Comments", cellTemplate:'<div class="ui-grid-cell-contents">{{grid.getCellValue(row, col)}}</div>', width: '*'}
     ],
     exporterCsvFilename: 'JudgeResults.csv',
     exporterPdfDefaultStyle: {fontSize: 9},
@@ -628,9 +631,10 @@ app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService,
 /**
  * FinalReportCtrl: controller for the template that displays the final/combined report for all judges and posters
  */
-app.controller('FinalReportCtrl', function($scope, pouchService, $rootScope, $cookies, $state, $service) {
-  pouchService.startListening();
-
+app.controller('FinalReportCtrl', function($scope, pouchService, $rootScope, $cookies, $state, $service, $pouchdb, uiGridConstants) {
+  var pouch = $pouchdb.retryReplication();
+  var localPouch = $pouchdb.localDB;
+  var remoteDB = $pouchdb.remoteDB;
   if($cookies.get('user') === undefined) {
     $rootScope.isAuth = false;
     $state.go('home');
@@ -662,20 +666,18 @@ app.controller('FinalReportCtrl', function($scope, pouchService, $rootScope, $co
   $scope.gridOptions = {
     enableColumnMenus: false,
     enableGridMenu: false,
+    enableHorizontalScrollbar : uiGridConstants.scrollbars.NEVER,
+    enableVerticalScrollbar   : uiGridConstants.scrollbars.NEVER,
     columnDefs: [
-      { field: "judgeName" , name: "Judge Name"},
-      { field: "groupName", name: "Poster Name" },
-      { field: "answers[0]", name: "Information and Background" },
-      { field: "answers[1]", name: "Question, Problem, and Hypothesis" },
-      { field: "answers[2]", name: "Experimental Approach and Design" },
-      { field: "answers[3]", name: "Data and Results" },
-      { field: "answers[4]", name: "Discussion and Conclusion" },
-      { field: "answers[5]", name: "Research Originality, Novelty" },
-      { field: "answers[6]", name: "Poster Organization, Style, Visual Appeal" },
-      { field: "answers[7]", name: "Oral Presentation of Research" },
-      { field: "answers[8]", name: "Ability to Answer Questions" },
-      { field: "answers[9]", name: "Overall Presentation" },
-      { field: "answers[10]", name: "Additional Comments", cellTemplate:'<div class="ui-grid-cell-contents">...</div>' }
+      { field: "judgeName" , name: "Judge Name", width: 100},
+      { field: "groupName", name: "Poster Name", width: 100},
+      { field: "answers[0]", name: "Statement of Problem", width: 100},
+      { field: "answers[1]", name: "Methodology", width: 100},
+      { field: "answers[2]", name: "Results/Solution", width: 100},
+      { field: "answers[3]", name: "Oral Presentation", width: 100},
+      { field: "answers[4]", name: "Poster Layout", width: 100},
+      { field: "answers[5]", name: "Impact", width: 100},
+      { field: "answers[6]", name: "Additional Comments", cellTemplate:'<div class="ui-grid-cell-contents">{{grid.getCellValue(row, col)}}</div>', width: '*'}
     ],
     exporterCsvFilename: 'FinalReport.csv',
     exporterPdfDefaultStyle: {fontSize: 9},

@@ -1,6 +1,7 @@
-var PouchDB = require('pouchdb');
 var express = require('express');
 var cors = require('cors');
+var request = require('request');
+var bodyParser = require('body-parser');
 var path = require('path');
 var app = express();
 
@@ -18,15 +19,13 @@ app.use(cors({
 }));
 
 app.use(express.static(path.join(__dirname, 'client')));
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 app.set('port', process.env.PORT || 3197);
 
-/*
- |--------------------------------------------------------------------------
- | Start the Server
- |--------------------------------------------------------------------------
- */
 app.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
 });

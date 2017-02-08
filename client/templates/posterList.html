@@ -10,24 +10,46 @@
         <label for="search">Search: Poster, Student, or Judge</label>
       </div>
       <br />
-      <div class="list-group">
-        <button type="button" class="list-group-item list-group-item-action active-custom">
-          <div class="col-xs-2" align="center">Group</div>
-          <div class="col-xs-2" align="center">Surveys</div>
-          <div class="col-xs-4" align="center">Students</div>
-          <div class="col-xs-4" align="center">Judges Surveyed</div>
-        </button>
-        <div ng-repeat="poster in posters | filter: search.value">
-          <a ui-sref="poster({id: poster.id})">
-            <button type="button" class="list-group-item list-group-item-action" >
-              <div class="col-xs-2" align="center">{{poster.group}}</div>
-              <div class="col-xs-2 list-group-divider" align="center">{{poster.countJudges}}</div>
-              <div class="col-xs-4 list-group-divider" align="center">{{poster.students | clearText}}</div>
-              <div class="col-xs-4 list-group-divider" align="center">{{poster.judges | clearText}}</div>
-            </button>
-          </a>
-        </div>
-      </div>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>
+              Poster
+            </th>
+            <th>
+              Students
+            </th>
+            <th>
+              Advisor
+            </th>
+            <th>
+              Number of Surveys
+            </th>
+            <th>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="poster in posters | filter: search.value">
+            <td>
+              {{poster.group}}
+            </td>
+            <td>
+              {{poster.students | clearText}}
+            </td>
+            <td>
+              {{poster.advisor}}
+            </td>
+            <td>
+              {{poster.countJudges}}
+            </td>
+            <td>
+              <button type="button" class="btn btn-primary btn-sm" ui-sref="poster({id: poster.id})">
+                View</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

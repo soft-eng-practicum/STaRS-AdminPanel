@@ -31,17 +31,20 @@ header {
 .ui-grid-header-cell-label, .ui-grid-header-cell {
     display:inline-block;
     white-space:initial;
-    text-align: center !important;
-    vertical-align: middle;
-    font-size: 10px;
+    float: none;
+    font-size: 12px;
+    padding: 0 !important;
 }
-.ui-grid-render-container {
-  pointer-events: none;
-}
+.ui-grid-header-cell {}
 .ui-grid, .ui-grid-viewport {
     height: auto !important;
 }
 .ui-grid-cell-contents {
-  text-wrap: normal !important;
-  word-wrap: break-word !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+thead {
+  background-color: #00704a;
+  color: #fff;
 }

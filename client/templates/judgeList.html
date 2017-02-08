@@ -10,22 +10,40 @@
         <label for="search">Search: Poster, Student, or Judge</label>
       </div>
       <br />
-      <div class="list-group">
-        <button type="button" class="list-group-item list-group-item-action active-custom">
-          <div class="col-xs-3" align="center">Judge</div>
-          <div class="col-xs-3" align="center">Total Surveys</div>
-          <div class="col-xs-6" align="center">Groups Surveyed</div>
-        </button>
-        <div ng-repeat="judge in judges | filter: search.value">
-          <a ui-sref="judge({id: judge.id})">
-            <button type="button" class="list-group-item list-group-item-action" >
-              <div class="col-xs-3" align="center">{{judge.name}}</div>
-              <div class="col-xs-3 list-group-divider" align="center">{{judge.surveyLength}}</div>
-              <div class="col-xs-6 list-group-divider" align="center">{{judge.groupsSurveyed | clearText}}</div>
-            </button>
-          </a>
-        </div>
-      </div>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>
+              Judge
+            </th>
+            <th>
+              Number of Surveys
+            </th>
+            <th>
+              Groups Surveyed
+            </th>
+            <th>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="judge in judges | filter: search.value">
+            <td>
+              {{judge.name}}
+            </td>
+            <td>
+              {{judge.surveyLength}}
+            </td>
+            <td>
+              {{judge.groupsSurveyed | clearText}}
+            </td>
+            <td>
+              <button type="button" class="btn btn-primary btn-sm" ui-sref="judge({id: judge.id})">
+                View</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

@@ -5,7 +5,18 @@
 			"students": ["John Doe", "Jane Doe"],
 			"id": "1",
 			"judges": [],
-			"countJudges": 0
+			"countJudges": 0,
+			"subject": "BIOLOGY",
+			"advisor": "Gordon Norman"
+		},
+		{
+			"group": "MATH",
+			"students": ["Malcolm Function", "Jason Response"],
+			"id": "2",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "MATH",
+			"advisor": "Piff Jenkins"
 		}
 	]
 }
