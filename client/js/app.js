@@ -95,30 +95,30 @@ app.service('$pouchdb', function($rootScope, pouchDB, $http) {
       live: true,
       retry: true,
       continuous: true,
-      back_off_function: function (delay) {
+      back_off_function: function(delay) {
         if (delay === 0) {
           return 1000;
         }
         return delay * 3;
-        }
-      };
+      }
+    };
 
     self.localDB = pouchDB('judges');
-    self.localDB.sync('http://192.168.1.14:5984/judges', opts)
-    .on('change', function(change) {
-      $rootScope.$broadcast('changes');
-      console.log('yo something changed');
-      console.log(change);
-    }).on('paused', function(info) {
-      $rootScope.$broadcast('paused');
-      console.log('PAUSED');
-    }).on('active', function(info) {
-      console.log(info);
-      console.log('ACTIVE');
-    }).on('error', function(err) {
-      console.log(err);
-      console.log('ERROR');
-    });
+    self.localDB.sync('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges', opts)
+      .on('change', function(change) {
+        $rootScope.$broadcast('changes');
+        console.log('yo something changed');
+        console.log(change);
+      }).on('paused', function(info) {
+        $rootScope.$broadcast('paused');
+        console.log('PAUSED');
+      }).on('active', function(info) {
+        console.log(info);
+        console.log('ACTIVE');
+      }).on('error', function(err) {
+        console.log(err);
+        console.log('ERROR');
+      });
 
   };
 });
@@ -155,6 +155,7 @@ app.service('pouchService', function($rootScope, pouchDB, $q, $pouchdb) {
       include_docs: true,
       attachments: true
     }).then(function(res) {
+      console.log(res);
       res.rows.forEach(function(row) {
         if(angular.equals(row.doc.username,username) && angular.equals(row.doc.password,password)) {
           deferred.resolve(row.doc);
@@ -308,7 +309,6 @@ app.controller('NavbarCtrl', function($rootScope, $scope, toastr) {
 app.controller('HomeCtrl', function($http, $scope, $cookies, $pouchdb, pouchService, $service, $rootScope, $timeout, $state, toastr) {
   var pouch = $pouchdb.retryReplication();
   var localPouch = $pouchdb.localDB;
-  var remoteDB = $pouchdb.remoteDB;
 
   $rootScope.isAuth = false;
 
