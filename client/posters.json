@@ -1,22 +1,427 @@
 {
 	"posters": [
 		{
-			"group": "BIO",
-			"students": ["John Doe", "Jane Doe"],
+			"group": "The Effect of Water Quality on the Immune Response in Local Fish Populations",
+			"students": ["Nathaly Leguizamon", "Adriana Perrucci"],
 			"id": "1",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOLOGY",
-			"advisor": "Gordon Norman"
+			"subject": "BIOL",
+			"advisor": "Shoshana Katzman & Elisabeth Javazon"
 		},
 		{
-			"group": "MATH",
-			"students": ["Malcolm Function", "Jason Response"],
+			"group": "Bio-Bridge: A Research and Study Skills Bridge Program for Transfer Students",
+			"students": ["Allison Claybrook"],
 			"id": "2",
 			"judges": [],
 			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Jennifer Hurst-Kennedy"
+		},
+		{
+			"group": "A Survey of Large-Size Mammal Diversity and Abundance in the Temperate Forests Located in Urban, Suburban, and Rural Parks",
+			"students": ["Carol Smith"],
+			"id": "3",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Mark Schlueter"
+		},
+		{
+			"group": "A Multi-Year Examination of the Seasonal Body Size Changes in Bumble Bees and Carpenter Bees",
+			"students": ["Emanuel Dylan Harbin"],
+			"id": "4",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Mark Schlueter"
+		},
+		{
+			"group": "Measuring the Benefits of Wildflower Plots to Boost Native Bee Abundance in Georgia Apple Orchards",
+			"students": ["Cherent Tesfaye"],
+			"id": "5",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Mark Schlueter"
+		},
+		{
+			"group": "A Phylogenetic Study of Y RNA based on Secondary Structures",
+			"students": ["Dat Nguyen"],
+			"id": "6",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Fengjie Sun"
+		},
+		{
+			"group": "Comparison of Otoliths and Scales in the Age Estimation of Redbreast Sunfish",
+			"students": ["Jessica Coover"],
+			"id": "7",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Peter C. Sakaris"
+		},
+		{
+			"group": "Comparison of Redbreast Sunfish Life Histories Across an Urban Gradient",
+			"students": ["Stefano Rosillo"],
+			"id": "8",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Peter C. Sakaris"
+		},
+		{
+			"group": "Life History of the Creek Chub in an Urban Stream",
+			"students": ["Ashley Fredricks"],
+			"id": "9",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Peter C. Sakaris"
+		},
+		{
+			"group": "A Phylogenetic Study of Y RNA Based on Secondary Structure",
+			"students": ["Dat Nguyen"],
+			"id": "10",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Fengjie Sun"
+		},
+		{
+			"group": "Neuroprotective Effects of Nicotine",
+			"students": ["Luis Ortiz"],
+			"id": "11",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Cindy Achat-Mendes"
+		},
+		{
+			"group": "Research Proposal: Effect of Nicotine on Cytokine Production in Neurons",
+			"students": ["Jonathan Mwizerwa"],
+			"id": "12",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Cindy Achat-Mendes"
+		},
+		{
+			"group": "Differential Gene Expression in Pancreatic Ductal Adenocarcinoma Cancer Cell Lines MiaPaCa2 and CAPAN1",
+			"students": ["Maryssa Cepic", "Angela Crawford", "Ricky Hour", "Vivien Nwoke"],
+			"id": "13",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Latanya Hammonds-Odie"
+		},
+		{
+			"group": "Observing Transgene Presence in Hawaiian Papaya Labeled as Non-GMO",
+			"students": ["India Dillard", "Porshaye Watkins"],
+			"id": "14",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Ernest Ricks"
+		},
+		{
+			"group": "Investigating the Presence of the BT Gene in Tomatoes",
+			"students": ["Zahra Ali", "Carolina Sanchez", "Ashton Goodwin", "Danielle Martin"],
+			"id": "15",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Ernest Ricks"
+		},
+		{
+			"group": "Are Unlabeled Tomatoes in the Marketplace GMO or Non-GMO",
+			"students": ["Carla Penaherrera", "Linh Ta", "Sia Pessima"],
+			"id": "16",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Ernest Ricks"
+		},
+		{
+			"group": "The Anti-Inflammatory Effects of Progesterone in RAW 264.7 Cells",
+			"students": ["Shai Waldrip"],
+			"id": "17",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Christopher Brandon"
+		},
+		{
+			"group": "Investigation of Genes Downstream of KLF5 and ELF3",
+			"students": ["Taneiqua Cobb", "Ashton Goodwin", "Kinjal Modi"],
+			"id": "18",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Latanya Hammonds-Odie"
+		},
+		{
+			"group": "Is Soy-Based Protein Powder GMO-Free?",
+			"students": ["Jake Bond", "Luis Valdes", "Henry Montoya", "Alex Menkes"],
+			"id": "19",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Ernest Ricks"
+		},
+		{
+			"group": "Exploring the Presence of cry1ab and gmEPSP Genes in Supermarket Fresh Corns",
+			"students": ["Richard Mensah", "Heather Young", "Ben Faulk", "Cedrick Mukinay"],
+			"id": "20",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Ernest Ricks"
+		},
+		{
+			"group": "Nitrogen Fixers: The Future of Food",
+			"students": ["Nia Le", "Nayeli Rodriguez", "Briana Stewart", "Luis Valdes"],
+			"id": "21",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Pratima Darr"
+		},
+		{
+			"group": "How Important is it to Store Milk Correctly?",
+			"students": ["Syeda Kazmi", "Katherin Lopez-Melo", "Sanjin Medvedovic"],
+			"id": "22",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Pratima Darr"
+		},
+		{
+			"group": "Early Detection of Pancreatic Cancer with Expression Level Analysis of GNAS Mutation",
+			"students": ["Tina Alighanbari", "Thomas Nguyen", "Terry Vang", "Theresa Williams"],
+			"id": "23",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Latanya Hammonds-Odie"
+		},
+		{
+			"group": "Exploring the Impact of ZEB-1 and CFPAC-1 Expressions in Pancreatic Cancer",
+			"students": ["Erin Guess", "Jessica Giron", "Joanne Maitre"],
+			"id": "24",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "BIOL",
+			"advisor": "Latanya Hammonds-Odie"
+		},
+		{
+			"group": "Molecular Modeling of the Binding Modes and Affinity of Sulfonylamide Ligands in Interactions with Glyceraldehyde-3-Phosphate Dehydrogenase from Plasmodium and Human Tissues",
+			"students": ["Porshaye Watkins"],
+			"id": "25",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Neville Forlemu"
+		},
+		{
+			"group": "Mechanotropic and Gelation Studies of Stearic Acid Based Molecular Gelators",
+			"students": ["Brian Matei"],
+			"id": "26",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Ajay Mallia"
+		},
+		{
+			"group": "Design of Pharmaceutically Active Molecules: Synthesis and Studies of Novel Polycyclic Systems Using Ninhydrin and Alkyloxyanilines",
+			"students": ["Callen Rhodes"],
+			"id": "27",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Ajay Mallia and Joseph Sloop"
+		},
+		{
+			"group": "Design of Pharmaceutically Active Molecules: Synthesis and Studies of Functionalized Indenopyrazolones",
+			"students": ["Bansi Kakadiya"],
+			"id": "28",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Ajay Mallia and Joseph Sloop"
+		},
+		{
+			"group": "Gelation Studies of Simple Steroidal Molecular Gelators",
+			"students": ["Mohammed Rafid"],
+			"id": "29",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Ajay Mallia"
+		},
+		{
+			"group": "Competitive Binding of Pesticides to Synthetic Neuromelanin",
+			"students": ["Jeremy Hoa Bui", "Linh Lam", "Jordan Naquin"],
+			"id": "30",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Rebecca Kalman"
+		},
+		{
+			"group": "Extraction of Pesticides in Crops and Soil Using QUeChERS Method and Analysis with HPLC-UV",
+			"students": ["Yasmeana Doghaimat", "Chloe Fernandes", "Zachary Herrera", "Whitley Ramirez"],
+			"id": "31",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Rebecca Kalman"
+		},
+		{
+			"group": "GGC Game Changing Chemistry Outreach",
+			"students": ["David Breaud", "Katie Coscia", "Niesha Davis", "Whitney Hudsen", "Ahla Ko", "Joshua Massey"],
+			"id": "32",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Gillian Rudd & Rebecca Kalman"
+		},
+		{
+			"group": "Quantitative Analysis of the Interaction Forces Between Foulants and Membranes",
+			"students": ["Farzana Zerin", "Taylor Hubbard"],
+			"id": "33",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Seungjin Lee"
+		},
+		{
+			"group": "The Effect of Language Elements on Chemical Education in Multicultural Classroom Environment",
+			"students": ["Edgar Vasquez"],
+			"id": "34",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Seungjin Lee"
+		},
+		{
+			"group": "Sustainable Water Reuse and Waste Management by Recycling Nutrients",
+			"students": ["Jake Grubb"],
+			"id": "35",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Seungjin Lee"
+		},
+		{
+			"group": "Establishing Conditions for the Pigmentation of Dopamine Neurons",
+			"students": ["Hoa (Jeremy) Bui"],
+			"id": "36",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Robert Haining"
+		},
+		{
+			"group": "Preparation and Characterization of Synthetic NM Variants with 6-OH and 5-OH Dopamine",
+			"students": ["Kayleigh Edwards"],
+			"id": "37",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Robert Haining"
+		},
+		{
+			"group": "Analysis of GGC Dining Operations Waste Oil and Grease (O&G) for use as Biofuel",
+			"students": ["Fergie Giron", "Syed Hyder", "Rizaan Kamruddin", "Ahla Ko", "Henry Montoya", "Michelle Solomon", "California Xiong"],
+			"id": "38",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Neelam Khan, Sang H. Park, David P. Pursell & Kathryn Zimmermann"
+		},
+		{
+			"group": "Targeting the Plasmodium falciparum Folate Pathway: Molecular Modelling of the Affinity Sulfonamide Derivatives and Isoforms of Dihydrofolate Reductase",
+			"students": ["Cedrick Dizala Mukinay"],
+			"id": "39",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Neville Forlemu"
+		},
+		{
+			"group": "TeachMover Robot Project",
+			"students": ["Cesar Mauricio Romero-Pedraza"],
+			"id": "40",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "ITEC",
+			"advisor": "Sairam Tangirala & Tae Song Lee"
+		},
+		{
+			"group": "Converting a Neuron Model Simulation into Python",
+			"students": ["Devin Childress"],
+			"id": "41",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "ITEC",
+			"advisor": "Cengiz Gunay"
+		},
+		{
+			"group": "A Tutorial for a Multicompartmental Model of a Drosophile Motoneuron",
+			"students": ["Musa Drammeh", "David Oladeji Salimonu"],
+			"id": "42",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "ITEC",
+			"advisor": "Cengiz Gunay"
+		},
+		{
+			"group": "Methods of Data Cleaning for Statistical Analysis",
+			"students": ["Maegan Lawrence"],
+			"id": "43",
+			"judges": [],
+			"countJudges": 0,
 			"subject": "MATH",
-			"advisor": "Piff Jenkins"
+			"advisor": "Jamye Curry"
+		},
+		{
+			"group": "Characterization of Hexagonal Boron Nitride Crystals by Atomic Force Microscope",
+			"students": ["Joseph Mondoux"],
+			"id": "44",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Neelam Khan"
+		},
+		{
+			"group": "Self Assemby and Gelation Studies of Simple Steroidal Molecular Gelators",
+			"students": ["Mohammed Rafid"],
+			"id": "45",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "CHEM",
+			"advisor": "Ajay Mallia"
+		},
+		{
+			"group": "GAME NIM’S STRATEGY",
+			"students": ["Quan Tran"],
+			"id": "46",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "MATH",
+			"advisor": "Andrei Olifer"
+		},
+		{
+			"group": "Teaching Cryptography to High School Students",
+			"students": ["Andrew Schmidt"],
+			"id": "47",
+			"judges": [],
+			"countJudges": 0,
+			"subject": "MATH",
+			"advisor": "Andrei Olifer"
 		}
 	]
 }

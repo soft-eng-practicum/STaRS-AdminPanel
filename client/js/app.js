@@ -295,12 +295,6 @@ app.factory('$service', function($http, $q, md5, $rootScope, pouchService) {
 app.controller('NavbarCtrl', function($rootScope, $scope, toastr) {
   $rootScope.isAuth = false;
 
-  $scope.checkAuth = function() {
-    if($rootScope.isAuth === false) {
-      toastr.warning('You must sign in to access the application');
-    }
-  };
-
 });
 
 /**
@@ -371,12 +365,6 @@ app.controller('DashboardCtrl', function($scope, pouchService, $service, $cookie
   var localPouch = $pouchdb.localDB;
   var remoteDB = $pouchdb.remoteDB;
 
-  if($cookies.get('user') === undefined) {
-    $rootScope.isAuth = false;
-    $state.go('home');
-  } else {
-    $rootScope.isAuth = true;
-  }
 
   $scope.items = [];
 
@@ -406,13 +394,6 @@ app.controller('PosterListCtrl', function($scope, $service, $cookies, $rootScope
   var localPouch = $pouchdb.localDB;
   var remoteDB = $pouchdb.remoteDB;
 
-  if($cookies.get('user') === undefined) {
-    $rootScope.isAuth = false;
-    $state.go('home');
-  } else {
-    $rootScope.isAuth = true;
-  }
-
   $scope.posters = [];
   $scope.search = {};
 
@@ -434,13 +415,6 @@ app.controller('PosterCtrl', function($scope, poster, uiGridConstants, $cookies,
   var pouch = $pouchdb.retryReplication();
   var localPouch = $pouchdb.localDB;
   var remoteDB = $pouchdb.remoteDB;
-  if($cookies.get('user') === undefined) {
-    $rootScope.isAuth = false;
-    $state.go('home');
-  } else {
-    $rootScope.isAuth = true;
-  }
-
   $scope.poster = poster;
   $scope.judges = [];
   $scope.questions = [];
@@ -521,12 +495,6 @@ app.controller('JudgeListCtrl', function($scope, $cookies, $rootScope, pouchServ
   var pouch = $pouchdb.retryReplication();
   var localPouch = $pouchdb.localDB;
   var remoteDB = $pouchdb.remoteDB;
-  if($cookies.get('user') === undefined) {
-    $rootScope.isAuth = false;
-    $state.go('home');
-  } else {
-    $rootScope.isAuth = true;
-  }
 
   $scope.judges = [];
   $scope.search = {};
@@ -555,12 +523,6 @@ app.controller('JudgeCtrl', function($scope, $cookies, $rootScope, pouchService,
   var localPouch = $pouchdb.localDB;
   var remoteDB = $pouchdb.remoteDB;
 
-  if($cookies.get('user') === undefined) {
-    $rootScope.isAuth = false;
-    $state.go('home');
-  } else {
-    $rootScope.isAuth = true;
-  }
 
   $scope.judge = judge;
   $scope.questions = [];
@@ -635,12 +597,6 @@ app.controller('FinalReportCtrl', function($scope, pouchService, $rootScope, $co
   var pouch = $pouchdb.retryReplication();
   var localPouch = $pouchdb.localDB;
   var remoteDB = $pouchdb.remoteDB;
-  if($cookies.get('user') === undefined) {
-    $rootScope.isAuth = false;
-    $state.go('home');
-  } else {
-    $rootScope.isAuth = true;
-  }
 
   $scope.surveys = [];
 

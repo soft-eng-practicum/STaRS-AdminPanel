@@ -1,7 +1,7 @@
 {"questions": [
   {
     "id": 1,
-    "information": "Statement of Problem",
+    "information": "Introduction and Motivation",
     "additional": "Includes summary of pertinent details, clearly state problem or theory, including appropriate background and citations.",
     "value": "0",
     "required": true
