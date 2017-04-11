@@ -187,16 +187,22 @@ app.service('pouchService', function($rootScope, pouchDB, $q, $pouchdb) {
       include_docs: true,
       attachments: true
     }).then(function(res) {
-      res.rows.forEach(function(row) {
-        row.doc.surveys.forEach(function(survey) {
-          if(survey.groupId === groupId) {
-            var resultObj = {};
-            resultObj.judgeName = row.doc.username;
-            resultObj.answers = survey.answers;
-            result.push(resultObj);
+      if(res.rows.length) {
+        res.rows.forEach(function(row) {
+          if(row.doc.surveys) {
+            row.doc.surveys.forEach(function(survey) {
+              if(survey.groupId === groupId) {
+                var resultObj = {};
+                resultObj.judgeName = row.doc.username;
+                resultObj.answers = survey.answers;
+                result.push(resultObj);
+              }
+            });
           }
+
         });
-      });
+      }
+
       deferred.resolve(result);
     }).catch(function(err) {
       deferred.reject(err);
@@ -211,14 +217,18 @@ app.service('pouchService', function($rootScope, pouchDB, $q, $pouchdb) {
       include_docs: true,
       attachments: true
     }).then(function(res) {
+      if(res.rows.length) {
       res.rows.forEach(function(row) {
-        for(var i = 0; i < row.doc.surveys.length; i++) {
-          if(row.doc.surveys[i].groupId == id) {
-            result.push(row.doc.username);
+        if(row.doc.surveys) {
+          for (var i = 0; i < row.doc.surveys.length; i++) {
+            if (row.doc.surveys[i].groupId == id) {
+              result.push(row.doc.username);
+            }
           }
         }
       });
       deferred.resolve(result);
+    }
     }).catch(function(err) {
       deferred.reject(err);
       console.log(err);
@@ -256,12 +266,15 @@ app.service('pouchService', function($rootScope, pouchDB, $q, $pouchdb) {
         };
         doc.id = row.id;
         doc.name = row.doc.username;
-        doc.surveys = row.doc.surveys;
-        doc.surveyLength = row.doc.surveys.length;
-        row.doc.surveys.forEach(function(survey) {
-          console.log(survey);
-          doc.groupsSurveyed.push(survey.groupName);
-        });
+        if(row.doc.surveys) {
+          doc.surveys = row.doc.surveys;
+          doc.surveyLength = row.doc.surveys.length;
+          row.doc.surveys.forEach(function(survey) {
+            console.log(survey);
+            doc.groupsSurveyed.push(survey.groupName);
+          });
+        }
+
         judges.push(doc);
       });
       deferred.resolve(judges);
@@ -503,7 +516,6 @@ app.controller('JudgeListCtrl', function($scope, $cookies, $rootScope, pouchServ
     pouchService.getJudges()
     .then(
       function(res) {
-        console.log(res);
         $scope.judges = res;
       },
       function(err) {
