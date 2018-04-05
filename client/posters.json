@@ -1,323 +1,323 @@
 {
 	"posters": [
 		{
-			"group": "The Effect of Water Quality on the Immune Response in Local Fish Populations",
-			"students": ["Nathaly Leguizamon", "Adriana Perrucci"],
+			"group": "The Effects of Nicotine as a Neuroprotectant Against Nigrostriatal Damage",
+			"students": ["Fergie Giron"],
 			"id": "1",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "BIOL",
-			"advisor": "Shoshana Katzman & Elisabeth Javazon"
+			"advisor": "Cindy Achat-Mendes"
 		},
 		{
-			"group": "Bio-Bridge: A Research and Study Skills Bridge Program for Transfer Students",
-			"students": ["Allison Claybrook"],
+			"group": "Time-of-day Influence on Postural Control and Neurocognition for Concussion Diagnostics",
+			"students": ["Katherine Valencia"],
 			"id": "2",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Jennifer Hurst-Kennedy"
+			"subject": "EXSC",
+			"advisor": "Brandon Doan"
 		},
 		{
-			"group": "A Survey of Large-Size Mammal Diversity and Abundance in the Temperate Forests Located in Urban, Suburban, and Rural Parks",
-			"students": ["Carol Smith"],
+			"group": "DFT studies of Ag nanoparticle binding to guanidinium moieties in saxitoxin",
+			"students": ["Amber Kimbrew"],
 			"id": "3",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Mark Schlueter"
+			"subject": "CHEM",
+			"advisor": "Cynthia Woodbridge"
 		},
 		{
-			"group": "A Multi-Year Examination of the Seasonal Body Size Changes in Bumble Bees and Carpenter Bees",
-			"students": ["Emanuel Dylan Harbin"],
+			"group": "MR. Mol: Mixed Reality Molecule",
+			"students": ["Matthew Camp", "Anastasiya Golovan", "David Hagerty", "Jessica Sok", "Caitlin Windham", "Bryan Yeap","Dr. Evelyn Brannock","Dr. Robert Lutz"],
 			"id": "4",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Mark Schlueter"
+			"subject": "ITEC",
+			"advisor": "Evelyn Brannock"
 		},
 		{
-			"group": "Measuring the Benefits of Wildflower Plots to Boost Native Bee Abundance in Georgia Apple Orchards",
-			"students": ["Cherent Tesfaye"],
+			"group": "Thermal Oxidation and Characterization of Hexagonal Boron Nitride by AFM",
+			"students": ["Edil Nour"],
 			"id": "5",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Mark Schlueter"
+			"subject": "PSYC",
+			"advisor": "Neelam Khan"
 		},
 		{
-			"group": "A Phylogenetic Study of Y RNA based on Secondary Structures",
-			"students": ["Dat Nguyen"],
+			"group": "The effect of filtration of used oil on the quality of produced biodiesel",
+			"students": ["Talib Araim"],
 			"id": "6",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Fengjie Sun"
+			"subject": "CHEM",
+			"advisor": "Seungjin Lee"
 		},
 		{
-			"group": "Comparison of Otoliths and Scales in the Age Estimation of Redbreast Sunfish",
-			"students": ["Jessica Coover"],
+			"group": "Synthesis and Application of Hydrogels",
+			"students": ["Yendami Alexander","Jake Grubb"],
 			"id": "7",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Peter C. Sakaris"
+			"subject": "CHEM",
+			"advisor": "Seungjin Lee"
 		},
 		{
-			"group": "Comparison of Redbreast Sunfish Life Histories Across an Urban Gradient",
-			"students": ["Stefano Rosillo"],
+			"group": "Statistical and Compositional Analysis of Synaptic Rhythmic Currents in Drosophila Motoneurons",
+			"students": ["Danny Vu","Marcie Smith"],
 			"id": "8",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Peter C. Sakaris"
+			"subject": "ITEC",
+			"advisor": "Cengiz Gunay"
 		},
 		{
-			"group": "Life History of the Creek Chub in an Urban Stream",
-			"students": ["Ashley Fredricks"],
+			"group": "Analyzing the subpopulations of splenic lymphocytes derived from catfish living in various tributaries of the Chatahoochee River",
+			"students": ["Rosemary Melendez"],
 			"id": "9",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "BIOL",
-			"advisor": "Peter C. Sakaris"
+			"advisor": "Shoshana Katzman"
 		},
 		{
-			"group": "A Phylogenetic Study of Y RNA Based on Secondary Structure",
-			"students": ["Dat Nguyen"],
+			"group": "Analyzing the gene expression differences of splenic lymphocytes derived from catfish living in various tributaries of the Chatahoochee River",
+			"students": ["Stephany Sifuentes"],
 			"id": "10",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "BIOL",
-			"advisor": "Fengjie Sun"
+			"advisor": "Elisabeth Javazon"
 		},
 		{
-			"group": "Neuroprotective Effects of Nicotine",
-			"students": ["Luis Ortiz"],
+			"group": "Synthesis and gelation studies of N-phenyloctadecanamides as low molecular mass gelators",
+			"students": ["Katelyn Galinat"],
 			"id": "11",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Cindy Achat-Mendes"
+			"subject": "CHEM",
+			"advisor": "Ajay Mallia"
 		},
 		{
-			"group": "Research Proposal: Effect of Nicotine on Cytokine Production in Neurons",
-			"students": ["Jonathan Mwizerwa"],
+			"group": "Environmental Science Capstone:  Environmental Justice in Gwinnett County",
+			"students": ["Lindsey Zegel"],
 			"id": "12",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Cindy Achat-Mendes"
+			"subject": "CHEM",
+			"advisor": "Kathryn Zimmermann"
 		},
 		{
-			"group": "Differential Gene Expression in Pancreatic Ductal Adenocarcinoma Cancer Cell Lines MiaPaCa2 and CAPAN1",
-			"students": ["Maryssa Cepic", "Angela Crawford", "Ricky Hour", "Vivien Nwoke"],
+			"group": "Synthesis and gelation studies of fatty acid metal salts as low molecular mass gelators",
+			"students": ["Cassandra Dill"],
 			"id": "13",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Latanya Hammonds-Odie"
+			"subject": "CHEM",
+			"advisor": "Ajay Mallia"
 		},
 		{
-			"group": "Observing Transgene Presence in Hawaiian Papaya Labeled as Non-GMO",
-			"students": ["India Dillard", "Porshaye Watkins"],
+			"group": "Design and synthesis of ninhydrin based unnatural Î±- amino acids",
+			"students": ["Farzana Zerin"],
 			"id": "14",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Ernest Ricks"
+			"subject": "CHEM",
+			"advisor": "Ajay Mallia"
 		},
 		{
-			"group": "Investigating the Presence of the BT Gene in Tomatoes",
-			"students": ["Zahra Ali", "Carolina Sanchez", "Ashton Goodwin", "Danielle Martin"],
+			"group": "Synthesis and studies of compounds from ninhydrin and substituted anilines",
+			"students": ["Joshua Russell"],
 			"id": "15",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Ernest Ricks"
+			"subject": "CHEM",
+			"advisor": "Ajay Mallia"
 		},
 		{
-			"group": "Are Unlabeled Tomatoes in the Marketplace GMO or Non-GMO",
-			"students": ["Carla Penaherrera", "Linh Ta", "Sia Pessima"],
+			"group": "Study of binary eutectic mixtures in quest of green solvents",
+			"students": ["Michael Masha"],
 			"id": "16",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Ernest Ricks"
+			"subject": "CHEM",
+			"advisor": "Ajay Mallia"
 		},
 		{
-			"group": "The Anti-Inflammatory Effects of Progesterone in RAW 264.7 Cells",
-			"students": ["Shai Waldrip"],
+			"group": "Grizzlies get their growl on: Georgia Gwinnett College chemistry outreach",
+			"students": ["Ara Ko", "Katie Coscia", "Madison Roark"],
 			"id": "17",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Christopher Brandon"
+			"subject": "CHEM",
+			"advisor": "Rebecca Kalman & Gillian Rudd"
 		},
 		{
-			"group": "Investigation of Genes Downstream of KLF5 and ELF3",
-			"students": ["Taneiqua Cobb", "Ashton Goodwin", "Kinjal Modi"],
+			"group": "The Same World: Education Through Shared Augmented Reality Experiences",
+			"students": ["Robert Westervelt"],
 			"id": "18",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Latanya Hammonds-Odie"
+			"subject": "CHEM",
+			"advisor": "Derek Behmke"
 		},
 		{
-			"group": "Is Soy-Based Protein Powder GMO-Free?",
-			"students": ["Jake Bond", "Luis Valdes", "Henry Montoya", "Alex Menkes"],
+			"group": "Analysis of GGC Dining Operations Waste Oil and Grease (O&G) for use as Biofuel",
+			"students": ["Evan Sheffield"],
 			"id": "19",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "BIOL",
-			"advisor": "Ernest Ricks"
+			"subject": "CHEM",
+			"advisor": "David P. Pursell"
 		},
 		{
-			"group": "Exploring the Presence of cry1ab and gmEPSP Genes in Supermarket Fresh Corns",
-			"students": ["Richard Mensah", "Heather Young", "Ben Faulk", "Cedrick Mukinay"],
+			"group": "Detecting the presence of EPSPS4 and Lectin Genes in Soy Based Protein Powders ",
+			"students": ["Danny Vu", "Jessica Montoya", "Nhu Tran", "Vanessa Largo" ],
 			"id": "20",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "BIOL",
-			"advisor": "Ernest Ricks"
+			"advisor": "Ernest Ricks, Jr."
 		},
 		{
-			"group": "Nitrogen Fixers: The Future of Food",
-			"students": ["Nia Le", "Nayeli Rodriguez", "Briana Stewart", "Luis Valdes"],
+			"group": "Detection of Genetic Modification in Non-GMO Labeled Soy Based Protein Powders ",
+			"students": ["Tyshica McDaniel", "Shai Waldrip", "Nailah Williamson" ],
 			"id": "21",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "BIOL",
-			"advisor": "Pratima Darr"
+			"advisor": "Ernest Ricks, Jr."
 		},
 		{
-			"group": "How Important is it to Store Milk Correctly?",
-			"students": ["Syeda Kazmi", "Katherin Lopez-Melo", "Sanjin Medvedovic"],
+			"group": "The Detection of EPSPS4 Gene in Non-GMO Soy-Based Products",
+			"students": ["April Morgan", "Mary Diaz", "Darien Woodley", "Zach Chickachop"],
 			"id": "22",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "BIOL",
-			"advisor": "Pratima Darr"
+			"advisor": "Ernest Ricks, Jr."
 		},
 		{
-			"group": "Early Detection of Pancreatic Cancer with Expression Level Analysis of GNAS Mutation",
-			"students": ["Tina Alighanbari", "Thomas Nguyen", "Terry Vang", "Theresa Williams"],
+			"group": "Soy and EPSPS4 Modification Analysis in Non-GMO Soy Protein Powders ",
+			"students": ["Levi Mang"],
 			"id": "23",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "BIOL",
-			"advisor": "Latanya Hammonds-Odie"
+			"advisor": "Ernest Ricks, Jr."
 		},
 		{
-			"group": "Exploring the Impact of ZEB-1 and CFPAC-1 Expressions in Pancreatic Cancer",
-			"students": ["Erin Guess", "Jessica Giron", "Joanne Maitre"],
+			"group": "Investigating the Presence of EPSPS4 in Non-GMO Soybean Protein Powders ",
+			"students": ["Angie Ortiz", "Brittany Xiong", "Giang To", "Mali Vang  "],
 			"id": "24",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "BIOL",
-			"advisor": "Latanya Hammonds-Odie"
+			"advisor": "Ernest Ricks, Jr."
 		},
 		{
-			"group": "Molecular Modeling of the Binding Modes and Affinity of Sulfonylamide Ligands in Interactions with Glyceraldehyde-3-Phosphate Dehydrogenase from Plasmodium and Human Tissues",
-			"students": ["Porshaye Watkins"],
+			"group": "Detecting the Presence of CP4-EPSPS Gene in Non-GMO Labeled Soy Protein Powders",
+			"students": ["Jessica Walters", "Christina Paramanis", "Theresa Allen", "Nasim Peymani"],
 			"id": "25",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "CHEM",
-			"advisor": "Neville Forlemu"
+			"subject": "BIOL",
+			"advisor": "Ernest Ricks, Jr."
 		},
 		{
-			"group": "Mechanotropic and Gelation Studies of Stearic Acid Based Molecular Gelators",
-			"students": ["Brian Matei"],
+			"group": "Investigating GMO and Non-GMO Soy-Based Protein Powders ",
+			"students": ["Jontana Scurry", "Nadia Jones", "Gavin Surujballi"],
 			"id": "26",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "CHEM",
-			"advisor": "Ajay Mallia"
+			"subject": "BIOL",
+			"advisor": "Ernest Ricks, Jr."
 		},
 		{
-			"group": "Design of Pharmaceutically Active Molecules: Synthesis and Studies of Novel Polycyclic Systems Using Ninhydrin and Alkyloxyanilines",
-			"students": ["Callen Rhodes"],
+			"group": "Verifying Non-GMO Labels on Soy-Based Protein Powders ",
+			"students": ["Ethel Ngene", "Rosie Melendez", "Rulencia Clayton", "Taylor Hubbard"],
 			"id": "27",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "CHEM",
-			"advisor": "Ajay Mallia and Joseph Sloop"
+			"subject": "BIOL",
+			"advisor": "Ernest Ricks, Jr."
 		},
 		{
-			"group": "Design of Pharmaceutically Active Molecules: Synthesis and Studies of Functionalized Indenopyrazolones",
-			"students": ["Bansi Kakadiya"],
+			"group": "Investigation of the functional role of a phospholipase C gene in Trypanosoma brucei using a ribozyme to degrade mRNA",
+			"students": ["Makayla Yang"],
 			"id": "28",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "CHEM",
-			"advisor": "Ajay Mallia and Joseph Sloop"
+			"subject": "BIOL",
+			"advisor": "Sharon Keller"
 		},
 		{
-			"group": "Gelation Studies of Simple Steroidal Molecular Gelators",
-			"students": ["Mohammed Rafid"],
+			"group": "Student Perseverance and Performance in Science and Math Courses Using Specifications Grading",
+			"students": ["Mar Maxwell"],
 			"id": "29",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "CHEM",
-			"advisor": "Ajay Mallia"
+			"advisor": "Mai Yin Tsoi & Mary Beth Anzovino"
 		},
 		{
-			"group": "Competitive Binding of Pesticides to Synthetic Neuromelanin",
-			"students": ["Jeremy Hoa Bui", "Linh Lam", "Jordan Naquin"],
+			"group": "The Study of Absorption, Emission, Fluorescence and Raman Spectroscopy Techniques in Physical Chemistry",
+			"students": ["Darshanie Munna"],
 			"id": "30",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "CHEM",
-			"advisor": "Rebecca Kalman"
+			"advisor": "Patrice Bell"
 		},
 		{
-			"group": "Extraction of Pesticides in Crops and Soil Using QUeChERS Method and Analysis with HPLC-UV",
-			"students": ["Yasmeana Doghaimat", "Chloe Fernandes", "Zachary Herrera", "Whitley Ramirez"],
+			"group": "Trace Metals Analysis of Local Georgia Natural Waters Using ICP-MS",
+			"students": ["Ara Kho", "Angelica Bernard"],
 			"id": "31",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "CHEM",
-			"advisor": "Rebecca Kalman"
+			"advisor": "Sang H. Park"
 		},
 		{
-			"group": "GGC Game Changing Chemistry Outreach",
-			"students": ["David Breaud", "Katie Coscia", "Niesha Davis", "Whitney Hudsen", "Ahla Ko", "Joshua Massey"],
+			"group": "CHEM 4701-Integrated Lab Students Research",
+			"students": ["Ara Ko", "Emily Smith", "Maryanne Aniekwe", "Matthew DeRosa "],
 			"id": "32",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "CHEM",
-			"advisor": "Gillian Rudd & Rebecca Kalman"
+			"advisor": "Sang H. Park"
 		},
 		{
-			"group": "Quantitative Analysis of the Interaction Forces Between Foulants and Membranes",
-			"students": ["Farzana Zerin", "Taylor Hubbard"],
+			"group": "Effects of Thermal Oxidation on Surface Topography of Hexagonal Boron Nitride (hBN) by AFM",
+			"students": ["Edil Nour"],
 			"id": "33",
 			"judges": [],
 			"countJudges": 0,
-			"subject": "CHEM",
-			"advisor": "Seungjin Lee"
+			"subject": "PSYC",
+			"advisor": "Neelam Khan"
 		},
 		{
-			"group": "The Effect of Language Elements on Chemical Education in Multicultural Classroom Environment",
-			"students": ["Edgar Vasquez"],
+			"group": "Does C. elegans Produce Neuromelanin?",
+			"students": ["Alexia Ousley"],
 			"id": "34",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "CHEM",
-			"advisor": "Seungjin Lee"
+			"advisor": "Robert Haining"
 		},
 		{
-			"group": "Sustainable Water Reuse and Waste Management by Recycling Nutrients",
-			"students": ["Jake Grubb"],
+			"group": "Progress towards In-Vitro Model of Parkinson's Disease: Relative Fluorescence in a Reducing Environment and Long-Term Sample Viability",
+			"students": ["John Smith"],
 			"id": "35",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "CHEM",
-			"advisor": "Seungjin Lee"
+			"advisor": "Robert Haining"
 		},
 		{
-			"group": "Establishing Conditions for the Pigmentation of Dopamine Neurons",
-			"students": ["Hoa (Jeremy) Bui"],
+			"group": "Effects of pH, Iron and Reduction state on Melanin Polymerization",
+			"students": ["Christian Santos"],
 			"id": "36",
 			"judges": [],
 			"countJudges": 0,
@@ -325,103 +325,13 @@
 			"advisor": "Robert Haining"
 		},
 		{
-			"group": "Preparation and Characterization of Synthetic NM Variants with 6-OH and 5-OH Dopamine",
-			"students": ["Kayleigh Edwards"],
+			"group": "Effects of pH on Neuromelanin and Nicotine Binding",
+			"students": ["Yechan Kang"],
 			"id": "37",
 			"judges": [],
 			"countJudges": 0,
 			"subject": "CHEM",
 			"advisor": "Robert Haining"
-		},
-		{
-			"group": "Analysis of GGC Dining Operations Waste Oil and Grease (O&G) for use as Biofuel",
-			"students": ["Fergie Giron", "Syed Hyder", "Rizaan Kamruddin", "Ahla Ko", "Henry Montoya", "Michelle Solomon", "California Xiong"],
-			"id": "38",
-			"judges": [],
-			"countJudges": 0,
-			"subject": "CHEM",
-			"advisor": "Neelam Khan, Sang H. Park, David P. Pursell & Kathryn Zimmermann"
-		},
-		{
-			"group": "Targeting the Plasmodium falciparum Folate Pathway: Molecular Modelling of the Affinity Sulfonamide Derivatives and Isoforms of Dihydrofolate Reductase",
-			"students": ["Cedrick Dizala Mukinay"],
-			"id": "39",
-			"judges": [],
-			"countJudges": 0,
-			"subject": "CHEM",
-			"advisor": "Neville Forlemu"
-		},
-		{
-			"group": "TeachMover Robot Project",
-			"students": ["Cesar Mauricio Romero-Pedraza"],
-			"id": "40",
-			"judges": [],
-			"countJudges": 0,
-			"subject": "ITEC",
-			"advisor": "Sairam Tangirala & Tae Song Lee"
-		},
-		{
-			"group": "Converting a Neuron Model Simulation into Python",
-			"students": ["Devin Childress"],
-			"id": "41",
-			"judges": [],
-			"countJudges": 0,
-			"subject": "ITEC",
-			"advisor": "Cengiz Gunay"
-		},
-		{
-			"group": "A Tutorial for a Multicompartmental Model of a Drosophile Motoneuron",
-			"students": ["Musa Drammeh", "David Oladeji Salimonu"],
-			"id": "42",
-			"judges": [],
-			"countJudges": 0,
-			"subject": "ITEC",
-			"advisor": "Cengiz Gunay"
-		},
-		{
-			"group": "Methods of Data Cleaning for Statistical Analysis",
-			"students": ["Maegan Lawrence"],
-			"id": "43",
-			"judges": [],
-			"countJudges": 0,
-			"subject": "MATH",
-			"advisor": "Jamye Curry"
-		},
-		{
-			"group": "Characterization of Hexagonal Boron Nitride Crystals by Atomic Force Microscope",
-			"students": ["Joseph Mondoux"],
-			"id": "44",
-			"judges": [],
-			"countJudges": 0,
-			"subject": "CHEM",
-			"advisor": "Neelam Khan"
-		},
-		{
-			"group": "Self Assemby and Gelation Studies of Simple Steroidal Molecular Gelators",
-			"students": ["Mohammed Rafid"],
-			"id": "45",
-			"judges": [],
-			"countJudges": 0,
-			"subject": "CHEM",
-			"advisor": "Ajay Mallia"
-		},
-		{
-			"group": "GAME NIM’S STRATEGY",
-			"students": ["Quan Tran"],
-			"id": "46",
-			"judges": [],
-			"countJudges": 0,
-			"subject": "MATH",
-			"advisor": "Andrei Olifer"
-		},
-		{
-			"group": "Teaching Cryptography to High School Students",
-			"students": ["Andrew Schmidt"],
-			"id": "47",
-			"judges": [],
-			"countJudges": 0,
-			"subject": "MATH",
-			"advisor": "Andrei Olifer"
 		}
 	]
 }
