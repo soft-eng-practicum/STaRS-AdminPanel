@@ -302,13 +302,11 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
         return deferred.promise;
     };
 
-    this.getconf = function(){
+    this.getConf = function(){
         confPouch.get("configuration").then(function (res) {
             console.log("Conf docs read.");
             $pouchdb.configuration = res;
             //console.log(res);
-
-
 
             console.log("Populating posters");
 
@@ -332,14 +330,14 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
                 };
                 posterIndex++;
             });
-
-        });
-        $pouchdb.posters.forEach(function (poster) {
-                pouchService.countCompletedSurveys(poster.id).then(function (res) {
+            $pouchdb.posters.forEach(function (poster) {
+                this.countCompletedSurveys(poster.id).then(function (res) {
                     poster.countJudges = res.length;
                     poster.judges = res;
                 });
             });
+        });
+        
     }
 
     // return {
@@ -501,7 +499,7 @@ app.controller('PosterListCtrl', function ($scope, $service, $cookies, $rootScop
     var localPouch = $pouchdb.localDB;
     var remoteDB = $pouchdb.remoteDB;
 
-    $scope.posters = [];
+    $scope.posters = $pouchdb.posters;
     $scope.search = {};
 
     //$service.getPoster().then(function (res) {
