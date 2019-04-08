@@ -49,18 +49,17 @@ app.config(function ($stateProvider, $urlRouterProvider, toastrConfig) {
         templateUrl: 'templates/poster.html',
         resolve: {
             poster: [
-                '$stateParams', '$http', '$q',
-                function ($stateParams, $http, $q) {
-                    return $http.get('./posters.json').then(function (res) {
+                '$stateParams', '$http', '$q', '$pouchdb',
+                function ($stateParams, $http, $q, $pouchdb) {
                         var deferred = $q.defer();
-                        res.data.posters.forEach(function (poster) {
+                        $pouchdb.posters.forEach(function (poster) {
                             if (poster.id == $stateParams.id) {
                                 console.log(poster);
                                 deferred.resolve(poster);
                             }
                         });
                         return deferred.promise;
-                    });
+                    
                 }
             ]
         }
@@ -303,6 +302,7 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
     };
 
     this.getConf = function(){
+        pouchService = this;
         confPouch.get("configuration").then(function (res) {
             console.log("Conf docs read.");
             $pouchdb.configuration = res;
@@ -331,7 +331,7 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
                 posterIndex++;
             });
             $pouchdb.posters.forEach(function (poster) {
-                this.countCompletedSurveys(poster.id).then(function (res) {
+                pouchService.countCompletedSurveys(poster.id).then(function (res) {
                     poster.countJudges = res.length;
                     poster.judges = res;
                 });
@@ -407,6 +407,7 @@ app.controller('NavbarCtrl', function ($rootScope, $scope, toastr) {
 app.controller('HomeCtrl', function ($http, $scope, $cookies, $pouchdb, pouchService, $service, $rootScope, $timeout, $state, toastr) {
     var pouch = $pouchdb.retryReplication();
     var localPouch = $pouchdb.localDB;
+    pouchService.getConf();
 
     $rootScope.isAuth = false;
 
@@ -468,7 +469,6 @@ app.controller('DashboardCtrl', function ($scope, pouchService, $service, $cooki
     var pouch = $pouchdb.retryReplication();
     var localPouch = $pouchdb.localDB;
     var remoteDB = $pouchdb.remoteDB;
-
     pouchService.getConf();
 
     $scope.items = [];
@@ -498,6 +498,7 @@ app.controller('PosterListCtrl', function ($scope, $service, $cookies, $rootScop
     var pouch = $pouchdb.retryReplication();
     var localPouch = $pouchdb.localDB;
     var remoteDB = $pouchdb.remoteDB;
+    pouchService.getConf();
 
     $scope.posters = $pouchdb.posters;
     $scope.search = {};
@@ -524,6 +525,7 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
     $scope.judges = [];
     $scope.questions = [];
     $scope.loading = true;
+    pouchService.getConf();
 
     $service.getQuestions().then(function (res) {
         $scope.questions = res.data.questions;
@@ -608,6 +610,7 @@ app.controller('JudgeListCtrl', function ($scope, $cookies, $rootScope, pouchSer
     var pouch = $pouchdb.retryReplication();
     var localPouch = $pouchdb.localDB;
     var remoteDB = $pouchdb.remoteDB;
+    pouchService.getConf();
 
     $scope.judges = [];
     $scope.search = {};
@@ -634,6 +637,7 @@ app.controller('JudgeCtrl', function ($scope, $cookies, $rootScope, pouchService
     var pouch = $pouchdb.retryReplication();
     var localPouch = $pouchdb.localDB;
     var remoteDB = $pouchdb.remoteDB;
+    pouchService.getConf();
 
 
     $scope.judge = judge;
@@ -717,6 +721,7 @@ app.controller('FinalReportCtrl', function ($scope, pouchService, $rootScope, $c
     var pouch = $pouchdb.retryReplication();
     var localPouch = $pouchdb.localDB;
     var remoteDB = $pouchdb.remoteDB;
+    pouchService.getConf();
 
     $scope.surveys = [];
 
