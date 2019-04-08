@@ -103,22 +103,39 @@ app.service('$pouchdb', function ($rootScope, pouchDB, $http) {
             }
         };
 
-        self.localDB = pouchDB('judges_sp18');
-        self.localDB.sync('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp18', opts)
+        self.localDB = pouchDB('judges');
+        self.localDB.sync('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp19_3', opts)
             .on('change', function (change) {
                 $rootScope.$broadcast('changes');
                 console.log('yo something changed');
                 console.log(change);
             }).on('paused', function (info) {
-            $rootScope.$broadcast('paused');
-            console.log('PAUSED');
-        }).on('active', function (info) {
-            console.log(info);
-            console.log('ACTIVE');
-        }).on('error', function (err) {
-            console.log(err);
-            console.log('ERROR');
-        });
+                $rootScope.$broadcast('paused');
+                console.log('PAUSED');
+            }).on('active', function (info) {
+                console.log(info);
+                console.log('ACTIVE');
+            }).on('error', function (err) {
+                console.log(err);
+                console.log('ERROR');
+            });
+
+        self.confDB = pouchDB('conf');
+        self.confDB.sync("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2019", opts)
+            .on('change', function (change) {
+                //$rootScope.$broadcast('changes');
+                console.log('yo something changed in conf');
+                console.log(change);
+            }).on('paused', function (info) {
+                //$rootScope.$broadcast('paused');
+                console.log('PAUSED in conf');
+            }).on('active', function (info) {
+                console.log(info);
+                console.log('ACTIVE in conf');
+            }).on('error', function (err) {
+                console.log(err);
+                console.log('ERROR in conf');
+            });
 
     };
 });
@@ -134,6 +151,8 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
     var pouch = $pouchdb.retryReplication();
     var database = $pouchdb.localDB;
     var remoteDB = $pouchdb.remoteDB;
+    var confPouch = $pouchdb.confDB;
+
 
     this.getUsers = function () {
         var deferred = $q.defer();
@@ -282,6 +301,81 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
         });
         return deferred.promise;
     };
+
+    this.getconf = function(){
+        confPouch.get("configuration").then(function (res) {
+            console.log("Conf docs read.");
+            $pouchdb.configuration = res;
+            //console.log(res);
+
+
+
+            console.log("Populating posters");
+
+            // go through poster CSV data and populate a JSON structure
+            posterRows = $pouchdb.configuration.posters.split(/\n/);
+            titles = posterRows.shift().split(/,/);
+            posterIndex = 0;
+            $pouchdb.posters = [];
+            posterRows.forEach(function (row) {
+                rowList = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+                $pouchdb.posters[posterIndex] = {
+                    "email": rowList[0],
+                    "id": rowList[1],
+                    "judges": [],
+                    "countJudges": 0,
+                    "group": rowList[2],
+                    "subject": rowList[3],
+                    "students": rowList[4],
+                    "advisor": rowList[5],
+                    "advisorEmail": rowList[6]
+                };
+                posterIndex++;
+            });
+
+        });
+        $pouchdb.posters.forEach(function (poster) {
+                pouchService.countCompletedSurveys(poster.id).then(function (res) {
+                    poster.countJudges = res.length;
+                    poster.judges = res;
+                });
+            });
+    }
+
+    // return {
+    //     // get configuration data, parse posters, and save in scope
+    //     getConf: function () {
+    //         confPouch.get("configuration").then(function (res) {
+    //             console.log("Conf docs read.");
+    //             $pouchdb.configuration = res;
+    //             //console.log(res);
+
+    //             console.log("Populating posters");
+
+    //             // go through poster CSV data and populate a JSON structure
+    //             posterRows = $pouchdb.configuration.posters.split(/\n/);
+    //             titles = posterRows.shift().split(/,/);
+    //             posterIndex = 0;
+    //             $pouchdb.posters = [];
+    //             posterRows.forEach(function (row) {
+    //                 rowList = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+    //                 $pouchdb.posters[posterIndex] = {
+    //                     "email": rowList[0],
+    //                     "id": rowList[1],
+    //                     "judges": [],
+    //                     "countJudges": 0,
+    //                     "group": rowList[2],
+    //                     "subject": rowList[3],
+    //                     "students": rowList[4],
+    //                     "advisor": rowList[5],
+    //                     "advisorEmail": rowList[6]
+    //                 };
+    //                 posterIndex++;
+    //             });
+
+    //         });
+    //     }
+    // }
 });
 
 /**
@@ -293,7 +387,7 @@ app.factory('$service', function ($http, $q, md5, $rootScope, pouchService) {
             return $http.get('./survey.json');
         },
         getPoster: function () {
-            return $http.get('./posters.json');
+            return $http.get('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2019/configuration');
         }
     };
 });
@@ -333,7 +427,7 @@ app.controller('HomeCtrl', function ($http, $scope, $cookies, $pouchdb, pouchSer
             .then(
                 function (res) {
                     res.forEach(function (row) {
-                        var item = {name: row.doc.username};
+                        var item = { name: row.doc.username };
                         $scope.items.push(item);
                     });
                 },
@@ -377,6 +471,7 @@ app.controller('DashboardCtrl', function ($scope, pouchService, $service, $cooki
     var localPouch = $pouchdb.localDB;
     var remoteDB = $pouchdb.remoteDB;
 
+    pouchService.getConf();
 
     $scope.items = [];
 
@@ -409,15 +504,15 @@ app.controller('PosterListCtrl', function ($scope, $service, $cookies, $rootScop
     $scope.posters = [];
     $scope.search = {};
 
-    $service.getPoster().then(function (res) {
-        $scope.posters = res.data.posters;
-        $scope.posters.forEach(function (poster) {
-            pouchService.countCompletedSurveys(poster.id).then(function (res) {
-                poster.countJudges = res.length;
-                poster.judges = res;
-            });
-        });
-    });
+    //$service.getPoster().then(function (res) {
+      //  $scope.posters = res.data.posters;
+        // $pouchdb.posters.forEach(function (poster) {
+        //     pouchService.countCompletedSurveys(poster.id).then(function (res) {
+        //         poster.countJudges = res.length;
+        //         poster.judges = res;
+        //     });
+        // });
+    //});
 });
 
 /**
@@ -442,13 +537,13 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
         enableHorizontalScrollbar: uiGridConstants.scrollbars.NEVER,
         enableVerticalScrollbar: uiGridConstants.scrollbars.NEVER,
         columnDefs: [
-            {field: "name", name: "Judge Name", width: 100},
-            {field: "answers[0]", name: "Statement of Problem", width: 100},
-            {field: "answers[1]", name: "Methodology", width: 100},
-            {field: "answers[2]", name: "Results/Solution", width: 100},
-            {field: "answers[3]", name: "Oral Presentation", width: 100},
-            {field: "answers[4]", name: "Poster Layout", width: 100},
-            {field: "answers[5]", name: "Impact", width: 100},
+            { field: "name", name: "Judge Name", width: 100 },
+            { field: "answers[0]", name: "Statement of Problem", width: 100 },
+            { field: "answers[1]", name: "Methodology", width: 100 },
+            { field: "answers[2]", name: "Results/Solution", width: 100 },
+            { field: "answers[3]", name: "Oral Presentation", width: 100 },
+            { field: "answers[4]", name: "Poster Layout", width: 100 },
+            { field: "answers[5]", name: "Impact", width: 100 },
             {
                 field: "answers[6]",
                 name: "Additional Comments",
@@ -457,19 +552,19 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
             }
         ],
         exporterCsvFilename: 'PosterResults.csv',
-        exporterPdfDefaultStyle: {fontSize: 9},
-        exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
-        exporterPdfTableHeaderStyle: {fontSize: 8, bold: true, italics: true, color: '#000000'},
+        exporterPdfDefaultStyle: { fontSize: 9 },
+        exporterPdfTableStyle: { margin: [30, 30, 30, 30] },
+        exporterPdfTableHeaderStyle: { fontSize: 8, bold: true, italics: true, color: '#000000' },
         exporterPdfHeader: {
             text: "GGC STaRS - Poster Report for " + $scope.poster.group + " / Students: " + $scope.poster.students,
-            style: {fontSize: 14, alignment: 'center', bold: true}
+            style: { fontSize: 14, alignment: 'center', bold: true }
         },
         exporterPdfFooter: function (currentPage, pageCount) {
-            return {text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle'};
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
         },
         exporterPdfCustomFormatter: function (docDefinition) {
-            docDefinition.styles.headerStyle = {fontSize: 22, bold: true};
-            docDefinition.styles.footerStyle = {fontSize: 10, bold: true};
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
             return docDefinition;
         },
         exporterPdfOrientation: 'landscape',
@@ -566,13 +661,13 @@ app.controller('JudgeCtrl', function ($scope, $cookies, $rootScope, pouchService
         enableHorizontalScrollbar: uiGridConstants.scrollbars.NEVER,
         enableVerticalScrollbar: uiGridConstants.scrollbars.NEVER,
         columnDefs: [
-            {field: "groupName", name: "Poster Name", width: 100},
-            {field: "answers[0]", name: "Statement of Problem", width: 100},
-            {field: "answers[1]", name: "Methodology", width: 100},
-            {field: "answers[2]", name: "Results/Solution", width: 100},
-            {field: "answers[3]", name: "Oral Presentation", width: 100},
-            {field: "answers[4]", name: "Poster Layout", width: 100},
-            {field: "answers[5]", name: "Impact", width: 100},
+            { field: "groupName", name: "Poster Name", width: 100 },
+            { field: "answers[0]", name: "Statement of Problem", width: 100 },
+            { field: "answers[1]", name: "Methodology", width: 100 },
+            { field: "answers[2]", name: "Results/Solution", width: 100 },
+            { field: "answers[3]", name: "Oral Presentation", width: 100 },
+            { field: "answers[4]", name: "Poster Layout", width: 100 },
+            { field: "answers[5]", name: "Impact", width: 100 },
             {
                 field: "answers[6]",
                 name: "Additional Comments",
@@ -581,19 +676,19 @@ app.controller('JudgeCtrl', function ($scope, $cookies, $rootScope, pouchService
             }
         ],
         exporterCsvFilename: 'JudgeResults.csv',
-        exporterPdfDefaultStyle: {fontSize: 9},
-        exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
-        exporterPdfTableHeaderStyle: {fontSize: 8, bold: true, italics: true, color: '#000000'},
+        exporterPdfDefaultStyle: { fontSize: 9 },
+        exporterPdfTableStyle: { margin: [30, 30, 30, 30] },
+        exporterPdfTableHeaderStyle: { fontSize: 8, bold: true, italics: true, color: '#000000' },
         exporterPdfHeader: {
             text: "GGC STaRS - Judge Report for " + $scope.judge.username,
-            style: {fontSize: 14, alignment: 'center', bold: true}
+            style: { fontSize: 14, alignment: 'center', bold: true }
         },
         exporterPdfFooter: function (currentPage, pageCount) {
-            return {text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle'};
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
         },
         exporterPdfCustomFormatter: function (docDefinition) {
-            docDefinition.styles.headerStyle = {fontSize: 22, bold: true};
-            docDefinition.styles.footerStyle = {fontSize: 10, bold: true};
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
             return docDefinition;
         },
         exporterPdfOrientation: 'landscape',
@@ -638,7 +733,7 @@ app.controller('FinalReportCtrl', function ($scope, pouchService, $rootScope, $c
 
                 var DocumentSurveys = DocumentDB.surveys || [];
 
-                for (var j = 0; j < DocumentSurveys.length; j++ ) {
+                for (var j = 0; j < DocumentSurveys.length; j++) {
 
                     var DocumentSurvey = DocumentSurveys[j];
 
@@ -656,19 +751,19 @@ app.controller('FinalReportCtrl', function ($scope, pouchService, $rootScope, $c
 
             });
 
-                $scope.gridOptions.data = $scope.surveys;
+            $scope.gridOptions.data = $scope.surveys;
 
-                // res.rows.forEach(function (row) {
-                //     row.doc.surveys.forEach(function (survey) {
-                //         var tempSurvey = {};
-                //         tempSurvey.judgeName = row.doc.username;
-                //         tempSurvey.groupName = survey.groupName;
-                //         tempSurvey.answers = survey.answers;
-                //         $scope.surveys.push(tempSurvey);
-                //     });
-                // });
-                // $scope.gridOptions.data = $scope.surveys;
-            },
+            // res.rows.forEach(function (row) {
+            //     row.doc.surveys.forEach(function (survey) {
+            //         var tempSurvey = {};
+            //         tempSurvey.judgeName = row.doc.username;
+            //         tempSurvey.groupName = survey.groupName;
+            //         tempSurvey.answers = survey.answers;
+            //         $scope.surveys.push(tempSurvey);
+            //     });
+            // });
+            // $scope.gridOptions.data = $scope.surveys;
+        },
             function (err) {
                 console.log(err);
             }
@@ -680,14 +775,14 @@ app.controller('FinalReportCtrl', function ($scope, pouchService, $rootScope, $c
         enableHorizontalScrollbar: uiGridConstants.scrollbars.NEVER,
         enableVerticalScrollbar: uiGridConstants.scrollbars.NEVER,
         columnDefs: [
-            {field: "judgeName", name: "Judge Name", width: 100},
-            {field: "groupName", name: "Poster Name", width: 100},
-            {field: "answers[0]", name: "Statement of Problem", width: 100},
-            {field: "answers[1]", name: "Methodology", width: 100},
-            {field: "answers[2]", name: "Results/Solution", width: 100},
-            {field: "answers[3]", name: "Oral Presentation", width: 100},
-            {field: "answers[4]", name: "Poster Layout", width: 100},
-            {field: "answers[5]", name: "Impact", width: 100},
+            { field: "judgeName", name: "Judge Name", width: 100 },
+            { field: "groupName", name: "Poster Name", width: 100 },
+            { field: "answers[0]", name: "Statement of Problem", width: 100 },
+            { field: "answers[1]", name: "Methodology", width: 100 },
+            { field: "answers[2]", name: "Results/Solution", width: 100 },
+            { field: "answers[3]", name: "Oral Presentation", width: 100 },
+            { field: "answers[4]", name: "Poster Layout", width: 100 },
+            { field: "answers[5]", name: "Impact", width: 100 },
             {
                 field: "answers[6]",
                 name: "Additional Comments",
@@ -696,16 +791,16 @@ app.controller('FinalReportCtrl', function ($scope, pouchService, $rootScope, $c
             }
         ],
         exporterCsvFilename: 'FinalReport.csv',
-        exporterPdfDefaultStyle: {fontSize: 9},
-        exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
-        exporterPdfTableHeaderStyle: {fontSize: 8, bold: true, italics: true, color: '#000000'},
-        exporterPdfHeader: {text: "GGC STaRS - Final Report", style: {fontSize: 14, alignment: 'center', bold: true}},
+        exporterPdfDefaultStyle: { fontSize: 9 },
+        exporterPdfTableStyle: { margin: [30, 30, 30, 30] },
+        exporterPdfTableHeaderStyle: { fontSize: 8, bold: true, italics: true, color: '#000000' },
+        exporterPdfHeader: { text: "GGC STaRS - Final Report", style: { fontSize: 14, alignment: 'center', bold: true } },
         exporterPdfFooter: function (currentPage, pageCount) {
-            return {text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle'};
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
         },
         exporterPdfCustomFormatter: function (docDefinition) {
-            docDefinition.styles.headerStyle = {fontSize: 22, bold: true};
-            docDefinition.styles.footerStyle = {fontSize: 10, bold: true};
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
             return docDefinition;
         },
         exporterPdfOrientation: 'landscape',
