@@ -746,6 +746,8 @@ app.controller('FinalReportCtrl', function ($scope, pouchService, $rootScope, $c
 
                     tempSurvey.groupName = DocumentSurvey.groupName;
 
+                    tempSurvey.groupId = DocumentSurvey.groupId;
+
                     tempSurvey.answers = DocumentSurvey.answers || [];
 
                     $scope.surveys.push(tempSurvey);
@@ -779,13 +781,14 @@ app.controller('FinalReportCtrl', function ($scope, pouchService, $rootScope, $c
         enableVerticalScrollbar: uiGridConstants.scrollbars.NEVER,
         columnDefs: [
             { field: "judgeName", name: "Judge Name", width: 100 },
-            { field: "groupName", name: "Poster Name", width: 100 },
-            { field: "answers[0]", name: "Statement of Problem", width: 100 },
-            { field: "answers[1]", name: "Methodology", width: 100 },
-            { field: "answers[2]", name: "Results/Solution", width: 100 },
-            { field: "answers[3]", name: "Oral Presentation", width: 100 },
-            { field: "answers[4]", name: "Poster Layout", width: 100 },
-            { field: "answers[5]", name: "Impact", width: 100 },
+            { field: "groupId", name: "Poster ID", width: 50 },
+            { field: "groupName", name: "Poster Name", width: 150 },
+            { field: "answers[0]", name: "Statement of Problem", width: 50 },
+            { field: "answers[1]", name: "Methodology", width: 50 },
+            { field: "answers[2]", name: "Results/ Solution", width: 50 },
+            { field: "answers[3]", name: "Oral Present.", width: 50 },
+            { field: "answers[4]", name: "Poster Layout", width: 50 },
+            { field: "answers[5]", name: "Impact", width: 50 },
             {
                 field: "answers[6]",
                 name: "Additional Comments",
