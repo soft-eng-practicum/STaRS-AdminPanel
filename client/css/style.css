@@ -48,3 +48,6 @@ thead {
   background-color: #00704a;
   color: #fff;
 }
+li.left {
+  text-align: left;
+}

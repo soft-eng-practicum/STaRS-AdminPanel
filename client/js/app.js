@@ -287,7 +287,7 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
                     doc.surveys = row.doc.surveys;
                     doc.surveyLength = row.doc.surveys.length;
                     row.doc.surveys.forEach(function (survey) {
-                        doc.groupsSurveyed.push(survey.groupName);
+                      doc.groupsSurveyed.push({'id': survey.groupId, 'name': survey.groupName});
                     });
                 }
 
@@ -578,6 +578,7 @@ app.controller('JudgeListCtrl', function ($scope, $cookies, $rootScope, pouchSer
 
     $scope.judges = [];
     $scope.search = {};
+    $scope.orderField = 'name';
 
     $scope.getJudges = function () {
         pouchService.getJudges()

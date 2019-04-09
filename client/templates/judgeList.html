@@ -10,14 +10,18 @@
         <label for="search">Search: Poster, Student, or Judge</label>
       </div>
       <br />
+      Order by: {{ orderField }} 
+      <button type="button" class="btn btn-primary btn-sm"
+              ng-click="orderReverse = (orderReverse + 1)%2">
+                Reverse</button><br/>
       <table class="table table-bordered">
         <thead>
           <tr>
             <th>
-              Judge
+              <a ng-click="orderField = 'name'">Judge</a>
             </th>
             <th>
-              Number of Surveys
+              <a ng-click="orderField = 'surveyLength'">Number of Surveys</a>              
             </th>
             <th>
               Groups Surveyed
@@ -27,7 +31,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="judge in judges | filter: search.value">
+          <tr ng-repeat="judge in judges | orderBy: orderField : (orderReverse ? 'reverse':'') | filter: search.value ">
             <td>
               {{judge.name}}
             </td>
@@ -35,7 +39,11 @@
               {{judge.surveyLength}}
             </td>
             <td>
-              {{judge.groupsSurveyed | clearText}}
+              <ul>
+                <li class="left" ng-repeat="group in judge.groupsSurveyed">
+                  <strong>#{{group.id | clearText}}:</strong> {{group.name}}
+                </li>
+              </ul>
             </td>
             <td>
               <button type="button" class="btn btn-primary btn-sm" ui-sref="judge({id: judge.id})">
