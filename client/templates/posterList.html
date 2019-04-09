@@ -14,6 +14,9 @@
         <thead>
           <tr>
             <th>
+              ID
+            </th>
+            <th>
               Poster
             </th>
             <th>
@@ -31,6 +34,9 @@
         </thead>
         <tbody>
           <tr ng-repeat="poster in posters | filter: search.value">
+            <td>
+              {{poster.id}}
+            </td>
             <td>
               {{poster.group}}
             </td>

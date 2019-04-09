@@ -287,7 +287,6 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
                     doc.surveys = row.doc.surveys;
                     doc.surveyLength = row.doc.surveys.length;
                     row.doc.surveys.forEach(function (survey) {
-                        console.log(survey);
                         doc.groupsSurveyed.push(survey.groupName);
                     });
                 }
@@ -306,7 +305,6 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
         confPouch.get("configuration").then(function (res) {
             console.log("Conf docs read.");
             $pouchdb.configuration = res;
-            //console.log(res);
 
             console.log("Populating posters");
 
@@ -340,40 +338,6 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
         
     }
 
-    // return {
-    //     // get configuration data, parse posters, and save in scope
-    //     getConf: function () {
-    //         confPouch.get("configuration").then(function (res) {
-    //             console.log("Conf docs read.");
-    //             $pouchdb.configuration = res;
-    //             //console.log(res);
-
-    //             console.log("Populating posters");
-
-    //             // go through poster CSV data and populate a JSON structure
-    //             posterRows = $pouchdb.configuration.posters.split(/\n/);
-    //             titles = posterRows.shift().split(/,/);
-    //             posterIndex = 0;
-    //             $pouchdb.posters = [];
-    //             posterRows.forEach(function (row) {
-    //                 rowList = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-    //                 $pouchdb.posters[posterIndex] = {
-    //                     "email": rowList[0],
-    //                     "id": rowList[1],
-    //                     "judges": [],
-    //                     "countJudges": 0,
-    //                     "group": rowList[2],
-    //                     "subject": rowList[3],
-    //                     "students": rowList[4],
-    //                     "advisor": rowList[5],
-    //                     "advisorEmail": rowList[6]
-    //                 };
-    //                 posterIndex++;
-    //             });
-
-    //         });
-    //     }
-    // }
 });
 
 /**
@@ -782,7 +746,8 @@ app.controller('FinalReportCtrl', function ($scope, pouchService, $rootScope, $c
         columnDefs: [
             { field: "judgeName", name: "Judge Name", width: 100 },
             { field: "groupId", name: "Poster ID", width: 50 },
-            { field: "groupName", name: "Poster Name", width: 150 },
+            { field: "groupName", name: "Poster Name", width: 150,
+              cellTemplate: '<div class="ui-grid-cell-contents" title="{{grid.getCellValue(row, col)}}">{{grid.getCellValue(row, col)}}</div>'},
             { field: "answers[0]", name: "Statement of Problem", width: 50 },
             { field: "answers[1]", name: "Methodology", width: 50 },
             { field: "answers[2]", name: "Results/ Solution", width: 50 },
@@ -792,7 +757,7 @@ app.controller('FinalReportCtrl', function ($scope, pouchService, $rootScope, $c
             {
                 field: "answers[6]",
                 name: "Additional Comments",
-                cellTemplate: '<div class="ui-grid-cell-contents">{{grid.getCellValue(row, col)}}</div>',
+                cellTemplate: '<div class="ui-grid-cell-contents" title="{{grid.getCellValue(row, col)}}">{{grid.getCellValue(row, col)}}</div>',
                 width: '*'
             }
         ],
