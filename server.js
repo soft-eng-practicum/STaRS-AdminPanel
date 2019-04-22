@@ -32,29 +32,33 @@ app.get('/hello', function (req, res) {
   res.send('hello world')
 });
 
-// Send mail out
-// async..await is not allowed in global scope, must use a wrapper
+// Send mail out to students
 // TODO: change to POST
-app.get('/judgemail', async function (req, res) {
+app.post('/judgemail', function (req, res) {
+  console.log(req.body);
+  sendmail(req.body).catch(console.error);
+  res.send('judges!')
+});
+
+// async..await is not allowed in global scope, must use a wrapper
+async function sendmail(req) {
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport(local_config.nodemailer);
 
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: '"Fred Foo 👻" <foo@example.com>', // sender address
-    to: "bar@example.com, baz@example.com", // list of receivers
-    subject: "Hello ✔", // Subject line
-    text: "Hello world?", // plain text body
-    html: "<b>Hello world?</b>" // html body
+    from: req.from, // sender address
+    to: req.to, // list of receivers
+    subject: req.subject, // Subject line
+    text: req.text, // plain text body
+    html: req.html // html body
   });
 
   console.log("Message sent: %s", info.messageId);
 
   // Preview only available when sending through an Ethereal account
   console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-
-  res.send('judges!')
-});
+}
 
 app.set('port', process.env.PORT || 3197);
 

@@ -481,7 +481,7 @@ app.controller('PosterListCtrl', function ($scope, $service, $cookies, $rootScop
 /**
  * PosterCtrl: controller for the template that displays an individual poster
  */
-app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies, $rootScope, $service, $pouchdb, toastr, $timeout, $state, pouchService) {
+app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies, $rootScope, $service, $pouchdb, toastr, $timeout, $state, pouchService, $http) {
     var pouch = $pouchdb.retryReplication();
     var localPouch = $pouchdb.localDB;
     var remoteDB = $pouchdb.remoteDB;
@@ -565,6 +565,19 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
             $scope.gridApi.exporter.pdfExport('all', 'all');
         }
     };
+
+  $scope.email = function () {
+    $http({
+      method: 'POST',
+      responseType: 'text',
+      headers: {},
+      data: { "from": "Master judge",
+              "to": "cgunay@ggc.edu",
+              "subject": "You've got JudgeMail!",
+              "text": "test",
+              "html": "<p>test" },
+      url: '/judgemail'})
+  };
 });
 
 /**
