@@ -8,6 +8,7 @@
         <i class="ion-search prefix"></i>
         <input type="text" id="search" class="form-control" ng-model="search.value">
         <label for="search">Search: Poster, Student, or Judge</label>
+        <p> Found {{ ( posters | filter: search.value).length }} posters.
       </div>
       <br />
       <table class="table table-bordered">

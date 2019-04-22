@@ -10,7 +10,8 @@
         <label for="search">Search: Poster, Student, or Judge</label>
       </div>
       <br />
-      Order by: {{ orderField }} 
+      <p>Found {{ (judges | filter: search.value).length }} judges.
+      <p>Order by: {{ orderField }} 
       <button type="button" class="btn btn-primary btn-sm"
               ng-click="orderReverse = (orderReverse + 1)%2">
                 Reverse</button><br/>
