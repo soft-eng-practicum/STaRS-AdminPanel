@@ -57,7 +57,7 @@ app.post('/judgemail', function (req, res) {
 async function sendmail(req) {
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport(local_config.nodemailer);
-  transporter.use('compile', inlineCSS({ preserveFontFaces: false, insertPreservedExtraCss: false }));
+  transporter.use('compile', inlineCSS());
   
   // send mail with defined transport object
   let info = await transporter.sendMail({
