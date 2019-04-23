@@ -542,19 +542,44 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
 
     pouchService.getGroupSurveys($scope.poster.id)
         .then(
-            function (res) {
-                res.forEach(function (doc) {
-                    var judge = {};
-                    judge.name = doc.judgeName;
-                    judge.answers = doc.answers;
-                    $scope.judges.push(judge);
-                });
-                $scope.gridOptions.data = $scope.judges;
-            },
-            function (err) {
-                toastr.error('There was an error retrieving the poster information');
-                console.log(err);
+          function (res) {
+            // Nothing to do, return
+            if (res.length < 1) { return; }
+
+            // Initialize average results
+            var avgResults = res[0].answers.slice(0);
+            avgResults.fill(0);
+            //for (var i in res[0].answers) { avgResults[i] = 0; }
+            console.log(avgResults);
+            
+            // Transfer judge data
+            res.forEach(function (doc) {
+              var judge = {};
+              judge.name = doc.judgeName;
+              judge.answers = doc.answers;
+              for (i in doc.answers) {
+                avgResults[i] = avgResults[i] + parseInt(doc.answers[i]);
+              }
+              console.log(avgResults)
+              $scope.judges.push(judge);
+            });
+            // add a summary line
+            for (i in avgResults) {
+              avgResults[i] = avgResults[i] / $scope.judges.length;
             }
+            // TODO: don't add summary to judges list, but just to data?
+            var summary = {};
+            summary.name = "Average";
+            avgResults[6] = 'Average of ' + $scope.judges.length + ' submissions.'; 
+            summary.answers = avgResults;
+            $scope.judges.push(summary);
+
+            $scope.gridOptions.data = $scope.judges;
+          },
+          function (err) {
+            toastr.error('There was an error retrieving the poster information');
+            console.log(err);
+          }
         );
 
     $scope.export = function () {
@@ -593,6 +618,8 @@ Poster information:
 Author(s): ${$scope.poster.students}
 Advisor(s): ${$scope.poster.advisor}
 Title: ${$scope.poster.group}
+
+We had ${$pouchdb.posters.length} posters judged at the event. Your poster was scored by ${$scope.judges.length - 1} judges.
 
 Sincerely,
 Dr. Cengiz Gunay`;
