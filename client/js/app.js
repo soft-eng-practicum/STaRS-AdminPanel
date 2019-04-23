@@ -568,13 +568,37 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
 
   // Send email to student and advisor with feedback information
   $scope.email = function () {
-    var CSVtable = angular.element(document.querySelectorAll(".grid"))[0];
+    // Could not format this into an email
+    //var CSVtable = angular.element(document.querySelectorAll(".grid"))[0];
+    
+    // Email destination addresses
     var dest = $scope.poster.students + " <" 
         + $scope.poster.email + ">, "
         + $scope.poster.advisor + " <" + $scope.poster.advisorEmail + ">";
+
+    // Remove judge name column for anonymity
     var grid = $scope.gridApi.grid;
+    var judgeColumn = grid.columns[0];
+    judgeColumn.hideColumn();
+    $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
+    
+    // Body of email
+    var message = `
+Dear authors,
+
+Please see attached CSV (Excel) file for your judging results of your poster below at the STaRS 2019 event.
+
+Poster information:
+
+Author(s): ${$scope.poster.students}
+Advisor(s): ${$scope.poster.advisor}
+Title: ${$scope.poster.group}
+
+Sincerely,
+Dr. Cengiz Gunay`;
+
+    // Send to backend
     console.log("Emailing to " + dest);
-    console.log(uiGridExporterService);
     $http({
       method: 'POST',
       responseType: 'text',
@@ -582,23 +606,19 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
       data: { "secret": "skjhiuwykcnbmnckuwykdkhkjdfhf",
               "from": "Judging App",
               "to": dest,
-              "subject": "STaRS judging scores and feedback",
-              "text": CSVtable.innerText,
-              "html": '<html><head>'
-              + '<link href="client/css/style.css" rel="stylesheet">'
-              + '<link href="client/lib/angular-ui-grid/ui-grid.min.css" rel="stylesheet">'
-              + '</head><body>'
-              + CSVtable.innerHTML + '</body>',
+              "subject": "STaRS 2019 judging scores and feedback",
+              "text": message,
               "attachments": [
                 { "filename": "results.csv",
                   "content":
-                  uiGridExporterService.formatAsCsv(uiGridExporterService
-                                                    .getColumnHeaders(grid, uiGridExporterConstants.VISIBLE),
-                                                    uiGridExporterService.getData(grid,
-                                                                                  uiGridExporterConstants.ALL,
-                                                                                  uiGridExporterConstants.VISIBLE),
-                                                    grid.options.exporterCsvColumnSeparator) } ]},
+                  uiGridExporterService.formatAsCsv(
+                    uiGridExporterService.getColumnHeaders(grid, uiGridExporterConstants.VISIBLE),
+                    uiGridExporterService.getData(grid, uiGridExporterConstants.ALL,
+                                                  uiGridExporterConstants.VISIBLE),
+                    grid.options.exporterCsvColumnSeparator) } ]},
       url: '/judgemail'}).then(res => { console.log(res.data); });
+    judgeColumn.showColumn();
+    $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
   };
 });
 
