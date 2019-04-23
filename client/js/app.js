@@ -489,6 +489,12 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
     $scope.judges = [];
     $scope.questions = [];
     $scope.loading = true;
+
+    // Email destination addresses
+    $scope.emailDest = $scope.poster.students + " <" 
+      + $scope.poster.email + ">, "
+      + $scope.poster.advisor + " <" + $scope.poster.advisorEmail + ">";
+
     pouchService.getConf();
 
     $service.getQuestions().then(function (res) {
@@ -583,8 +589,8 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
             avgResults[6] = 'Average of ' + $scope.judges.length + ' submissions.'; 
             summary.answers = avgResults;
             //$scope.judges.push(summary);
-            // no need anymore since ui-grid is adding the footer
-
+            // no need anymore since ui-grid is adding the footer            
+            
             $scope.gridOptions.data = $scope.judges;
           },
           function (err) {
@@ -602,15 +608,18 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
         }
     };
 
+  // Not used
+  $scope.emailConfirmFunc = function () {
+    toastr.warning('You are about to send an anonymous summary email to ' + $scope.emailDest, 'Are you sure?');
+  }
+  
   // Send email to student and advisor with feedback information
   $scope.email = function () {
+    // close the modal first
+    $('#emailConfirmModal').modal('hide');
+    
     // Could not format this into an email
     //var CSVtable = angular.element(document.querySelectorAll(".grid"))[0];
-    
-    // Email destination addresses
-    var dest = $scope.poster.students + " <" 
-        + $scope.poster.email + ">, "
-        + $scope.poster.advisor + " <" + $scope.poster.advisorEmail + ">";
 
     // Remove judge name column for anonymity
     var grid = $scope.gridApi.grid;
@@ -636,14 +645,14 @@ Sincerely,
 Dr. Cengiz Gunay`;
 
     // Send to backend
-    console.log("Emailing to " + dest);
+    console.log("Emailing to " + $scope.emailDest);
     $http({
       method: 'POST',
       responseType: 'text',
       headers: {},
       data: { "secret": "skjhiuwykcnbmnckuwykdkhkjdfhf",
               "from": "Judging App",
-              "to": dest,
+              "to": $scope.emailDest,
               "subject": "STaRS 2019 judging scores and feedback",
               "text": message,
               "attachments": [
