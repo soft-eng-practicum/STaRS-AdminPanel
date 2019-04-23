@@ -4,6 +4,7 @@ var request = require('request');
 var bodyParser = require('body-parser');
 var path = require('path');
 const nodemailer = require("nodemailer");
+var inlineCSS = require('nodemailer-juice');
 const local_config = require("./localconfig.json");
 var app = express();
 
@@ -35,23 +36,38 @@ app.get('/hello', function (req, res) {
 // Send mail out to students
 // TODO: change to POST
 app.post('/judgemail', function (req, res) {
-  console.log(req.body);
-  sendmail(req.body).catch(console.error);
-  res.send('judges!')
+  // Abort if not authorized
+  if (req.body.secret != "skjhiuwykcnbmnckuwykdkhkjdfhf") {
+    res.send("unathorized");
+    console.error("unathorized access to /judgemail; wrong secret");
+    return;
+  }
+  // Copy email to admin
+  req.body.from = local_config.adminemail; 
+  req.body.cc = local_config.adminemail; 
+  sendmail(req.body).then(doc =>{
+    res.send('success');
+  }).catch(err => {
+    res.send("error");
+    console.error(err);
+  });  
 });
 
 // async..await is not allowed in global scope, must use a wrapper
 async function sendmail(req) {
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport(local_config.nodemailer);
-
+  transporter.use('compile', inlineCSS({ preserveFontFaces: false, insertPreservedExtraCss: false }));
+  
   // send mail with defined transport object
   let info = await transporter.sendMail({
     from: req.from, // sender address
     to: req.to, // list of receivers
+    cc: req.cc, // list of carbon copy
     subject: req.subject, // Subject line
     text: req.text, // plain text body
-    html: req.html // html body
+    html: req.html, // html body
+    attachments: req.attachments
   });
 
   console.log("Message sent: %s", info.messageId);

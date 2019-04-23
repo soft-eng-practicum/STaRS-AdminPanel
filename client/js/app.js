@@ -54,7 +54,7 @@ app.config(function ($stateProvider, $urlRouterProvider, toastrConfig) {
                         var deferred = $q.defer();
                         $pouchdb.posters.forEach(function (poster) {
                             if (poster.id == $stateParams.id) {
-                                console.log(poster);
+                                //console.log(poster);
                                 deferred.resolve(poster);
                             }
                         });
@@ -188,7 +188,7 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
         console.log('getJudge');
         var deferred = $q.defer();
         database.get(id).then(function (doc) {
-            console.log(doc);
+            //console.log(doc);
             deferred.resolve(doc);
         }).catch(function (err) {
             deferred.reject(err);
@@ -481,7 +481,7 @@ app.controller('PosterListCtrl', function ($scope, $service, $cookies, $rootScop
 /**
  * PosterCtrl: controller for the template that displays an individual poster
  */
-app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies, $rootScope, $service, $pouchdb, toastr, $timeout, $state, pouchService, $http) {
+app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies, $rootScope, $service, $pouchdb, toastr, $timeout, $state, pouchService, $http, uiGridExporterService, uiGridExporterConstants) {
     var pouch = $pouchdb.retryReplication();
     var localPouch = $pouchdb.localDB;
     var remoteDB = $pouchdb.remoteDB;
@@ -566,17 +566,39 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
         }
     };
 
+  // Send email to student and advisor with feedback information
   $scope.email = function () {
+    var CSVtable = angular.element(document.querySelectorAll(".grid"))[0];
+    var dest = $scope.poster.students + " <" 
+        + $scope.poster.email + ">, "
+        + $scope.poster.advisor + " <" + $scope.poster.advisorEmail + ">";
+    var grid = $scope.gridApi.grid;
+    console.log("Emailing to " + dest);
+    console.log(uiGridExporterService);
     $http({
       method: 'POST',
       responseType: 'text',
       headers: {},
-      data: { "from": "Master judge",
-              "to": "cgunay@ggc.edu",
-              "subject": "You've got JudgeMail!",
-              "text": "test",
-              "html": "<p>test" },
-      url: '/judgemail'})
+      data: { "secret": "skjhiuwykcnbmnckuwykdkhkjdfhf",
+              "from": "Judging App",
+              "to": dest,
+              "subject": "STaRS judging scores and feedback",
+              "text": CSVtable.innerText,
+              "html": '<html><head>'
+              + '<link href="client/css/style.css" rel="stylesheet">'
+              + '<link href="client/lib/angular-ui-grid/ui-grid.min.css" rel="stylesheet">'
+              + '</head><body>'
+              + CSVtable.innerHTML + '</body>',
+              "attachments": [
+                { "filename": "results.csv",
+                  "content":
+                  uiGridExporterService.formatAsCsv(uiGridExporterService
+                                                    .getColumnHeaders(grid, uiGridExporterConstants.VISIBLE),
+                                                    uiGridExporterService.getData(grid,
+                                                                                  uiGridExporterConstants.ALL,
+                                                                                  uiGridExporterConstants.VISIBLE),
+                                                    grid.options.exporterCsvColumnSeparator) } ]},
+      url: '/judgemail'}).then(res => { console.log(res.data); });
   };
 });
 
