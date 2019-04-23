@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var path = require('path');
 const nodemailer = require("nodemailer");
 var inlineCSS = require('nodemailer-juice');
+var nodeoutlook = require('nodejs-nodemailer-outlook');
 const local_config = require("./localconfig.json");
 var app = express();
 
@@ -55,25 +56,45 @@ app.post('/judgemail', function (req, res) {
 
 // async..await is not allowed in global scope, must use a wrapper
 async function sendmail(req) {
-  // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport(local_config.nodemailer);
-  transporter.use('compile', inlineCSS());
-  
-  // send mail with defined transport object
-  let info = await transporter.sendMail({
-    from: req.from, // sender address
-    to: req.to, // list of receivers
-    cc: req.cc, // list of carbon copy
-    subject: req.subject, // Subject line
-    text: req.text, // plain text body
-    html: req.html, // html body
-    attachments: req.attachments
-  });
 
-  console.log("Message sent: %s", info.messageId);
+  // Use Outlook if specified in config
+  if (local_config.outlook) {
+    req.auth = local_config.nodemailer.auth;
+    req.onError = (e) => console.log(e);
+    req.onSuccess = (i) => console.log(i);
+    nodeoutlook.sendEmail(req);
+  } else { // using regular nodemailer
+    
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport(local_config.nodemailer);
+    transporter.use('compile', inlineCSS());
 
-  // Preview only available when sending through an Ethereal account
-  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+    // verify connection configuration
+    transporter.verify(function(error, success) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Server is ready to take our messages");
+      }
+    });  
+    
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+      from: req.from, // sender address
+      to: req.to, // list of receivers
+      cc: req.cc, // list of carbon copy
+      subject: req.subject, // Subject line
+      text: req.text, // plain text body
+      html: req.html, // html body
+      attachments: req.attachments
+    });
+
+    console.log("Message sent: %s", info.messageId);
+
+    // Preview only available when sending through an Ethereal account
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+
+  }
 }
 
 app.set('port', process.env.PORT || 3197);
