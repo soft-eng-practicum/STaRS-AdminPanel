@@ -494,27 +494,40 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
     $service.getQuestions().then(function (res) {
         $scope.questions = res.data.questions;
     });
-
+  
     $scope.gridOptions = {
         enableColumnMenus: false,
         enableGridMenu: false,
         enableHorizontalScrollbar: uiGridConstants.scrollbars.NEVER,
         enableVerticalScrollbar: uiGridConstants.scrollbars.NEVER,
-        columnDefs: [
-            { field: "name", name: "Judge Name", width: 100 },
-            { field: "answers[0]", name: "Statement of Problem", width: 100 },
-            { field: "answers[1]", name: "Methodology", width: 100 },
-            { field: "answers[2]", name: "Results/Solution", width: 100 },
-            { field: "answers[3]", name: "Oral Presentation", width: 100 },
-            { field: "answers[4]", name: "Poster Layout", width: 100 },
-            { field: "answers[5]", name: "Impact", width: 100 },
-            {
-                field: "answers[6]",
-                name: "Additional Comments",
-                cellTemplate: '<div class="ui-grid-cell-contents">{{grid.getCellValue(row, col)}}</div>',
-                width: '*'
-            }
-        ],
+        showColumnFooter: true,
+      columnDefs: [
+        { field: "name", name: "Judge Name", width: 100 },
+        { field: "answers[0]", name: "Statement of Problem", width: 100,
+          aggregationType: uiGridConstants.aggregationTypes.avg, aggregationHideLabel: true,
+          footerCellFilter: 'fixed2' },
+        { field: "answers[1]", name: "Methodology", width: 100,
+          aggregationType: uiGridConstants.aggregationTypes.avg, aggregationHideLabel: true,
+          footerCellFilter: 'fixed2' },
+        { field: "answers[2]", name: "Results/Solution", width: 100,
+          aggregationType: uiGridConstants.aggregationTypes.avg, aggregationHideLabel: true,
+          footerCellFilter: 'fixed2' },
+        { field: "answers[3]", name: "Oral Presentation", width: 100,
+          aggregationType: uiGridConstants.aggregationTypes.avg, aggregationHideLabel: true,
+          footerCellFilter: 'fixed2' },
+        { field: "answers[4]", name: "Poster Layout", width: 100,
+          aggregationType: uiGridConstants.aggregationTypes.avg, aggregationHideLabel: true,
+          footerCellFilter: 'fixed2' },
+        { field: "answers[5]", name: "Impact", width: 100,
+          aggregationType: uiGridConstants.aggregationTypes.avg, aggregationHideLabel: true,
+          footerCellFilter: 'fixed2' },
+        {
+          field: "answers[6]",
+          name: "Additional Comments",
+          cellTemplate: '<div class="ui-grid-cell-contents">{{grid.getCellValue(row, col)}}</div>',
+          width: '*'
+        }
+      ],
         exporterCsvFilename: 'PosterResults.csv',
         exporterPdfDefaultStyle: { fontSize: 9 },
         exporterPdfTableStyle: { margin: [30, 30, 30, 30] },
@@ -549,8 +562,6 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
             // Initialize average results
             var avgResults = res[0].answers.slice(0);
             avgResults.fill(0);
-            //for (var i in res[0].answers) { avgResults[i] = 0; }
-            console.log(avgResults);
             
             // Transfer judge data
             res.forEach(function (doc) {
@@ -560,7 +571,6 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
               for (i in doc.answers) {
                 avgResults[i] = avgResults[i] + parseInt(doc.answers[i]);
               }
-              console.log(avgResults)
               $scope.judges.push(judge);
             });
             // add a summary line
@@ -572,7 +582,8 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
             summary.name = "Average";
             avgResults[6] = 'Average of ' + $scope.judges.length + ' submissions.'; 
             summary.answers = avgResults;
-            $scope.judges.push(summary);
+            //$scope.judges.push(summary);
+            // no need anymore since ui-grid is adding the footer
 
             $scope.gridOptions.data = $scope.judges;
           },
@@ -619,7 +630,7 @@ Author(s): ${$scope.poster.students}
 Advisor(s): ${$scope.poster.advisor}
 Title: ${$scope.poster.group}
 
-We had ${$pouchdb.posters.length} posters judged at the event. Your poster was scored by ${$scope.judges.length - 1} judges.
+We had ${$pouchdb.posters.length} posters judged at the event. Your poster was scored by ${$scope.judges.length} judges.
 
 Sincerely,
 Dr. Cengiz Gunay`;
@@ -647,6 +658,8 @@ Dr. Cengiz Gunay`;
     judgeColumn.showColumn();
     $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
   };
+}).filter('fixed2', function () {
+  return function (value) { return parseFloat(value).toFixed(2); }
 });
 
 /**
