@@ -300,6 +300,24 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
         return deferred.promise;
     };
 
+  this.avgSumScores = function (judges) {
+    console.log(judges);
+    var avgResults = judges[0].answers.slice(0);
+    avgResults.fill(0);
+    
+    // Average and sum judge scores
+    judges.forEach(function (doc) {
+      for (i in doc.answers) {
+        avgResults[i] = avgResults[i] + parseInt(doc.answers[i]);
+      }
+    });
+    // Divide by number of judges
+    for (i in avgResults) {
+      avgResults[i] = avgResults[i] / $scope.judges.length;
+    }
+    return avgResults.reduce((num, val) => { return num + val; }, 0);
+  }
+  
     this.getConf = function(){
         pouchService = this;
         confPouch.get("configuration").then(function (res) {
@@ -330,8 +348,11 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
             });
             $pouchdb.posters.forEach(function (poster) {
                 pouchService.countCompletedSurveys(poster.id).then(function (res) {
-                    poster.countJudges = res.length;
-                    poster.judges = res;
+                  poster.countJudges = res.length;
+                  poster.judges = res;
+
+                  // calculate summed average scores
+                  poster.score = 0; // pouchService.avgSumScores(res); not ready yet
                 });
             });
         });
@@ -462,20 +483,11 @@ app.controller('PosterListCtrl', function ($scope, $service, $cookies, $rootScop
     var pouch = $pouchdb.retryReplication();
     var localPouch = $pouchdb.localDB;
     var remoteDB = $pouchdb.remoteDB;
-    pouchService.getConf();
+    pouchService.getConf();     // this will fetch the poster list
 
     $scope.posters = $pouchdb.posters;
     $scope.search = {};
 
-    //$service.getPoster().then(function (res) {
-      //  $scope.posters = res.data.posters;
-        // $pouchdb.posters.forEach(function (poster) {
-        //     pouchService.countCompletedSurveys(poster.id).then(function (res) {
-        //         poster.countJudges = res.length;
-        //         poster.judges = res;
-        //     });
-        // });
-    //});
 });
 
 /**
