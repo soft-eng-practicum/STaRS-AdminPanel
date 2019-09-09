@@ -4,7 +4,7 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 
 ## Team
 
-* Team Polaris - Fall 2019
+* **Team Polaris** - Fall 2019
 
 ## Repo Location URL
 
