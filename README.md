@@ -20,7 +20,7 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 
 ## Members
 
-1.
+1. **Nancy Sardar**: *Project Manager & Client Liason* :zap:
 2. **Juan Linares**: *Lead Programmer & Testing Lead* :ghost:
 3.
 4.
