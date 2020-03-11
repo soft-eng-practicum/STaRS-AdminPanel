@@ -2,6 +2,29 @@
 
 A web client to support the STaRS mobile application. Used to analyze results from judging.
 
+## Team
+
+* **Team Polaris** - Fall 2019
+
+## Repo Location URL
+
+* https://github.com/soft-eng-practicum/STaRS
+
+## Progess tracking tool
+
+* TBA
+
+## Communication tool
+
+* [Discord](https://discordapp.com/)
+
+## Members
+
+1. **Nancy Sardar**: *Project Manager & Client Liason* :zap:
+2. **Juan Linares**: *Lead Programmer & Testing Lead* :ghost:
+3. **Andrew Plourde**: *Documentation & Data Modeler* :thought_balloon:
+4. **Jacob Weekley**: *UI/UX Designer & Lead Programmer* :ice_hockey:
+
 ## Installation
 
 1. `npm` is required to install dependencies and run
