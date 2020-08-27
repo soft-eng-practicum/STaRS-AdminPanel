@@ -29,7 +29,7 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 * Fall 2020
 **Matt LaFayette**
 
-**Gabriella Pujada**: *Data Modeler & * :gpujada:
+**Gabriella Pujada**: Data Modeler & 
 
 
 ## Installation
