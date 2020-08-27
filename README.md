@@ -25,6 +25,11 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 3. **Andrew Plourde**: *Documentation & Data Modeler* :thought_balloon:
 4. **Jacob Weekley**: *UI/UX Designer & Lead Programmer* :ice_hockey:
 
+
+* Fall 2020
+**Matt LaFayette**
+
+
 ## Installation
 
 1. `npm` is required to install dependencies and run
