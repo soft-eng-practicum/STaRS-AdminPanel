@@ -20,6 +20,8 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 
 ## Members
 
+* Fall 2019
+
 1. **Nancy Sardar**: *Project Manager & Client Liason* :zap:
 2. **Juan Linares**: *Lead Programmer & Testing Lead* :ghost:
 3. **Andrew Plourde**: *Documentation & Data Modeler* :thought_balloon:
@@ -27,10 +29,10 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 
 
 * Fall 2020
-**Matt LaFayette**
 
-**Gabriella Pujada**: Data Modeler & 
-**Greg Dagnan** ????, ????
+**Matt LaFayette**
+**Gabriella Pujada**: *Data Modeler &* 
+**Greg Dagnan**: *???? & ????*
 
 ## Installation
 
