@@ -33,6 +33,7 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 **Matt LaFayette**
 **Gabriella Pujada**: *Data Modeler &* 
 **Greg Dagnan**: *???? & ????*
+**Dakota Norris**: *UI/UX Designer & Documentation*
 
 ## Installation
 
