@@ -30,10 +30,10 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 
 * Fall 2020
 
-**Matt LaFayette**: *Documentation & Testing Lead* :sleeping:
+**Matt LaFayette**: *Project Manager & Testing Lead* :sleeping:
 **Gabriella Pujada**: *Data Modeler &* 
 **Greg Dagnan**: *????* & ????*
-**Dakota Norris**: *UI/UX Designer*
+**Dakota Norris**: *UI/UX Designer & Documentation*
 
 ## Installation
 
