@@ -5,6 +5,7 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 ## Team
 
 * **Team Polaris** - Fall 2019
+* **Comet Watchers** - Fall 2020
 
 ## Repo Location URL
 
@@ -12,7 +13,7 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 
 ## Progess tracking tool
 
-* TBA
+* [Jira](https://jira.ggc.edu/projects/SJCWC/summary)
 
 ## Communication tool
 
