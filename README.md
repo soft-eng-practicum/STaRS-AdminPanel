@@ -22,18 +22,18 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 
 * Fall 2019
 
-1. **Nancy Sardar**: *Project Manager & Client Liason* :zap:
+1. **Nancy Sardar**: *Project Manager & Client Liaison* :zap:
 2. **Juan Linares**: *Lead Programmer & Testing Lead* :ghost:
-3. **Andrew Plourde**: *Documentation & Data Modeler* :thought_balloon:
+3. **Andrew Plourde**: *Documentation & Data Modeller* :thought_balloon:
 4. **Jacob Weekley**: *UI/UX Designer & Lead Programmer* :ice_hockey:
 
 
 * Fall 2020
 
-**Matt LaFayette**: *Project Manager & Testing Lead* :sleeping:
-**Gabriella Pujada**: *Data Modeler &* 
-**Greg Dagnan**: *????* & ????*
-**Dakota Norris**: *UI/UX Designer & Documentation*
+1. **Matt LaFayette**: *Project Manager & Testing Lead* :sleeping:
+2. **Gabriella Pujada**: *Data Modeller & Client Liaison* :lion_face: 
+3. **Greg Dagnan**: *Lead Programmer* & Testing & Scrum Master* :eyes:
+4. **Dakota Norris**: *UI/UX Designer & Documentation & Lead Programmer* :thinking:
 
 ## Installation
 
@@ -45,7 +45,7 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 ## How to Run
 
 * Navigate to folder location in a terminal
-* Run `npm start`
+* Run `npm start
 * Open `localhost:3197` in a browser to view app locally
 
 ## Functionality
