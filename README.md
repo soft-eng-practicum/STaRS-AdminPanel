@@ -31,8 +31,8 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 * Fall 2020
 
 1. **Matt LaFayette**: *Project Manager & Testing Lead* :sleeping:
-2. **Gabriella Pujada**: *Data Modeller & Client Liaison* :lion_face: 
-3. **Greg Dagnan**: *Lead Programmer* & Testing & Scrum Master* :eyes:
+2. **Gabriella Pujada**: *Data Modeller & Client Liaison* :lion: 
+3. **Greg Dagnan**: *Lead Programmer & Testing & Scrum Master* :eyes:
 4. **Dakota Norris**: *UI/UX Designer & Documentation & Lead Programmer* :thinking:
 
 ## Installation
