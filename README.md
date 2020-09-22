@@ -42,6 +42,7 @@ A web client to support the STaRS mobile application. Used to analyze results fr
 1. Clone repository
 1. Navigate to folder location in a terminal
 1. Run `npm i` to install dependencies
+1. Ensure the localconfig.json file provided is present
 
 ## How to Run
 
