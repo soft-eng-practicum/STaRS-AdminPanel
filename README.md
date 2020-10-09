@@ -1,75 +1,27 @@
-# STaRS-Web
+# STaRSAdmin
 
-A web client to support the STaRS mobile application. Used to analyze results from judging.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.8.
 
-## Team
+## Development server
 
-* **Team Polaris** - Fall 2019
-* **Comet Watchers** - Fall 2020
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Repo Location URL
+## Code scaffolding
 
-* https://github.com/soft-eng-practicum/STaRS
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Progess tracking tool
+## Build
 
-* [Jira](https://jira.ggc.edu/projects/SJCWC/summary)
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-## Communication tool
+## Running unit tests
 
-* [Discord](https://discordapp.com/)
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Members
+## Running end-to-end tests
 
-* Fall 2019
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
-1. **Nancy Sardar**: *Project Manager & Client Liaison* :zap:
-2. **Juan Linares**: *Lead Programmer & Testing Lead* :ghost:
-3. **Andrew Plourde**: *Documentation & Data Modeller* :thought_balloon:
-4. **Jacob Weekley**: *UI/UX Designer & Lead Programmer* :ice_hockey:
+## Further help
 
-
-* Fall 2020
-
-1. **Matt LaFayette**: *Project Manager & Testing Lead* :sleeping:
-2. **Gabriella Pujada**: *Data Modeller & Client Liaison* :lion: 
-3. **Greg Dagnan**: *Lead Programmer & Testing & Scrum Master* :eyes:
-4. **Dakota Norris**: *UI/UX Designer & Documentation & Lead Programmer* :thinking:
-
-## Installation
-
-1. `npm` is required to install dependencies and run
-1. Clone repository
-1. Navigate to folder location in a terminal
-1. Run `npm i` to install dependencies
-1. Ensure the localconfig.json file provided is present
-
-## How to Run
-
-* Navigate to folder location in a terminal
-* Run `npm start
-* Open `localhost:3197` in a browser to view app locally
-
-## Functionality
-
-* Poster report details can be exported to PDF or CSV
-
-### Login
-
-![login](screenshots/login-2019.PNG)
-
-### Dashboard
-
-![dashboard](screenshots/dashboard-2019.PNG)
-
-### Poster Reports
-
-![poster-reports](screenshots/poster-reports-2019.PNG)
-
-### Judge Reports
-
-![judge-reports](screenshots/judge-reports-2019.PNG)
-
-### Combined Reports
-
-![combined-reports](screenshots/combined-reports-2019.PNG)
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
