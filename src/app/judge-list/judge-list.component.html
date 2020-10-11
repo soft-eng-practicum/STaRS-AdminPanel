@@ -1,1 +1,58 @@
-<p>judge-list works!</p>
+<div class="container">
+  <div class="card">
+    <div class="card-header ggc-green white-text">
+      Judge Reports: Please select one of the following judges to continue
+    </div>
+    <div class="card-block">
+      <div class="md-form">
+        <i class="ion-search prefix"></i>
+        <input type="text" id="search" class="form-control" ng-model="search.value">
+        <label for="search">Search: Poster, Student, or Judge</label>
+      </div>
+      <br />
+      <!-- <p>Found {{ (judges | filter: search.value).length }} judges. -->
+      <!-- <p>Order by: {{ orderField }} -->
+      <button type="button" class="btn btn-primary btn-sm"
+              ng-click="orderReverse = (orderReverse + 1)%2">
+                Reverse</button><br/>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>
+              <a ng-click="orderField = 'name'">Judge</a>
+            </th>
+            <th>
+              <a ng-click="orderField = 'surveyLength'">Number of Surveys</a>
+            </th>
+            <th>
+              Groups Surveyed
+            </th>
+            <th>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="judge in judges | orderBy: orderField : (orderReverse ? 'reverse':'') | filter: search.value ">
+            <td>
+              <!-- {{judge.name}} -->
+            </td>
+            <td>
+              <!-- {{judge.surveyLength}} -->
+            </td>
+            <td>
+              <ul>
+                <li class="left" ng-repeat="group in judge.groupsSurveyed">
+                  <!-- <strong>#{{group.id | clearText}}:</strong> {{group.name}} -->
+                </li>
+              </ul>
+            </td>
+            <td>
+              <button type="button" class="btn btn-primary btn-sm" ui-sref="judge({id: judge.id})">
+                View</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -11,6 +11,7 @@ import { JudgeListComponent } from './judge-list/judge-list.component';
 import { PosterComponent } from './poster/poster.component';
 import { JudgeComponent } from './judge/judge.component';
 import { LogoutComponent } from './logout/logout.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,10 @@ import { LogoutComponent } from './logout/logout.component';
   ],
   imports: [
     BrowserModule,
+    RouterModule.forRoot([
+      { path: '', component: HomeComponent, pathMatch: 'full' },
+      { path: '**', redirectTo: '', pathMatch: 'full' }
+    ]),
     AppRoutingModule
   ],
   providers: [],
