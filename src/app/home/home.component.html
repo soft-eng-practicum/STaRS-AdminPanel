@@ -5,22 +5,22 @@
     </button>
     <div class="container">
       <div class="collapse navbar-toggleable-xs" id="navbar-stars">
-        <a class="navbar-brand" href="javascript:void(0)">GGC STaRS</a>
+        <a class="navbar-brand" [routerLink]="['/home']">GGC STaRS</a>
         <ul class="nav navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+            <a class="nav-link" [routerLink]="['/dashboard']">Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['posterlist']">Poster Reports</a>
+            <a class="nav-link" [routerLink]="['/posterlist']">Poster Reports</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['judgelist']">Judge Reports</a>
+            <a class="nav-link" [routerLink]="['/judgelist']">Judge Reports</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" ui-sref="finalReport" ng-click="checkAuth()">Combined Reports</a>
+            <a class="nav-link" [routerLink]="['/finalReport']">Combined Reports</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" ui-sref="logout" ng-show="$root.isAuth">Logout</a>
+            <a class="nav-link" [routerLink]="['/logout']">Logout</a>
           </li>
         </ul>
       </div>

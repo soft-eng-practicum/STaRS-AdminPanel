@@ -9,7 +9,7 @@
           <div class="card">
             <div class="card-block">
               <h4 class="h3">Reports for Individual Posters</h4>
-              <a class="w3-btn-floating-large ggc-green w3-text-shadow" ui-sref="posterList"><i class="ion-information-circled"></i></a>
+              <a class="w3-btn-floating-large ggc-green w3-text-shadow" [routerLink]="['/posterlist']"><i class="ion-information-circled"></i></a>
             </div>
           </div>
         </div>
@@ -17,7 +17,7 @@
           <div class="card">
             <div class="card-block">
               <h4 class="h3">Reports for Individual Judges</h4>
-              <a class="w3-btn-floating-large ggc-green w3-text-shadow" ui-sref="judgeList"><i class="ion-information-circled"></i></a>
+              <a class="w3-btn-floating-large ggc-green w3-text-shadow" [routerLink]="['/judgelist']"><i class="ion-information-circled"></i></a>
             </div>
           </div>
         </div>
@@ -25,12 +25,11 @@
           <div class="card">
             <div class="card-block">
               <h4 class="h3">Report for Judges and Posters</h4>
-              <a class="w3-btn-floating-large ggc-green w3-text-shadow" ui-sref="finalReport"><i class="ion-information-circled"></i></a>
+              <a class="w3-btn-floating-large ggc-green w3-text-shadow" [routerLink]="['/finalReport']"><i class="ion-information-circled"></i></a>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
 </div>
