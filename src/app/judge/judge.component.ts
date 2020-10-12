@@ -11,5 +11,5 @@ export class JudgeComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
+  
 }
