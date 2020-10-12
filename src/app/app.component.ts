@@ -15,8 +15,4 @@ export class AppComponent {
     private router: Router){
 
     }
-
-  onClick(){
-    this.router.navigate(['/dashboard']);
-  }
 }

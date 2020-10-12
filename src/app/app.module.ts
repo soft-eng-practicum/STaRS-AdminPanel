@@ -11,6 +11,7 @@ import { PosterComponent } from './poster/poster.component';
 import { JudgeComponent } from './judge/judge.component';
 import { LogoutComponent } from './logout/logout.component';
 import { RouterModule } from '@angular/router';
+import { MainComponent } from './main/main.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { RouterModule } from '@angular/router';
     JudgeListComponent,
     PosterComponent,
     JudgeComponent,
-    LogoutComponent
+    LogoutComponent,
+    MainComponent
   ],
   imports: [
     BrowserModule,
