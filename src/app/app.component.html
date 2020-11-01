@@ -1,0 +1,34 @@
+<header>
+  <nav class="navbar navbar-dark ggc-green" ng-controller="NavbarCtrl">
+    <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#navbar-stars">
+      <i class="ion-navicon-round"></i>
+    </button>
+    <div class="container">
+      <div class="collapse navbar-toggleable-xs" id="navbar-stars">
+        <a class="navbar-brand" [routerLink]="['/dashboard']">GGC STaRS</a>
+        <ul class="nav navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/posterlist']">Poster Reports</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/judgelist']">Judge Reports</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/finalReport']">Combined Reports</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/logout']">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+<body>
+  <main>
+    <div ui-view></div>
+  </main>
+  <div style="padding-top: 50px">
+    <router-outlet></router-outlet>
+  </div>
+</body>

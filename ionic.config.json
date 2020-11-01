@@ -1,0 +1,7 @@
+{
+  "name": "STaRS-Admin",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
