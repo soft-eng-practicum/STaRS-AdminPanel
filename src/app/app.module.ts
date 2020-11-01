@@ -1,42 +1,34 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { AppRoutingModule } from './app-routing.module';
+import { BrowserModule } from '@angular/platform-browser';
+import { RouteReuseStrategy } from '@angular/router';
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { FinalReportComponent } from './final-report/final-report.component';
-import { PosterListComponent } from './poster-list/poster-list.component';
-import { JudgeListComponent } from './judge-list/judge-list.component';
-import { PosterComponent } from './poster/poster.component';
-import { JudgeComponent } from './judge/judge.component';
-import { LogoutComponent } from './logout/logout.component';
-import { RouterModule } from '@angular/router';
-import { MainComponent } from './main/main.component';
+import { AppRoutingModule } from './app-routing.module';
+import { PouchService } from './pouch.service'; 
+import { ComponentModule } from './Components/component/component.module';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    HomeComponent,
-    DashboardComponent,
-    HomeComponent,
-    DashboardComponent,
-    FinalReportComponent,
-    PosterListComponent,
-    JudgeListComponent,
-    PosterComponent,
-    JudgeComponent,
-    LogoutComponent,
-    MainComponent
+    AppComponent, 
   ],
+  entryComponents: [],
   imports: [
     BrowserModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: '**', redirectTo: '', pathMatch: 'full' }
-    ]),
+    ComponentModule,
+    IonicModule.forRoot(),
+    HttpClientModule, 
     AppRoutingModule
   ],
-  providers: [],
+  providers: [
+    StatusBar,
+    SplashScreen,
+    PouchService,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+   
+  ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

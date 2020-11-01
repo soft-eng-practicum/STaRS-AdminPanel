@@ -1,0 +1,57 @@
+[
+    {
+      "id": 1,
+      "information": "Introduction and Motivation",
+      "additional": "Includes summary of pertinent details, clearly state problem or theory, including appropriate background and citations.",
+      "value": "0",
+      "wordValue": "",
+      "required": true
+    },
+    {
+      "id": 2,
+      "information": "Methodology",
+      "additional": "Methods/techniques are appropriate and properly applied.",
+      "value": "0",
+      "wordValue": "",
+      "required": true
+    },
+    {
+      "id": 3,
+      "information": "Results/Solution",
+      "additional": "Logical, clearly presented, and appropriately summarized.",
+      "value": "0",
+      "wordValue": "",
+      "required": true
+    },
+    {
+      "id": 4,
+      "information": "Oral Presentation",
+      "additional": "Presenter has a good grasp of study and related areas and responds effectively and clearly to questions.",
+      "value": "0",
+      "wordValue": "",
+      "required": true
+    },
+    {
+      "id": 5,
+      "information": "Poster Layout",
+      "additional": "Laid out in a manner that is easy to follow and visually appealling.",
+      "value": "0",
+      "wordValue": "",
+      "required": true
+    },
+    {
+      "id": 6,
+      "information": "Impact",
+      "additional": "Work is creative, original, and may have an impact on the field (wow factor).",
+      "value": "0",
+      "wordValue": "",
+      "required": true
+    },
+    {
+      "id": 7,
+      "information": "Additional Comments",
+      "additional": "Feel free to add any comments to the submitted survey (not required).",
+      "value": "",
+      "required": false
+    }
+    ]
