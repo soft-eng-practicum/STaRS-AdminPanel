@@ -1,0 +1,6 @@
+{
+    "/posterlist": {
+      "target": "http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984",
+      "secure": false
+    }
+  }

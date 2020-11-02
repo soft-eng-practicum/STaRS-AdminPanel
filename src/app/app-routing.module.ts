@@ -1,22 +1,10 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { FinalReportComponent } from './final-report/final-report.component';
-import { JudgeListComponent } from './judge-list/judge-list.component';
-import { LogoutComponent } from './logout/logout.component';
-import { PosterListComponent } from './poster-list/poster-list.component';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { ComponentModule } from './Components/component/component.module'
 
-
-const routes: Routes = [
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'posterlist', component: PosterListComponent },
-  { path: 'judgelist', component: JudgeListComponent },
-  { path: 'finalReport', component: FinalReportComponent },
-  { path: 'logout', component: LogoutComponent }
-];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [ComponentModule],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

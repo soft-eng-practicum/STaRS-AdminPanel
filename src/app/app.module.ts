@@ -1,42 +1,30 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { FinalReportComponent } from './final-report/final-report.component';
-import { PosterListComponent } from './poster-list/poster-list.component';
-import { JudgeListComponent } from './judge-list/judge-list.component';
-import { PosterComponent } from './poster/poster.component';
-import { JudgeComponent } from './judge/judge.component';
-import { LogoutComponent } from './logout/logout.component';
 import { RouterModule } from '@angular/router';
-import { MainComponent } from './main/main.component';
+import { PouchService } from './pouch-service.service';
+import { HttpClientModule } from '@angular/common/http';
+import { ComponentModule } from './Components/component/component.module';
+import { DashboardComponent } from './Components/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
-    DashboardComponent,
-    HomeComponent,
-    DashboardComponent,
-    FinalReportComponent,
-    PosterListComponent,
-    JudgeListComponent,
-    PosterComponent,
-    JudgeComponent,
-    LogoutComponent,
-    MainComponent
   ],
   imports: [
     BrowserModule,
+    ComponentModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
+      { path: '', component: DashboardComponent, pathMatch: 'full' },
       { path: '**', redirectTo: '', pathMatch: 'full' }
     ]),
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
   ],
-  providers: [],
+  providers: [
+    PouchService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

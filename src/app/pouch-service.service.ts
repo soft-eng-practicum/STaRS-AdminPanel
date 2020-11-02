@@ -1,221 +1,77 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders} from '@angular/common/http';
+import { from, Observable, of } from 'rxjs';
+import { catchError, retry } from 'rxjs/operators';
+import * as PouchDB  from 'pouchdb';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class PouchService {
+  constructor () { }
 
-  // constructor($rootScope, pouchDB, $q, $pouchdb) {
-  //   var pouch = $pouchdb.retryReplication();
-  //   var database = $pouchdb.localDB;
-  //   var remoteDB = $pouchdb.remoteDB;
-  //   var confPouch = $pouchdb.confDB;
+  pouchCall: any;
+  mattsList: any = [];
+  posterName: any = [];
+  advisorName: any = [];
+  posterids: any = [];
+  posterTitle: any = [];
+  resultString: string;
+  res:any;
+  loading = true; //Don't know what this does... looks important?
+  contactsTest: any = [];
+  posterkey:any;
+  objectResults:any = [];
+
+  //pouchJudges: any;
+  //pouchPosters: any;
+  //globalUser: any;
+  //globalUserDoc: any;
+  //posters: any = [];
+  //password: any = [];
+  //surveyQuestions: any = [];
+  //judgeSurveys: any;
+  
+  getPoster(){
+    var PouchDB = require('pouchdb').default;
+    this.pouchCall = new PouchDB('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2019/');
+    this.pouchCall.get("configuration").then(resultString => {
+
+      // This returns arrays within an array
+      this.res = resultString.posters.split('\n');
+      for (let index = 0; index < this.res.length; index++) {
+        //console.log(this.res[index]); //testing
+        this.mattsList.push(this.res[index].split(','));
+      } // Don't touch the above part!
+      
+
+      console.log(this.mattsList);
+      
+      // Starting from 1 to remove the "id" header
+      for (let index = 1; index < this.mattsList.length; index++) {      //array[index][number] array inside an array 
+        this.posterids.push(this.mattsList[index][1]); 
+        this.posterTitle.push(this.mattsList[index][2]);
+        this.posterName.push(this.mattsList[index][4]);
+        this.advisorName.push(this.mattsList[index][5]);
+      }
+      
+      // Don't know why... but I had to seperate the loops
+      for (let index = 0; index < this.posterids.length; index++) {
+        this.objectResults.push(
+          {
+            ID : this.posterids[index].toString(), 
+            Poster : this.posterName[index].toString(),
+            Title : this.posterTitle[index].toString(),
+            Advisor : this.advisorName[index].toString()
+          }
+        );
+      }
 
 
-  //   this.getUsers(): {
-  //       var deferred = $q.defer();
-  //       database.allDocs({
-  //           include_docs: true,
-  //           attachments: true
-  //       }).then(function (res) {
-  //           deferred.resolve(res.rows);
-  //       }).catch(function (err) {
-  //           console.log(err);
-  //           deferred.reject(err);
-  //       });
-  //       return deferred.promise;
-  //   };
+    });
 
-  //   this.login = function (username, password) {
-  //       var deferred = $q.defer();
-  //       database.allDocs({
-  //           include_docs: true,
-  //           attachments: true
-  //       }).then(function (res) {
-  //           res.rows.forEach(function (row) {
-  //               if (angular.equals(row.doc.username, username) && angular.equals(row.doc.password, password)) {
-  //                   deferred.resolve(row.doc);
-  //               }
-  //           });
-  //       }).catch(function (err) {
-  //           deferred.reject(err);
-  //       });
-  //       return deferred.promise;
-  //   };
+    return this.objectResults;
+  };
 
-  //   this.getJudge = function (id) {
-  //       console.log('getJudge');
-  //       var deferred = $q.defer();
-  //       database.get(id).then(function (doc) {
-  //           //console.log(doc);
-  //           deferred.resolve(doc);
-  //       }).catch(function (err) {
-  //           deferred.reject(err);
-  //           console.log(err);
-  //       });
-  //       return deferred.promise;
-  //   };
-
-  //   this.getGroupSurveys = function (groupId) {
-  //       var deferred = $q.defer();
-  //       var result = [];
-  //       database.allDocs({
-  //           include_docs: true,
-  //           attachments: true
-  //       }).then(function (res) {
-  //           if (res.rows.length) {
-  //               res.rows.forEach(function (row) {
-  //                   if (row.doc.surveys) {
-  //                       row.doc.surveys.forEach(function (survey) {
-  //                           if (survey.groupId === groupId) {
-  //                               var resultObj = {};
-  //                               resultObj.judgeName = row.doc.username;
-  //                               resultObj.answers = survey.answers;
-  //                               result.push(resultObj);
-  //                           }
-  //                       });
-  //                   }
-
-  //               });
-  //           }
-
-  //           deferred.resolve(result);
-  //       }).catch(function (err) {
-  //           deferred.reject(err);
-  //       });
-  //       return deferred.promise;
-  //   };
-
-  //   this.countCompletedSurveys = function (id) {
-  //       var deferred = $q.defer();
-  //       var result = [];
-  //       database.allDocs({
-  //           include_docs: true,
-  //           attachments: true
-  //       }).then(function (res) {
-  //           if (res.rows.length) {
-  //               res.rows.forEach(function (row) {
-  //                   if (row.doc.surveys) {
-  //                       for (var i = 0; i < row.doc.surveys.length; i++) {
-  //                           if (row.doc.surveys[i].groupId == id) {
-  //                               result.push(row.doc.username);
-  //                           }
-  //                       }
-  //                   }
-  //               });
-  //               deferred.resolve(result);
-  //           }
-  //       }).catch(function (err) {
-  //           deferred.reject(err);
-  //           console.log(err);
-  //       });
-  //       return deferred.promise;
-  //   };
-
-  //   this.getAllSurveys = function () {
-  //       var deferred = $q.defer();
-  //       database.allDocs({
-  //           include_docs: true,
-  //           attachments: true
-  //       }).then(function (res) {
-  //           deferred.resolve(res);
-  //       }).catch(function (err) {
-  //           deferred.reject(err);
-  //       });
-  //       return deferred.promise;
-  //   };
-
-  //   this.getJudges = function () {
-  //       var deferred = $q.defer();
-  //       database.allDocs({
-  //           include_docs: true,
-  //           attachments: true
-  //       }).then(function (res) {
-  //           var judges = [];
-  //           res.rows.forEach(function (row) {
-  //               var doc = {
-  //                   id: '',
-  //                   name: '',
-  //                   surveys: [],
-  //                   surveyLength: 0,
-  //                   groupsSurveyed: []
-  //               };
-  //               doc.id = row.id;
-  //               doc.name = row.doc.username;
-  //               if (row.doc.surveys) {
-  //                   doc.surveys = row.doc.surveys;
-  //                   doc.surveyLength = row.doc.surveys.length;
-  //                   row.doc.surveys.forEach(function (survey) {
-  //                     doc.groupsSurveyed.push({'id': survey.groupId, 'name': survey.groupName});
-  //                   });
-  //               }
-
-  //               judges.push(doc);
-  //           });
-  //           deferred.resolve(judges);
-  //       }).catch(function (err) {
-  //           deferred.reject(err);
-  //       });
-  //       return deferred.promise;
-  //   };
-
-  // this.avgSumScores = function (judges) {
-  //   console.log(judges);
-  //   var avgResults = judges[0].answers.slice(0);
-  //   avgResults.fill(0);
-
-  //   // Average and sum judge scores
-  //   judges.forEach(function (doc) {
-  //     for (i in doc.answers) {
-  //       avgResults[i] = avgResults[i] + parseInt(doc.answers[i]);
-  //     }
-  //   });
-  //   // Divide by number of judges
-  //   for (i in avgResults) {
-  //     avgResults[i] = avgResults[i] / $scope.judges.length;
-  //   }
-  //   return avgResults.reduce((num, val) => { return num + val; }, 0);
-  // }
-
-  //   this.getConf = function(){
-  //       pouchService = this;
-  //       confPouch.get("configuration").then(function (res) {
-  //           console.log("Conf docs read.");
-  //           $pouchdb.configuration = res;
-
-  //           console.log("Populating posters");
-
-  //           // go through poster CSV data and populate a JSON structure
-  //           posterRows = $pouchdb.configuration.posters.split(/\n/);
-  //           titles = posterRows.shift().split(/,/);
-  //           posterIndex = 0;
-  //           $pouchdb.posters = [];
-  //           posterRows.forEach(function (row) {
-  //               rowList = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-  //               $pouchdb.posters[posterIndex] = {
-  //                   "email": rowList[0],
-  //                   "id": rowList[1],
-  //                   "judges": [],
-  //                   "countJudges": 0,
-  //                   "group": rowList[2],
-  //                   "subject": rowList[3],
-  //                   "students": rowList[4],
-  //                   "advisor": rowList[5],
-  //                   "advisorEmail": rowList[6]
-  //               };
-  //               posterIndex++;
-  //           });
-  //           $pouchdb.posters.forEach(function (poster) {
-  //               pouchService.countCompletedSurveys(poster.id).then(function (res) {
-  //                 poster.countJudges = res.length;
-  //                 poster.judges = res;
-
-  //                 // calculate summed average scores
-  //                 poster.score = 0; // pouchService.avgSumScores(res); not ready yet
-  //               });
-  //           });
-  //       });
-
-  //   }
-   //}
 }
