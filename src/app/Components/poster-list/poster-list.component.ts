@@ -1,14 +1,28 @@
 import { Component, OnInit } from '@angular/core';
+import { PouchService } from '../../pouch-service.service';
+import { CommonModule } from '@angular/common'
+
 
 @Component({
   selector: 'app-poster-list',
   templateUrl: './poster-list.component.html',
-  styleUrls: ['./poster-list.component.scss'],
+  styleUrls: ['./poster-list.component.scss']
 })
 export class PosterListComponent implements OnInit {
 
-  constructor() { }
+  public poster;// = this.service.getPoster();
+  //public x = this.poster[0];
 
-  ngOnInit() {}
+
+
+  constructor(private service: PouchService) {
+    //this.service = service;
+    this.poster = this.service.getPoster();
+   }
+
+  ngOnInit() {
+    //return this.service.getPoster();
+      //.subscribe(data => this.poster = data);
+  }
 
 }

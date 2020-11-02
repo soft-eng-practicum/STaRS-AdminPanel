@@ -1,34 +1,30 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { HttpClientModule } from '@angular/common/http';
-import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { PouchService } from './pouch.service'; 
+import { AppComponent } from './app.component';
+import { RouterModule } from '@angular/router';
+import { PouchService } from './pouch-service.service';
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentModule } from './Components/component/component.module';
+import { DashboardComponent } from './Components/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
-    AppComponent, 
+    AppComponent,
   ],
-  entryComponents: [],
   imports: [
     BrowserModule,
     ComponentModule,
-    IonicModule.forRoot(),
-    HttpClientModule, 
-    AppRoutingModule
+    RouterModule.forRoot([
+      { path: '', component: DashboardComponent, pathMatch: 'full' },
+      { path: '**', redirectTo: '', pathMatch: 'full' }
+    ]),
+    AppRoutingModule,
+    HttpClientModule,
   ],
   providers: [
-    StatusBar,
-    SplashScreen,
-    PouchService,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
-   
+    PouchService
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

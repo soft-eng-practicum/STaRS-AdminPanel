@@ -7,11 +7,10 @@ import { PosterComponent } from '../poster/poster.component';
 import { LogoutComponent } from '../logout/logout.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { PosterListComponent } from '../poster-list/poster-list.component';
-import { PouchService } from 'src/app/pouch.service';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  
+
   { path: 'dashboard', component: DashboardComponent },
   { path: 'posterlist', component: PosterListComponent },
   { path: 'judgelist', component: JudgeListComponent },
@@ -36,7 +35,7 @@ const routes: Routes = [
   ],
   imports: [
     CommonModule,
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forChild(routes)
   ],
   exports: [
     FinalReportComponent,
@@ -48,7 +47,6 @@ const routes: Routes = [
     PosterListComponent
   ],
   providers: [
-    PouchService
   ],
 })
 export class ComponentModule { }

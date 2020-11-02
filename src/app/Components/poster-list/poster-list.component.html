@@ -37,18 +37,18 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="poster in posters | filter: search.value">
+          <tr *ngFor = "let poster of poster">
             <td>
-              <!-- {{poster.id}} -->
+              {{poster.ID}}
             </td>
             <td>
-              <!-- {{poster.group}} -->
+              {{poster.Title}}
             </td>
             <td>
-              <!-- {{poster.students | clearText}} -->
+              {{poster.Poster}}
             </td>
             <td>
-              <!-- {{poster.advisor}} -->
+              <!-- {{x}} -->
             </td>
             <td>
               <!-- {{poster.countJudges}} -->
@@ -57,10 +57,10 @@
               <!-- {{poster.score}} -->
             </td>
             <td>
-              <button type="button" class="btn btn-primary btn-sm" ui-sref="poster({id: poster.id})">
-                View</button>
+              <!-- <button type="button" class="btn btn-primary btn-sm" ui-sref="poster({id: poster.id})">
+                View</button> -->
             </td>
-          </tr>
+        </tr>
         </tbody>
       </table>
     </div>

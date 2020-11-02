@@ -1,4 +1,3 @@
-
 {
   "extends": "tslint:recommended",
   "rules": {
@@ -14,7 +13,7 @@
     "deprecation": {
       "severity": "warning"
     },
-    "component-class-suffix": [true, "Page", "Component"],
+    "component-class-suffix": true,
     "contextual-lifecycle": true,
     "directive-class-suffix": true,
     "directive-selector": [
@@ -95,6 +94,10 @@
         "named": "never"
       }
     },
+    "typedef": [
+      true,
+      "call-signature"
+    ],
     "typedef-whitespace": {
       "options": [
         {
@@ -141,8 +144,7 @@
     "template-banana-in-box": true,
     "template-no-negated-async": true,
     "use-lifecycle-interface": true,
-    "use-pipe-transform-interface": true,
-    "object-literal-sort-keys": false
+    "use-pipe-transform-interface": true
   },
   "rulesDirectory": [
     "codelyzer"
