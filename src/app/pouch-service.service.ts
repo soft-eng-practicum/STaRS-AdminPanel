@@ -38,8 +38,8 @@ export class PouchService {
     this.pouchCall = new PouchDB('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2019/');
     this.pouchCall.get("configuration").then(resultString => {
 
-      // This returns arrays within an array
-      this.res = resultString.posters.split('\n');
+      // This returns arrays within an array and replaces redundant "
+      this.res = resultString.posters.replace(/"([^"]+(?="))"/g, '$1').split('\n');
       for (let index = 0; index < this.res.length; index++) {
         //console.log(this.res[index]); //testing
         this.mattsList.push(this.res[index].split(','));
