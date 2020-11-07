@@ -10,19 +10,12 @@ import { CommonModule } from '@angular/common'
 })
 export class PosterListComponent implements OnInit {
 
-  public poster;// = this.service.getPoster();
-  //public x = this.poster[0];
-
-
-
+  public posters;
   constructor(private service: PouchService) {
-    //this.service = service;
-    this.poster = this.service.getPoster();
-   }
+  }
 
   ngOnInit() {
-    //return this.service.getPoster();
-      //.subscribe(data => this.poster = data);
+    this.posters = this.service.getPosters();
   }
 
 }
