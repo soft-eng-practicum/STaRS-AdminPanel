@@ -53,8 +53,8 @@ export class PouchService {
   }
 
   private async getAll(){
-    let x: any;
-    let y: any;
+    let x: any; // index for posters
+    let y: any; // index for judges
     await this.localDB.allDocs({
       include_docs: true,
       attachments: true
@@ -97,7 +97,7 @@ export class PouchService {
       console.log('Judge loop ' + j);
       if (y.rows[j].doc.Advisors == null){ // The judge DB also contains posters. This should filter out the posters.
         this.judgeDBResults.push({
-          JID: y.rows[j].doc._id, // this is pulling the ID from the posters when it should pull from judges.
+          JID: y.rows[j].doc._id,
           Username: y.rows[j].doc.username,
           SurveyLength: 'dummy value ' + j,
           // Find out how to get the size of a field
@@ -109,5 +109,4 @@ export class PouchService {
     console.log('Finished loading judges');
     await this.judgeDBResults;
   }
-
 }
