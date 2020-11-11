@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {PouchService} from "../../pouch-service.service";
 
 @Component({
   selector: 'app-judge-list',
@@ -7,8 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class JudgeListComponent implements OnInit {
 
-  constructor() { }
+  public judges;
+  constructor(private service: PouchService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.judges = this.service.getJudges();
+  }
 
 }

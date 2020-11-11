@@ -19,6 +19,9 @@
         <thead>
           <tr>
             <th>
+              <a ng-click="orderField = 'ID'">ID</a>
+            </th>
+            <th>
               <a ng-click="orderField = 'name'">Judge</a>
             </th>
             <th>
@@ -32,9 +35,13 @@
           </tr>
         </thead>
         <tbody>
+
           <tr ng-repeat="judge in judges | orderBy: orderField : (orderReverse ? 'reverse':'') | filter: search.value ">
             <td>
-              <!-- {{judge.name}} -->
+              {{judges.id}}
+            </td>
+            <td>
+              {{judges.name}}
             </td>
             <td>
               <!-- {{judge.surveyLength}} -->
@@ -51,6 +58,7 @@
                 View</button>
             </td>
           </tr>
+
         </tbody>
       </table>
     </div>
