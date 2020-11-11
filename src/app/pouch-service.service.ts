@@ -95,14 +95,16 @@ export class PouchService {
     // TODO:x.total_rows below is returning 0?
     for (let j = 0; j < y.total_rows; j++) {
       console.log('Judge loop ' + j);
-      this.judgeDBResults.push({
-        JID: y.rows[j].doc._id, // this is pulling the ID from the posters when it should pull from judges.
-        Username: y.rows[j].doc.username,
-        // NumSurveys:
-        // Find out how to get the size of a field
-        // GroupsSurveyed: x.rows[j].doc['surveys_assigned']
-        // Above line causes problem, loop never exits
-      });
+      if (y.rows[j].doc.Advisors == null){ // The judge DB also contains posters. This should filter out the posters.
+        this.judgeDBResults.push({
+          JID: y.rows[j].doc._id, // this is pulling the ID from the posters when it should pull from judges.
+          Username: y.rows[j].doc.username,
+          SurveyLength: 'dummy value ' + j,
+          // Find out how to get the size of a field
+          // GroupsSurveyed: [] = x.rows[j].doc['surveys_assigned']
+          // Above line causes problem, loop never exits
+        });
+    }
     }
     console.log('Finished loading judges');
     await this.judgeDBResults;
