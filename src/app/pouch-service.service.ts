@@ -83,12 +83,6 @@ export class PouchService {
     }
     console.log('Finished loading posters');
     await this.posterDBResults;
-    await this.localDB.allDocs({
-      include_docs: true,
-      attachments: true
-    }).then((result) => {
-      x = result;
-    });
     // Fetch Judge results
     console.log('Parsing judges...');
     console.log('Row size: ' + y.total_rows);
