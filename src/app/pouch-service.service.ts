@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { from, Observable, of } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import * as PouchDB  from 'pouchdb';
+import {log} from "util";
 
 
 @Injectable({
@@ -71,7 +72,6 @@ export class PouchService {
     console.log('Parsing posters...');
     console.log('Row size: ' + x.total_rows);
     for (let i = 0; i < x.total_rows; i++) {
-      console.log('Poster loop '  + i);
       this.posterDBResults.push(
       {
         ID: x.rows[i].doc._id,
@@ -92,19 +92,21 @@ export class PouchService {
     // Fetch Judge results
     console.log('Parsing judges...');
     console.log('Row size: ' + y.total_rows);
-    // TODO:x.total_rows below is returning 0?
     for (let j = 0; j < y.total_rows; j++) {
-      console.log('Judge loop ' + j);
       if (y.rows[j].doc.Advisors == null){ // The judge DB also contains posters. This should filter out the posters.
+        let tempGroup = '';
+        for (let k = 0; k < y.rows[j].doc.surveys_assigned.length; k++){ // parse info for "Groups surveyed"
+          tempGroup += 'Group ID ' + y.rows[j].doc.surveys_assigned[k].groupId + ': ';
+          tempGroup += y.rows[j].doc.surveys_assigned[k].groupName + ' | ';
+        }
         this.judgeDBResults.push({
           JID: y.rows[j].doc._id,
           Username: y.rows[j].doc.username,
-          SurveyLength: 'dummy value ' + j,
-          // Find out how to get the size of a field
-          // GroupsSurveyed: [] = x.rows[j].doc['surveys_assigned']
-          // Above line causes problem, loop never exits
+          Surveys: y.rows[j].doc.surveys_assigned, // unused but would be useful if I knew how attachments worked
+          SurveyLength: y.rows[j].doc.surveys_assigned.length,
+          GroupsSurveyed: tempGroup
         });
-    }
+      }
     }
     console.log('Finished loading judges');
     await this.judgeDBResults;
