@@ -62,17 +62,19 @@ export class PouchService {
       {
         ID: x.rows[i].doc._id,
         Title: x.rows[i].doc['Poster Title'],
+        Discipline: x.rows[i].doc['Discipline(s)'],
         Students: x.rows[i].doc['Student Authors'],
         Advisors: x.rows[i].doc.Advisors
       });
     }
     await this.posterDBResults;
+    // Fetch Judge results
     for (let i = 0; i < x.total_rows; i++) {
       this.judgeDBResults.push({
-        ID: x.rows[i].doc._id, // might conflict with ID from posters? Rename if necessary
+        JID: x.rows[i].doc._id, // might conflict with ID from posters? Rename if necessary
         Username: x.rows[i].doc.username,
-        // NumOfSurveys - genrate in html?
-        GroupsSurveyed: x.rows[i].doc['surveys_assignedgit ']
+        // NumOfSurveys - genrate in webpage?
+        GroupsSurveyed: x.rows[i].doc.surveys_assigned
       });
     }
     await this.judgeDBResults;

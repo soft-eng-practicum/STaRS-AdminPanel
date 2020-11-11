@@ -35,13 +35,13 @@
           </tr>
         </thead>
         <tbody>
-
-          <tr ng-repeat="judge in judges | orderBy: orderField : (orderReverse ? 'reverse':'') | filter: search.value ">
+        <tr *ngFor ="let judge of judges">
+          <!--<tr ng-repeat="judge in judges | orderBy: orderField : (orderReverse ? 'reverse':'') | filter: search.value "> -->
             <td>
-              {{judges.id}}
+              {{judge.JID}}
             </td>
             <td>
-              {{judges.name}}
+              {{judge.Username}}
             </td>
             <td>
               <!-- {{judge.surveyLength}} -->
@@ -58,7 +58,6 @@
                 View</button>
             </td>
           </tr>
-
         </tbody>
       </table>
     </div>

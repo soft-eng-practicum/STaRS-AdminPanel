@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {PouchService} from "../../pouch-service.service";
+import { PouchService } from '../../pouch-service.service';
 
 @Component({
   selector: 'app-judge-list',
