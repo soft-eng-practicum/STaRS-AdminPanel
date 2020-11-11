@@ -11,6 +11,7 @@ import * as PouchDB  from 'pouchdb';
 export class PouchService {
 
   private localDB: any;
+  private jLocalDB: any;
   private pouchDB = require('pouchdb').default;
   private couchCallPosters: any;
   private couchCallJudges: any;
@@ -32,10 +33,13 @@ export class PouchService {
   constructor() {
     const pouchDB = require('pouchdb').default;
     this.localDB = new pouchDB('localPouchDB');
+    this.jLocalDB = new pouchDB('jLocalPouchDB');
     this.couchCallPosters = new pouchDB('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2020posters/', this.opts);
     this.couchCallJudges = new pouchDB('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2020judges/', this.opts);
     this.localDB.sync(this.couchCallPosters);
+    this.jLocalDB.sync(this.couchCallJudges);
     this.posterDBResults = [];
+    this.judgeDBResults = [];
     this.starter = this.getAll();
   }
 
@@ -50,14 +54,24 @@ export class PouchService {
 
   private async getAll(){
     let x: any;
+    let y: any;
     await this.localDB.allDocs({
       include_docs: true,
       attachments: true
     }).then((result) => {
       x = result;
     });
+    await this.jLocalDB.allDocs({
+      include_docs: true,
+      attachments: true
+    }).then((result) => {
+      y = result;
+    });
     // Fetch Poster results
+    console.log('Parsing posters...');
+    console.log('Row size: ' + x.total_rows);
     for (let i = 0; i < x.total_rows; i++) {
+      console.log('Poster loop '  + i);
       this.posterDBResults.push(
       {
         ID: x.rows[i].doc._id,
@@ -67,16 +81,30 @@ export class PouchService {
         Advisors: x.rows[i].doc.Advisors
       });
     }
+    console.log('Finished loading posters');
     await this.posterDBResults;
+    await this.localDB.allDocs({
+      include_docs: true,
+      attachments: true
+    }).then((result) => {
+      x = result;
+    });
     // Fetch Judge results
-    for (let i = 0; i < x.total_rows; i++) {
+    console.log('Parsing judges...');
+    console.log('Row size: ' + y.total_rows);
+    // TODO:x.total_rows below is returning 0?
+    for (let j = 0; j < y.total_rows; j++) {
+      console.log('Judge loop ' + j);
       this.judgeDBResults.push({
-        JID: x.rows[i].doc._id, // might conflict with ID from posters? Rename if necessary
-        Username: x.rows[i].doc.username,
-        // NumOfSurveys - genrate in webpage?
-        GroupsSurveyed: x.rows[i].doc.surveys_assigned
+        JID: y.rows[j].doc._id, // this is pulling the ID from the posters when it should pull from judges.
+        Username: y.rows[j].doc.username,
+        // NumSurveys:
+        // Find out how to get the size of a field
+        // GroupsSurveyed: x.rows[j].doc['surveys_assigned']
+        // Above line causes problem, loop never exits
       });
     }
+    console.log('Finished loading judges');
     await this.judgeDBResults;
   }
 
