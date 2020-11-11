@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PouchService } from 'src/app/pouch-service.service';
 import { ComponentModule } from '../component/component.module';
 
 @Component({
@@ -8,15 +9,17 @@ import { ComponentModule } from '../component/component.module';
 })
 export class DashboardComponent implements OnInit {
 
+  pouchService: any;
 
-  constructor() {
-   }
+  constructor(pouchService: PouchService) {
+    this.pouchService = pouchService;
+  }
 
   ngOnInit() {}
 
-  killme()
+  sync()
   {
-    console.log('kll me');
+    this.pouchService.sync();
   }
 
 }
