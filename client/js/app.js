@@ -102,8 +102,8 @@ app.service('$pouchdb', function ($rootScope, pouchDB, $http) {
             }
         };
 
-        self.localDB = pouchDB('judges_sp19');
-        self.localDB.sync('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp19_3', opts)
+        self.localDB = pouchDB('judges_sp21');
+        self.localDB.sync('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp21', opts)
             .on('change', function (change) {
                 $rootScope.$broadcast('changes');
                 console.log('yo something changed');
@@ -120,7 +120,7 @@ app.service('$pouchdb', function ($rootScope, pouchDB, $http) {
             });
 
         self.confDB = pouchDB('conf');
-        self.confDB.sync("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/stars2019", opts)
+        self.confDB.sync("http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/configuration", opts)
             .on('change', function (change) {
                 //$rootScope.$broadcast('changes');
                 console.log('yo something changed in conf');
@@ -324,12 +324,16 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
   
     this.getConf = function(){
         pouchService = this;
-        confPouch.get("configuration").then(function (res) {
+        confPouch.get("stars2021").then(function (res) {
             console.log("Conf docs read.");
             $pouchdb.configuration = res;
 
             console.log("Populating posters");
 
+          // check if a pre-made JSON object exists
+          if ("posters_json" in $pouchdb.configuration)
+            $pouchdb.posters = $pouchdb.configuration.posters_json;
+          else {
             // go through poster CSV data and populate a JSON structure
             posterRows = $pouchdb.configuration.posters.split(/\n/);
             titles = posterRows.shift().split(/,/);
@@ -350,15 +354,16 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
                 };
                 posterIndex++;
             });
-            $pouchdb.posters.forEach(function (poster) {
-                pouchService.countCompletedSurveys(poster.id).then(function (res) {
-                  poster.countJudges = res.judge_names.length;
-                  poster.judges = res.judge_names;
+          }
+          $pouchdb.posters.forEach(function (poster) {
+            pouchService.countCompletedSurveys(poster.id).then(function (res) {
+              poster.countJudges = res.judge_names.length;
+              poster.judges = res.judge_names;
 
-                  // calculate summed average scores
-                  poster.score = pouchService.avgSumScores(res.judge_reports); // not ready yet
-                });
+              // calculate summed average scores
+              poster.score = pouchService.avgSumScores(res.judge_reports); // not ready yet
             });
+          });
         });
         
     }
