@@ -9,35 +9,39 @@
         <input type="text" id="search" class="form-control" ng-model="search.value">
         <label for="search">Search: Poster, Student, or Judge</label>
         <p> Found {{ ( posters | filter: search.value).length }} posters.
+        <p>Order by: {{ orderField }} 
+          <button type="button" class="btn btn-primary btn-sm"
+                  ng-click="orderReverse = (orderReverse + 1)%2">
+            Reverse</button><br/>
       </div>
       <br />
       <table class="table table-bordered">
         <thead>
           <tr>
             <th>
-              ID
+              <a ng-click="orderField = 'id'">ID</a>
             </th>
             <th>
-              Poster
+              <a ng-click="orderField = 'group'">Poster</a>
             </th>
             <th>
-              Students
+              <a ng-click="orderField = 'students'">Students</a>
             </th>
             <th>
-              Advisor
+              <a ng-click="orderField = 'advisor'">Advisor</a>
             </th>
             <th>
-              Number of Surveys
+              <a ng-click="orderField = 'countJudges'">Number of Surveys</a>
             </th>
             <th>
-              Score
+              <a ng-click="orderField = 'score'">Score</a>
             </th>
             <th>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="poster in posters | filter: search.value">
+          <tr ng-repeat="poster in posters | orderBy: orderField : (orderReverse ? 'reverse':'') | filter: search.value">
             <td>
               {{poster.id}}
             </td>

@@ -315,9 +315,11 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
       }
     });
     // Divide by number of judges
-    avgResults = avgResults / poster_reports.length;
-    
-    return avgResults.toFixed(2);
+    if (poster_reports.length > 0) 
+      avgResults = avgResults / poster_reports.length;
+
+    // Return only two decimal digits
+    return Math.round(avgResults * 100)/100;
   }
   
     this.getConf = function(){
@@ -489,7 +491,8 @@ app.controller('PosterListCtrl', function ($scope, $service, $cookies, $rootScop
 
     $scope.posters = $pouchdb.posters;
     $scope.search = {};
-
+    $scope.orderField = 'score';
+    $scope.orderReverse = 1;
 });
 
 /**
