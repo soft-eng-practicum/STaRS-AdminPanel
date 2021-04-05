@@ -70,7 +70,8 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "STaRS-Admin:build:production"
+              "browserTarget": "STaRS-Admin:build:production",
+              "deployUrl": "http://itec-gunay.duckdns.org:4200/"
             }
           }
         },
