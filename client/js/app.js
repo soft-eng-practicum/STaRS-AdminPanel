@@ -339,7 +339,7 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
                 rowList = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
                 $pouchdb.posters[posterIndex] = {
                     "email": rowList[0],
-                    "id": rowList[1],
+                    "id": parseInt(rowList[1]),
                     "judges": [],
                     "countJudges": 0,
                     "group": rowList[2],
