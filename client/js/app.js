@@ -228,8 +228,10 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
     };
 
     this.countCompletedSurveys = function (id) {
-        var deferred = $q.defer();
-        var result = [];
+      var deferred = $q.defer();
+      var judges = [];
+      var results = [];
+      
         database.allDocs({
             include_docs: true,
             attachments: true
@@ -239,12 +241,13 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
                     if (row.doc.surveys) {
                         for (var i = 0; i < row.doc.surveys.length; i++) {
                             if (row.doc.surveys[i].groupId == id) {
-                                result.push(row.doc.username);
+                              judges.push(row.doc.username);
+                              results.push(row.doc.surveys[i].answers);                       
                             }
                         }
                     }
                 });
-                deferred.resolve(result);
+              deferred.resolve({"judge_names": judges, "judge_reports": results});
             }
         }).catch(function (err) {
             deferred.reject(err);
@@ -300,22 +303,18 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
         return deferred.promise;
     };
 
-  this.avgSumScores = function (judges) {
-    console.log(judges);
-    var avgResults = judges[0].answers.slice(0);
-    avgResults.fill(0);
+  this.avgSumScores = function (poster_reports) {
+    var avgResults = 0;
     
     // Average and sum judge scores
-    judges.forEach(function (doc) {
-      for (i in doc.answers) {
-        avgResults[i] = avgResults[i] + parseInt(doc.answers[i]);
-      }
+    poster_reports.forEach(function (doc) {
+      avgResults = avgResults + parseInt(doc[0]) + parseInt(doc[1]) + parseInt(doc[2]) + parseInt(doc[3]) +
+        parseInt(doc[4]) + parseInt(doc[5]);
     });
     // Divide by number of judges
-    for (i in avgResults) {
-      avgResults[i] = avgResults[i] / $scope.judges.length;
-    }
-    return avgResults.reduce((num, val) => { return num + val; }, 0);
+    avgResults = avgResults / poster_reports.length;
+    
+    return avgResults.toFixed(2);
   }
   
     this.getConf = function(){
@@ -348,11 +347,11 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
             });
             $pouchdb.posters.forEach(function (poster) {
                 pouchService.countCompletedSurveys(poster.id).then(function (res) {
-                  poster.countJudges = res.length;
-                  poster.judges = res;
+                  poster.countJudges = res.judge_names.length;
+                  poster.judges = res.judge_names;
 
                   // calculate summed average scores
-                  poster.score = 0; // pouchService.avgSumScores(res); not ready yet
+                  poster.score = pouchService.avgSumScores(res.judge_reports); // not ready yet
                 });
             });
         });
@@ -539,6 +538,9 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
         { field: "answers[5]", name: "Impact", width: 100,
           aggregationType: uiGridConstants.aggregationTypes.avg, aggregationHideLabel: true,
           footerCellFilter: 'fixed2' },
+        { field: "answers[7]", name: "Total", width: 100,
+          aggregationType: uiGridConstants.aggregationTypes.avg, aggregationHideLabel: true,
+          footerCellFilter: 'fixed2' },
         {
           field: "answers[6]",
           name: "Additional Comments",
@@ -585,10 +587,14 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
             res.forEach(function (doc) {
               var judge = {};
               judge.name = doc.judgeName;
-              judge.answers = doc.answers;
+              total = 0;
               for (i in doc.answers) {
                 avgResults[i] = avgResults[i] + parseInt(doc.answers[i]);
+                if (i < 6)
+                  total = total + parseInt(doc.answers[i]);
               }
+              doc.answers.push(total); // add a total column
+              judge.answers = doc.answers;
               $scope.judges.push(judge);
             });
             // add a summary line
