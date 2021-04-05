@@ -308,8 +308,11 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
     
     // Average and sum judge scores
     poster_reports.forEach(function (doc) {
-      avgResults = avgResults + parseInt(doc[0]) + parseInt(doc[1]) + parseInt(doc[2]) + parseInt(doc[3]) +
-        parseInt(doc[4]) + parseInt(doc[5]);
+      for (i in doc) {
+        num = parseInt(doc[i]);
+        if (i < 6 && num > 0)
+          avgResults = avgResults + num;
+      }
     });
     // Divide by number of judges
     avgResults = avgResults / poster_reports.length;
@@ -590,8 +593,9 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
               total = 0;
               for (i in doc.answers) {
                 avgResults[i] = avgResults[i] + parseInt(doc.answers[i]);
-                if (i < 6)
-                  total = total + parseInt(doc.answers[i]);
+                num = parseInt(doc.answers[i]);
+                if (i < 6 && num > 0)
+                  total = total + num;
               }
               doc.answers.push(total); // add a total column
               judge.answers = doc.answers;
