@@ -105,18 +105,18 @@ app.service('$pouchdb', function ($rootScope, pouchDB, $http) {
         self.localDB = pouchDB('judges_sp21');
         self.localDB.sync('http://admin:starsGGCadmin@itec-gunay.duckdns.org:5984/judges_sp21', opts)
             .on('change', function (change) {
-                $rootScope.$broadcast('changes');
+                $rootScope.$broadcast('CHANGES in judges');
                 console.log('yo something changed');
                 console.log(change);
             }).on('paused', function (info) {
-                $rootScope.$broadcast('paused');
-                console.log('PAUSED');
+                $rootScope.$broadcast('judges paused');
+                console.log('PAUSED in judges');
             }).on('active', function (info) {
                 console.log(info);
-                console.log('ACTIVE');
+                console.log('ACTIVE in judges');
             }).on('error', function (err) {
                 console.log(err);
-                console.log('ERROR');
+                console.log('ERROR in judges');
             });
 
         self.confDB = pouchDB('conf');
@@ -556,7 +556,8 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
           field: "answers[6]",
           name: "Additional Comments",
           cellTemplate: '<div class="ui-grid-cell-contents">{{grid.getCellValue(row, col)}}</div>',
-          width: '*'
+          width: '*',
+          cellTooltip: true
         }
       ],
         exporterCsvFilename: 'PosterResults.csv',
@@ -605,6 +606,8 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
                 if (i < 6 && num > 0)
                   total = total + num;
               }
+              if (doc.answers.length < 7) // if comments missing, add empty
+                doc.answers.push("");
               doc.answers.push(total); // add a total column
               judge.answers = doc.answers;
               $scope.judges.push(judge);
@@ -762,6 +765,11 @@ app.controller('JudgeCtrl', function ($scope, $cookies, $rootScope, pouchService
         enableHorizontalScrollbar: uiGridConstants.scrollbars.NEVER,
         enableVerticalScrollbar: uiGridConstants.scrollbars.NEVER,
         columnDefs: [
+          { field: "groupId", name: "ID", width: 100,
+            cellTemplate:
+            '<div class="ui-grid-cell-contents">' +
+            '<a ui-sref="poster({id: {{grid.getCellValue(row, col)}} })">{{grid.getCellValue(row, col)}}</a></div>',
+          },
             { field: "groupName", name: "Poster Name", width: 100 },
             { field: "answers[0]", name: "Statement of Problem", width: 100 },
             { field: "answers[1]", name: "Methodology", width: 100 },
