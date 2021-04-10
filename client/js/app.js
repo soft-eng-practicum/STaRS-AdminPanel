@@ -555,9 +555,8 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
         {
           field: "answers[6]",
           name: "Additional Comments",
-          cellTemplate: '<div class="ui-grid-cell-contents">{{grid.getCellValue(row, col)}}</div>',
           width: '*',
-          cellTooltip: true
+          "cellTooltip": true
         }
       ],
         exporterCsvFilename: 'PosterResults.csv',
@@ -765,24 +764,19 @@ app.controller('JudgeCtrl', function ($scope, $cookies, $rootScope, pouchService
         enableHorizontalScrollbar: uiGridConstants.scrollbars.NEVER,
         enableVerticalScrollbar: uiGridConstants.scrollbars.NEVER,
         columnDefs: [
-          { field: "groupId", name: "ID", width: 100,
+          { field: "groupId", name: "ID", width: 30,
             cellTemplate:
             '<div class="ui-grid-cell-contents">' +
             '<a ui-sref="poster({id: {{grid.getCellValue(row, col)}} })">{{grid.getCellValue(row, col)}}</a></div>',
           },
-            { field: "groupName", name: "Poster Name", width: 100 },
+          { field: "groupName", name: "Poster Name", width: 100, "cellTooltip": true },
             { field: "answers[0]", name: "Statement of Problem", width: 100 },
             { field: "answers[1]", name: "Methodology", width: 100 },
             { field: "answers[2]", name: "Results/Solution", width: 100 },
             { field: "answers[3]", name: "Oral Presentation", width: 100 },
             { field: "answers[4]", name: "Poster Layout", width: 100 },
             { field: "answers[5]", name: "Impact", width: 100 },
-            {
-                field: "answers[6]",
-                name: "Additional Comments",
-                cellTemplate: '<div class="ui-grid-cell-contents">{{grid.getCellValue(row, col)}}</div>',
-                width: '*'
-            }
+            { field: "answers[6]", name: "Additional Comments", width: '*', "cellTooltip": true }
         ],
         exporterCsvFilename: 'JudgeResults.csv',
         exporterPdfDefaultStyle: { fontSize: 9 },
