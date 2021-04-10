@@ -530,7 +530,10 @@ app.controller('PosterCtrl', function ($scope, poster, uiGridConstants, $cookies
         enableVerticalScrollbar: uiGridConstants.scrollbars.NEVER,
         showColumnFooter: true,
       columnDefs: [
-        { field: "name", name: "Judge Name", width: 100 },
+        { field: "name", name: "Judge Name", width: 100,
+          "cellTemplate": '<div class="ui-grid-cell-contents">' +
+          '<a ui-sref="judge({id: \'{{grid.getCellValue(row, col)}}\' })">{{grid.getCellValue(row, col)}}</a></div>'
+        },
         { field: "answers[0]", name: "Statement of Problem", width: 100,
           aggregationType: uiGridConstants.aggregationTypes.avg, aggregationHideLabel: true,
           footerCellFilter: 'fixed2' },
