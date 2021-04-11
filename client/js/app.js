@@ -188,8 +188,8 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
         console.log('getJudge');
         var deferred = $q.defer();
         database.get(id).then(function (doc) {
-            //console.log(doc);
-            deferred.resolve(doc);
+          //console.log(doc);
+          deferred.resolve(doc);
         }).catch(function (err) {
             deferred.reject(err);
             console.log(err);
@@ -361,7 +361,7 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
               poster.judges = res.judge_names;
 
               // calculate summed average scores
-              poster.score = pouchService.avgSumScores(res.judge_reports); // not ready yet
+              poster.score = pouchService.avgSumScores(res.judge_reports);
             });
           });
         });
@@ -688,7 +688,7 @@ Dr. Cengiz Gunay`;
       data: { "secret": "skjhiuwykcnbmnckuwykdkhkjdfhf",
               "from": "Judging App",
               "to": $scope.emailDest,
-              "subject": "STaRS 2019 judging scores and feedback",
+              "subject": "STaRS judging scores and feedback",
               "text": message,
               "attachments": [
                 { "filename": "results.csv",
@@ -743,7 +743,6 @@ app.controller('JudgeCtrl', function ($scope, $cookies, $rootScope, pouchService
     var remoteDB = $pouchdb.remoteDB;
     pouchService.getConf();
 
-
     $scope.judge = judge;
     $scope.questions = [];
     $scope.surveys = [];
@@ -753,7 +752,19 @@ app.controller('JudgeCtrl', function ($scope, $cookies, $rootScope, pouchService
         $scope.questions = res.data.questions;
     });
 
-    $scope.getSurveysByJudge = function () {
+  $scope.getSurveysByJudge = function () {
+    $scope.judge.surveys.forEach(function (doc) {
+            total = 0;
+            for (i in doc.answers) {
+              num = parseInt(doc.answers[i]);
+              if (i < 6 && num > 0)
+                total = total + num;
+            }
+            if (doc.answers.length < 7) // if comments missing, add empty
+              doc.answers.push("");
+            doc.answers.push(total); // add a total column
+          });
+    
         $scope.gridOptions.data = $scope.judge.surveys;
 
         if ($scope.surveys.length === 0) {
@@ -779,6 +790,7 @@ app.controller('JudgeCtrl', function ($scope, $cookies, $rootScope, pouchService
             { field: "answers[3]", name: "Oral Presentation", width: 100 },
             { field: "answers[4]", name: "Poster Layout", width: 100 },
             { field: "answers[5]", name: "Impact", width: 100 },
+            { field: "answers[7]", name: "Total", width: 100 },
             { field: "answers[6]", name: "Additional Comments", width: '*', "cellTooltip": true }
         ],
         exporterCsvFilename: 'JudgeResults.csv',
