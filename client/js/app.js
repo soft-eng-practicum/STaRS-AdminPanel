@@ -331,9 +331,11 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
             console.log("Populating posters");
 
           // check if a pre-made JSON object exists
-          if ("posters_json" in $pouchdb.configuration)
+          if ("posters_json" in $pouchdb.configuration) {
             $pouchdb.posters = $pouchdb.configuration.posters_json;
-          else {
+            // remove non-judged posters
+            $pouchdb.posters = $pouchdb.posters.filter(poster => poster["Judged?"] == "Yes");
+          } else {
             // go through poster CSV data and populate a JSON structure
             posterRows = $pouchdb.configuration.posters.split(/\n/);
             titles = posterRows.shift().split(/,/);
