@@ -389,12 +389,31 @@ app.factory('$service', function ($http, $q, md5, $rootScope, pouchService) {
 /* ==========================================================================
    Controllers
    ========================================================================== */
+
+/**
+ * LoginCtrl: controller for Login Page an authentication
+ */
+app.controller('loginCtrl', function($scope, $location){
+    $scope.submitForm(user) = function() {
+        var userName = $scope.username;
+        var password = $scope.password;
+        if($scope.username == 'admin' && $scope.password == 'admin') {
+            $location.path('/dashboard');
+        } else
+        {
+            alert('Wrong username or password');
+        }
+    }
+})
+
 /**
  * NavbarCtrl: controller for the navbar (header)
  */
 app.controller('NavbarCtrl', function ($rootScope, $scope, toastr) {
     $rootScope.isAuth = false;
-
+    $scope.checkAuth = function() {
+        console.log("hellow world");
+    }
 });
 
 /**

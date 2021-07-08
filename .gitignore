@@ -1,2 +1,4 @@
 **/.DS_Store
+localconfig.json
+.vscode/
 node_modules/
