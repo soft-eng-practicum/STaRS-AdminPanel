@@ -24,26 +24,61 @@ app.config(function ($stateProvider, $urlRouterProvider, toastrConfig) {
         templateUrl: 'templates/home.html'
     });
     $stateProvider.state('dashboard', {
+        resolve: {
+            "check": function($location, $rootScope) {
+                if (!$rootScope.isAuth) {
+                    $location.path('/');
+                }
+            }
+        },
         url: '/dashboard',
         controller: 'DashboardCtrl',
         templateUrl: 'templates/dashboard.html'
     });
     $stateProvider.state('finalReport', {
+        resolve: {
+            "check": function($location, $rootScope) {
+                if (!$rootScope.isAuth) {
+                    $location.path('/');
+                }
+            }
+        },
         url: '/finalReport',
         controller: 'FinalReportCtrl',
         templateUrl: 'templates/finalReport.html'
     });
     $stateProvider.state('posterList', {
+        resolve: {
+            "check": function($location, $rootScope) {
+                if (!$rootScope.isAuth) {
+                    $location.path('/');
+                }
+            }
+        },
         url: '/posterList',
         controller: 'PosterListCtrl',
         templateUrl: 'templates/posterList.html'
     });
     $stateProvider.state('judgeList', {
+        resolve: {
+            "check": function($location, $rootScope) {
+                if (!$rootScope.isAuth) {
+                    $location.path('/');
+                }
+            }
+        },
         url: '/judgeList',
         controller: 'JudgeListCtrl',
         templateUrl: 'templates/judgeList.html'
     });
     $stateProvider.state('poster', {
+        resolve: {
+            "check": function($location, $rootScope) {
+                if (!$rootScope.isAuth) {
+                    $location.path('/');
+                }
+            }
+        },
         url: '/poster/{id}',
         controller: 'PosterCtrl',
         templateUrl: 'templates/poster.html',
@@ -169,6 +204,7 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
 
     this.login = function (username, password) {
         var deferred = $q.defer();
+        var checklogin = true;
         database.allDocs({
             include_docs: true,
             attachments: true
@@ -176,11 +212,12 @@ app.service('pouchService', function ($rootScope, pouchDB, $q, $pouchdb) {
             res.rows.forEach(function (row) {
                 if (angular.equals(row.doc.username, username) && angular.equals(row.doc.password, password)) {
                     deferred.resolve(row.doc);
+                    checklogin = false;
                 }
-            });
-        }).catch(function (err) {
-            deferred.reject(err);
-        });
+            }); if(checklogin) {
+                deferred.reject();
+            }
+        })
         return deferred.promise;
     };
 
@@ -393,18 +430,18 @@ app.factory('$service', function ($http, $q, md5, $rootScope, pouchService) {
 /**
  * LoginCtrl: controller for Login Page an authentication
  */
-app.controller('loginCtrl', function($scope, $location){
-    $scope.submitForm(user) = function() {
-        var userName = $scope.username;
-        var password = $scope.password;
-        if($scope.username == 'admin' && $scope.password == 'admin') {
-            $location.path('/dashboard');
-        } else
-        {
-            alert('Wrong username or password');
-        }
-    }
-})
+// app.controller('loginCtrl', function($scope, $location){
+//     $scope.submitForm(user) = function() {
+//         var userName = $scope.username;
+//         var password = $scope.password;
+//         if($scope.username == 'admin' && $scope.password == 'admin') {
+//             $location.path('/dashboard');
+//         } else
+//         {
+//             alert('Wrong username or password');
+//         }
+//     }
+// })
 
 /**
  * NavbarCtrl: controller for the navbar (header)
@@ -412,7 +449,7 @@ app.controller('loginCtrl', function($scope, $location){
 app.controller('NavbarCtrl', function ($rootScope, $scope, toastr) {
     $rootScope.isAuth = false;
     $scope.checkAuth = function() {
-        console.log("hellow world");
+        //console.log("hellow world");
     }
 });
 
@@ -519,6 +556,17 @@ app.controller('PosterListCtrl', function ($scope, $service, $cookies, $rootScop
     $scope.search = {};
     $scope.orderField = 'score';
     $scope.orderReverse = 1;
+    
+    $scope.getSortClass = function(column) {
+        if($scope.orderField == column) {
+            if($scope.orderReverse != 1)
+            {
+                return 'arrow-up';
+            }
+            return 'arrow-down';
+        }
+        return '';
+    }
 });
 
 /**
@@ -739,6 +787,7 @@ app.controller('JudgeListCtrl', function ($scope, $cookies, $rootScope, pouchSer
     $scope.judges = [];
     $scope.search = {};
     $scope.orderField = 'name';
+    $scope.orderReverse = 1;
 
     $scope.getJudges = function () {
         pouchService.getJudges()
@@ -751,6 +800,17 @@ app.controller('JudgeListCtrl', function ($scope, $cookies, $rootScope, pouchSer
                 }
             );
     };
+
+    $scope.getSortClass = function(column) {
+        if($scope.orderField == column) {
+            if($scope.orderReverse != 1)
+            {
+                return 'arrow-up';
+            }
+            return 'arrow-down';
+        }
+        return '';
+    }
 
     $scope.getJudges();
 });

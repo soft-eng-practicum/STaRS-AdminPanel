@@ -19,10 +19,10 @@
         <thead>
           <tr>
             <th>
-              <a ng-click="orderField = 'name'">Judge</a>
+              <a ng-click="orderField = 'name'">Judge<div ng-class="getSortClass('name')"></div></a>
             </th>
             <th>
-              <a ng-click="orderField = 'surveyLength'">Number of Surveys</a>              
+              <a ng-click="orderField = 'surveyLength'">Number of Surveys<div ng-class="getSortClass('surveyLength')"></div></a>              
             </th>
             <th>
               Groups Surveyed

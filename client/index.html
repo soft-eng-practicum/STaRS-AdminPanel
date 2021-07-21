@@ -24,16 +24,16 @@
             <a class="navbar-brand" href="javascript:void(0)">GGC STaRS</a>
             <ul class="nav navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" ui-sref="dashboard" ng-click="checkAuth()">Dashboard</a>
+                <a class="nav-link" ui-sref="dashboard" ng-show="$root.isAuth" ng-click="checkAuth('dashboard')">Dashboard</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" ui-sref="posterList" ng-click="checkAuth()">Poster Reports</a>
+                <a class="nav-link" ui-sref="posterList" ng-show="$root.isAuth" ng-click="checkAuth('posterList')">Poster Reports</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" ui-sref="judgeList" ng-click="checkAuth()">Judge Reports</a>
+                <a class="nav-link" ui-sref="judgeList" ng-show="$root.isAuth" ng-click="checkAuth('judgeList')">Judge Reports</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" ui-sref="finalReport" ng-click="checkAuth()">Combined Reports</a>
+                <a class="nav-link" ui-sref="finalReport" ng-show="$root.isAuth" ng-click="checkAuth('finalReport')">Combined Reports</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" ui-sref="logout" ng-show="$root.isAuth">Logout</a>
