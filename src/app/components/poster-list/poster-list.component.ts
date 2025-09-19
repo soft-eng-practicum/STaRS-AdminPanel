@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-poster-list',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './poster-list.component.html',
   styleUrl: './poster-list.component.scss'
 })
-export class PosterList {
+export class PosterListComponent {
 
 }

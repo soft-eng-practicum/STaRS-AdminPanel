@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'final-report',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './final-report.component.html',
   styleUrl: './final-report.component.scss'
 })
-export class FinalReport {
+export class FinalReportComponent {
 
 }

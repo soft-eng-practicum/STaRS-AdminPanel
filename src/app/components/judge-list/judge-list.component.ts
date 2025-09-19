@@ -1,12 +1,14 @@
 
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'judge-list',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './judge-list.component.html',
   styleUrl: './judge-list.component.scss'
 })
-export class JudgeList {
+export class JudgeListComponent {
 
 }

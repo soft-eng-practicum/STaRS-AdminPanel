@@ -1,0 +1,42 @@
+<header>
+  <nav class="navbar navbar-expand-md navbar-dark ggc-green">
+    <div class="container">
+      <a class="navbar-brand" href="#">GGC STaRS</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbar-stars"
+        aria-controls="navbar-stars"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbar-stars">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/posters">Poster Reports</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/judges">Judge Reports</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/final-report">Combined Reports</a>
+          </li>
+          <li class="nav-item" *ngIf="isAuth">
+            <a class="nav-link" routerLink="/logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="container mt-4">
+  <router-outlet></router-outlet>
+</main>
