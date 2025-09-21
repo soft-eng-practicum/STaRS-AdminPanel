@@ -30,17 +30,24 @@
               }
             ],
             "styles":  [
-              "src/app/css/w3.css",
-              "src/app/css/style.css",
+              "public/css/w3.css",
+              "public/css/style.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.scss"
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ]
+
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",

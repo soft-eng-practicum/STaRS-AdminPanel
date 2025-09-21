@@ -1,1 +1,62 @@
-<p>poster-list works!</p>
+<div class="container">
+  <div class="card">
+    <div class="card-header ggc-green white-text py-2">
+      Poster Reports: Please select one of the following posters to continue
+    </div>
+    <div class="card-body">
+      <div class="md-form mb-3">
+        <i class="ion-search prefix"></i>
+        <input
+          type="text"
+          id="search"
+          class="form-control"
+          [(ngModel)]="searchValue"
+        />
+        <label for="search">Search: Poster, Student, or Judge</label>
+        <p> Found {{ getFilteredPosters().length }} posters. </p>
+        <p>
+          Order by: {{ orderField }}
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            (click)="toggleOrder()"
+          >
+            Reverse
+          </button>
+        </p>
+      </div>
+
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <th><a (click)="orderField = 'id'">ID</a></th>
+          <th><a (click)="orderField = 'group'">Poster</a></th>
+          <th><a (click)="orderField = 'students'">Students</a></th>
+          <th><a (click)="orderField = 'advisor'">Advisor</a></th>
+          <th><a (click)="orderField = 'countJudges'">Number of Surveys</a></th>
+          <th><a (click)="orderField = 'score'">Score</a></th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let poster of getFilteredPosters()">
+        <td>{{ poster.id }}</td>
+          <td>{{ poster.group }}</td>
+          <td>{{ poster.students }}</td>
+          <td>{{ poster.advisor }}</td>
+          <td>{{ poster.countJudges }}</td>
+          <td>{{ poster.score }}</td>
+          <td>
+            <a
+              [routerLink]="['/poster', poster.id]"
+              class="btn btn-primary btn-sm"
+            >
+              View
+            </a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
