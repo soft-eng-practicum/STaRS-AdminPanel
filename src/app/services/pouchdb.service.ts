@@ -2,62 +2,130 @@ declare let PouchDB: any;
 
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Poster } from '../models/poster.model';
+import { PosterList } from '../models/poster.model';
+import { JudgeSummary } from '../models/judge.model';
 
 
 @Injectable({ providedIn: 'root' })
 export class PouchdbService {
+  //for posters
   private localDB: any;
   private remoteDB: any;
 
-  constructor() {
-    console.log('[PouchdbService] Initializing...');
+  //for judges
+  private judgesLocalDB: any;
+  private judgesRemoteDB: any;
+  private judgesDBName = environment.couch.judgesDB;
 
+  constructor() {
+
+    //posters
     this.localDB = new PouchDB('conf');  // Local IndexedDB
     const remoteURL = `${environment.couch.protocol}://${environment.couch.username}:${environment.couch.password}@${environment.couch.host}:${environment.couch.port}/${environment.couch.confDB}`;
     this.remoteDB = new PouchDB(remoteURL);
+    this.startConfSync();
 
-    this.startSync();
+    //judges
+    this.judgesLocalDB = new PouchDB(this.judgesDBName);
+    const judgesURL = `${environment.couch.protocol}://${environment.couch.username}:${environment.couch.password}@${environment.couch.host}:${environment.couch.port}/${environment.couch.judgesDB}`;
+    this.judgesRemoteDB = new PouchDB(judgesURL);
+    this.startJudgesSync();
+
   }
 
-  private startSync(): void {
-    this.localDB.sync(this.remoteDB, {
-      live: true,
-      retry: true
-    })
-      .on('change', (info: any) => console.log('[Sync] change:', info))
-      .on('paused', (err: any) => console.log('[Sync] paused:', err))
-      .on('active', () => console.log('[Sync] active/resumed'))
-      .on('error', (err: any) => console.error('[Sync] error:', err));
+  private startConfSync(): void {
+    this.localDB.sync(this.remoteDB, {live: true, retry: true})
+      .on('change', (info: any) => console.log('Sync change:', info))
+      .on('paused', (err: any) => console.log('Sync paused:', err))
+      .on('active', () => console.log('Syn active/resumed'))
+      .on('error', (err: any) => console.error('Sync error:', err));
   }
 
-  async getPosters(): Promise<Poster[]> {
+  async getPosters(): Promise<PosterList[]> {
     try {
       const doc = await this.localDB.get(environment.configurationDocId);
       const postersJson = doc['posters_json'];
 
       if (!Array.isArray(postersJson)) {
-        console.warn('[getPosters] posters_json is invalid or not an array.');
+        console.warn('[getPosters] posters_json is invalid.');
         return [];
       }
 
       return postersJson
         .filter((p: any) => p['Judged?'] === 'Yes')
         .map((p: any) => ({
-          email: p['email'] ?? '',
-          id: Number(p['id'] ?? 0),
+          email: p['email'],
+          id: Number(p['id']),
           judges: [],
           countJudges: 0,
-          group: p['group'] ?? p['Poster'] ?? '',
-          subject: p['subject'] ?? '',
-          students: p['students'] ?? '',
-          advisor: p['advisor'] ?? '',
-          advisorEmail: p['advisorEmail'] ?? '',
+          group: p['group'],
+          subject: p['subject'],
+          students: p['students'],
+          advisor: p['advisor'],
+          advisorEmail: p['advisorEmail'],
           score: 0
         }));
     } catch (err: any) {
-      console.error(`[getPosters] Failed to load '${environment.configurationDocId}' from local DB.`, err);
+      console.error(`Posters Failed to load '${environment.configurationDocId}' from local DB.`, err);
       return [];
     }
   }
+
+  private startJudgesSync(): void {
+    this.judgesLocalDB.sync(this.judgesRemoteDB, { live: true, retry: true })
+      .on('change', (info: any) => console.log('Judges Sync change:', info))
+      .on('paused', (err: any) => console.log('Judges Sync paused:', err))
+      .on('active', () => console.log('Judges Sync active/resumed'))
+      .on('error', (err: any) => console.error('Judges Sync error:', err));
+    this.judgesLocalDB.info().then(console.log);
+
+  }
+
+  async getJudges(): Promise<JudgeSummary[]> {
+    try {
+      const res = await this.judgesLocalDB.allDocs({ include_docs: true });
+
+      const judges: JudgeSummary[] = [];
+
+      res.rows.forEach((row: any) => {
+        const doc = row.doc;
+
+        if (!doc || !doc._id) return;
+
+        const judge: JudgeSummary = {
+          id: doc._id,
+          name: doc.username || doc._id,
+          surveys: Array.isArray(doc.surveys) ? doc.surveys : [],
+          surveyLength: 0,
+          groupsSurveyed: []
+        };
+
+        judge.surveyLength = judge.surveys!.length;
+        judge.groupsSurveyed = judge.surveys!.map((s: any) => ({
+          id: s.groupId ?? '',
+          name: s.groupName ?? ''
+        }));
+
+        judges.push(judge);
+      });
+
+      return judges;
+    } catch (err) {
+      console.error('Judges Error:', err);
+      return [];
+    }
+  }
+
+  async getJudgesRaw(): Promise<any[]> {
+    try {
+      const res = await this.judgesLocalDB.allDocs({ include_docs: true });
+      return res.rows.map((r: { doc: any; }) => r.doc);
+    } catch (err) {
+      console.error(' Failed to load judge');
+      return [];
+    }
+  }
+
+
+
 }

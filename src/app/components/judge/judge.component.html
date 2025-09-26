@@ -1,1 +1,61 @@
-<p>judge works!</p>
+<div class="container">
+  <div class="card">
+    <div class="card-header ggc-green white-text">
+      <b>{{ judgeTitle() }}</b> - Judge Survey Results
+    </div>
+
+    <div class="card-body">
+      <div class="form-inline mb-3">
+        <label class="mr-2">What format would you like to export?</label>
+        <select class="form-control mr-2" [(ngModel)]="exportFormat">
+          <option value="csv">CSV</option>
+          <option value="pdf">PDF</option>
+        </select>
+        <button class="btn btn-primary btn-sm" (click)="export()">Export</button>
+      </div>
+
+      <div class="judge-csv-location mb-3">
+        <label>Your CSV will download when you click Export.</label>
+        <span class="ui-grid-exporter-csv-link">&nbsp;</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th style="width: 60px;">ID</th>
+            <th>Poster Name</th>
+            <th>Statement of Problem</th>
+            <th>Methodology</th>
+            <th>Results/Solution</th>
+            <th>Oral Presentation</th>
+            <th>Poster Layout</th>
+            <th>Impact</th>
+            <th>Total</th>
+            <th>Additional Comments</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let s of surveys()">
+            <td>
+              <a [routerLink]="['/poster', s.groupId]">{{ s.groupId }}</a>
+            </td>
+            <td>{{ s.groupName }}</td>
+            <td>{{ s.answers[0] }}</td>
+            <td>{{ s.answers[1] }}</td>
+            <td>{{ s.answers[2] }}</td>
+            <td>{{ s.answers[3] }}</td>
+            <td>{{ s.answers[4] }}</td>
+            <td>{{ s.answers[5] }}</td>
+            <td>{{ s.total }}</td>
+            <td>{{ s.answers[6] }}</td>
+          </tr>
+          <tr *ngIf="surveys().length === 0">
+            <td colspan="10" class="text-center text-muted">No surveys found for this judge.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,40 @@
-<p>poster works!</p>
+<div class="container" *ngIf="poster">
+  <div class="card">
+    <div class="card-header ggc-green white-text">
+      <b>#{{ poster.id }}: {{ poster.group }}</b> Poster - Judge Information and Survey Results
+    </div>
+    <div class="card-body">
+      <label>What format would you like to export?</label>
+      <select [(ngModel)]="exportFormat" class="form-control d-inline w-auto mx-2">
+        <option value="csv">CSV</option>
+        <option value="pdf">PDF</option>
+      </select>
+      <button class="btn btn-primary btn-sm" (click)="export()">Export</button>
+      <button class="btn btn-secondary btn-sm" (click)="email()" data-toggle="modal" data-target="#emailConfirmModal">Email</button>
+
+      <div class="poster-csv-location mt-3">
+        <label>Your CSV will show below:</label>
+        <span class="ui-grid-exporter-csv-link">&nbsp;</span>
+      </div>
+
+      <table class="table table-sm table-bordered mt-3">
+        <thead>
+        <tr>
+          <th>Judge</th>
+          <th *ngFor="let idx of [0,1,2,3,4,5]">Score {{ idx + 1 }}</th>
+          <th>Total</th>
+          <th>Comments</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let survey of surveys">
+          <td>{{ survey.judgeName }}</td>
+          <td *ngFor="let score of survey.answers.slice(0,6)">{{ score }}</td>
+          <td>{{ survey.answers[7] }}</td>
+          <td>{{ survey.answers[6] }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -51,3 +51,8 @@ thead {
 li.left {
   text-align: left;
 }
+
+.th {
+  background-color: #00704a !important;
+  color: #fff !important;
+}

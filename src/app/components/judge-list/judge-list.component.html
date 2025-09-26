@@ -1,1 +1,62 @@
-<p>judge-list works!</p>
+<div class="container">
+  <div class="card">
+    <div class="card-header ggc-green white-text py-2">
+      Judge Reports: Please select one of the following judges to continue
+    </div>
+
+    <div class="card-body">
+      <div class="md-form mb-3">
+        <i class="ion-search prefix"></i>
+        <input
+          type="text"
+          id="search"
+          class="form-control"
+          [(ngModel)]="searchValue"
+        />
+        <label for="search">Search: Poster, Student, or Judge</label>
+
+        <p>Found {{ getFilteredJudges().length }} judges.</p>
+        <p>
+          Order by:
+          <strong>{{ orderField }}</strong>
+          <button type="button" class="btn btn-primary btn-sm ml-2" (click)="toggleOrder()">
+            Reverse
+          </button>
+        </p>
+      </div>
+
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <th class = "th"><a (click)="setOrder('name')">Judge</a></th>
+          <th class = "th"><a (click)="setOrder('surveyLength')">Number of Surveys</a></th>
+          <th class = "th">Groups Surveyed</th>
+          <th class = "th"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let judge of getFilteredJudges()">
+          <td>{{ judge.name }}</td>
+          <td>{{ judge.surveyLength }}</td>
+          <td>
+            <ul class="mb-0">
+              <li class="left" *ngFor="let group of judge.groupsSurveyed">
+                <strong>#{{ group.id }}:</strong> {{ group.name }}
+              </li>
+            </ul>
+          </td>
+          <td>
+            <a
+              class="btn btn-primary btn-sm"
+              [routerLink]="['/judge', judge.id]"
+            >
+              View
+            </a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

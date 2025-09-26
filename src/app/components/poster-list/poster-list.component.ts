@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Poster } from '../../models/poster.model';
+import { PosterList } from '../../models/poster.model';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PouchdbService } from '../../services/pouchdb.service';
@@ -13,9 +13,9 @@ import { PouchdbService } from '../../services/pouchdb.service';
   styleUrls: ['./poster-list.component.scss']
 })
 export class PosterListComponent implements OnInit {
-  posters: Poster[] = [];
+  posters: PosterList[] = [];
   searchValue = '';
-  orderField: keyof Poster = 'id';
+  orderField: keyof PosterList = 'id';
   orderReverse = true;
 
   constructor(private pouchdb: PouchdbService) {}
@@ -25,7 +25,7 @@ export class PosterListComponent implements OnInit {
 
   }
 
-  getFilteredPosters(): Poster[] {
+  getFilteredPosters(): PosterList[] {
     return this.posters
       .filter(p =>
         (p.group + p.students + p.advisor)

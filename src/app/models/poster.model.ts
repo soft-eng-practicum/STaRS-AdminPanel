@@ -1,4 +1,4 @@
-export interface Poster {
+export interface PosterList {
   email: string;
   id: number;
   judges: string[];
