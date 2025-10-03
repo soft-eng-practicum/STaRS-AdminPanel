@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -21,17 +21,20 @@ type SurveyRow = {
   styleUrls: ['./judge.component.scss']
 })
 export class JudgeComponent implements OnInit {
-  exportFormat = 'csv';
+  exportFormat: 'csv' | 'pdf' = 'csv';
 
   judge = signal<JudgeSummary | null>(null);
-  surveys = signal<SurveyRow[]>([]);
+  rawData = signal<SurveyRow[]>([]);
 
-  judgeTitle = computed(() => this.judge()?.name ?? 'Judge');
+  sortField = signal<string>('groupId');
+  sortDir = signal<'asc' | 'desc'>('asc');
 
   constructor(
     private route: ActivatedRoute,
     private pouch: JudgeService
   ) {}
+
+  judgeTitle = computed(() => this.judge()?.name ?? 'Judge');
 
   async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id');
@@ -44,10 +47,10 @@ export class JudgeComponent implements OnInit {
       const rows: SurveyRow[] = j.surveys.map((s: any) => {
         const answers = Array.isArray(s.answers) ? [...s.answers] : [];
         while (answers.length < 7) answers.push('');
-        const total =
-          answers.slice(0, 6)
-            .map((v: any) => Number.parseInt(String(v), 10) || 0)
-            .reduce((a, b) => a + b, 0);
+        const total = answers
+          .slice(0, 6)
+          .map(v => parseInt(v || '0', 10) || 0)
+          .reduce((a, b) => a + b, 0);
 
         return {
           groupId: String(s.groupId ?? ''),
@@ -57,18 +60,54 @@ export class JudgeComponent implements OnInit {
         };
       });
 
-      this.surveys.set(rows);
+      this.rawData.set(rows);
     }
+  }
+
+  get sortedRows(): SurveyRow[] {
+    const field = this.sortField();
+    const dir = this.sortDir();
+    const data = [...this.rawData()];
+
+    return data.sort((a, b) => {
+      const aVal = this.getFieldValue(a, field);
+      const bVal = this.getFieldValue(b, field);
+      return dir === 'asc'
+        ? String(aVal).localeCompare(String(bVal), undefined, { numeric: true })
+        : String(bVal).localeCompare(String(aVal), undefined, { numeric: true });
+    });
+  }
+
+  private getFieldValue(row: SurveyRow, field: string): string | number {
+    if (field.startsWith('answers[')) {
+      const match = field.match(/\d+/);
+      const index = match ? Number(match[0]) : -1;
+      return row.answers[index] ?? '';
+    }
+    return (row as any)[field] ?? '';
+  }
+
+  sortBy(field: string): void {
+    if (this.sortField() === field) {
+      this.sortDir.set(this.sortDir() === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.sortField.set(field);
+      this.sortDir.set('asc');
+    }
+  }
+
+  getSortIcon(field: string): string {
+    if (this.sortField() !== field) return '';
+    return this.sortDir() === 'asc' ? 'ion-arrow-up-b' : 'ion-arrow-down-b';
   }
 
   export(): void {
-      const j = this.judge();
-      const s = this.surveys();
-      if (this.exportFormat === 'csv' && j && s.length) {
-        exportJSurveyCSV('JudgeResults', s, j.name);
-      } else {
-        alert('PDF export not implemented yet. Choose CSV for now.');
-      }
+    const j = this.judge();
+    const s = this.rawData();
+    if (this.exportFormat === 'csv' && j && s.length) {
+      exportJSurveyCSV('JudgeResults', s, j.name);
+    } else {
+      alert('PDF export not implemented yet.');
     }
-
   }
+}

@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { PosterList } from '../models/poster.model';
 import { JudgeSummary } from '../models/judge.model';
-
+import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class PouchdbService {
@@ -17,18 +17,19 @@ export class PouchdbService {
   private judgesRemoteDB: any;
   private judgesDBName = environment.couch.judgesDB;
 
-  constructor() {
-
+  constructor(private auth: AuthService) {
+    const user = this.auth.username;
+    const pass = this.auth.password;
     //posters
-    this.localDB = new PouchDB('conf');  // Local IndexedDB
-    const remoteURL = `${environment.couch.protocol}://${environment.couch.username}:${environment.couch.password}@${environment.couch.host}:${environment.couch.port}/${environment.couch.confDB}`;
+    this.localDB = new PouchDB('conf');
+    const remoteURL = `http://${user}:${pass}@${environment.couch.host}:${environment.couch.port}/${environment.couch.confDB}`;
     this.remoteDB = new PouchDB(remoteURL);
 
     this.startConfSync();
 
     //judges
     this.judgesLocalDB = new PouchDB(this.judgesDBName);
-    const judgesURL = `${environment.couch.protocol}://${environment.couch.username}:${environment.couch.password}@${environment.couch.host}:${environment.couch.port}/${environment.couch.judgesDB}`;
+    const judgesURL = `http://${user}:${pass}@${environment.couch.host}:${environment.couch.port}/${environment.couch.judgesDB}`;
     this.judgesRemoteDB = new PouchDB(judgesURL);
     this.startJudgesSync();
 

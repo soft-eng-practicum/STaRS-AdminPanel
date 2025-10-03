@@ -11,32 +11,33 @@
           type="text"
           id="search"
           class="form-control"
-          [(ngModel)]="searchValue"
+          [ngModel]="searchValue()"
+          (ngModelChange)="searchValue.set($event)"
         />
         <label for="search">Search: Poster, Student, or Judge</label>
 
-        <p>Found {{ getFilteredJudges().length }} judges.</p>
-        <p>
-          Order by:
-          <strong>{{ orderField }}</strong>
-          <button type="button" class="btn btn-primary btn-sm ml-2" (click)="toggleOrder()">
-            Reverse
-          </button>
-        </p>
+        <p>Found {{ sortedFilteredJudges.length }} judges.</p>
       </div>
 
-      <table class="table table-bordered">
+      <div class="table-responsive">
+      <table class="table table-bordered table-sm table-hover">
         <thead>
         <tr>
-          <th class = "th"><a (click)="setOrder('name')">Judge</a></th>
-          <th class = "th"><a (click)="setOrder('surveyLength')">Number of Surveys</a></th>
-          <th class = "th">Groups Surveyed</th>
-          <th class = "th"></th>
+          <th (click)="sortBy('name')">
+            Judge
+            <i class="ml-1" *ngIf="sortField() === 'name'" [ngClass]="getSortIcon('name')"></i>
+          </th>
+          <th (click)="sortBy('surveyLength')">
+            Number of Surveys
+            <i class="ml-1" *ngIf="sortField() === 'surveyLength'" [ngClass]="getSortIcon('surveyLength')"></i>
+          </th>
+          <th>Groups Surveyed</th>
+          <th></th>
         </tr>
         </thead>
 
         <tbody>
-        <tr *ngFor="let judge of getFilteredJudges()">
+        <tr *ngFor="let judge of sortedFilteredJudges">
           <td>{{ judge.name }}</td>
           <td>{{ judge.surveyLength }}</td>
           <td>
@@ -57,6 +58,7 @@
         </tr>
         </tbody>
       </table>
+      </div>
     </div>
   </div>
 </div>

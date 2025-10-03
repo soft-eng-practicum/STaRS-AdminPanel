@@ -35,7 +35,7 @@ export class PosterListComponent implements OnInit {
       .sort((a, b) => {
         const valA = a[this.sortField] ?? '';
         const valB = b[this.sortField] ?? '';
-        const cmp = String(valA).localeCompare(String(valB), undefined, { numeric: true });
+        const cmp = String(valA).localeCompare(String(valB), undefined, { numeric: true });//comparison
         return this.sortDir === 'asc' ? cmp : -cmp;
       });
   }
@@ -49,7 +49,7 @@ export class PosterListComponent implements OnInit {
     }
   }
 
-  getSortIcon(field: keyof PosterList): string {
+  getSortIcon(field:string): string {
     if (this.sortField !== field) return '';
     return this.sortDir === 'asc' ? 'ion-arrow-up-b' : 'ion-arrow-down-b';
   }

@@ -1,7 +1,8 @@
-
-import { Component, signal } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink } from '@angular/router';
+import { AuthService } from './services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,14 @@ import { RouterOutlet, RouterLink } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  protected readonly title = signal('AdminPanel');
-  isAuth = true; // temporary until login
+  constructor(private auth: AuthService,
+              private router: Router) {}
+
+  isAuth = computed(() => this.auth.isLoggedIn());
+
+  logout(): void {
+    this.auth.logout();
+    this.router.navigate(['/']);
+  }
+
 }

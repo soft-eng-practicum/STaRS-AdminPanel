@@ -14,7 +14,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse" id="navbar-stars">
+      <div class="collapse navbar-collapse" id="navbar-stars" *ngIf="isAuth()">
         <ul class="navbar-nav ml-auto pl-3">
           <li class="nav-item">
             <a class="nav-link" routerLink="/dashboard">Dashboard</a>
@@ -28,8 +28,8 @@
           <li class="nav-item">
             <a class="nav-link" routerLink="/final-report">Combined Reports</a>
           </li>
-          <li class="nav-item" *ngIf="isAuth">
-            <a class="nav-link" routerLink="/logout">Logout</a>
+          <li class="nav-item">
+            <a class="nav-link" (click)="logout()">Logout</a>
           </li>
         </ul>
       </div>

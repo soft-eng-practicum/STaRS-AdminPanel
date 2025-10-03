@@ -15,42 +15,47 @@
       </div>
 
       <div class="judge-csv-location mb-3">
-        <label>Your CSV will download when you click Export.</label>
+        <label>Your CSV will show below:</label>
         <span class="ui-grid-exporter-csv-link">&nbsp;</span>
       </div>
 
       <div class="table-responsive">
-        <table class="table table-bordered">
+        <table class="table table-bordered table-sm table-hover">
           <thead>
           <tr>
-            <th style="width: 60px;">ID</th>
-            <th>Poster Name</th>
-            <th>Statement of Problem</th>
-            <th>Methodology</th>
-            <th>Results/Solution</th>
-            <th>Oral Presentation</th>
-            <th>Poster Layout</th>
-            <th>Impact</th>
-            <th>Total</th>
-            <th>Additional Comments</th>
+            <th (click)="sortBy('groupId')">
+              ID
+              <i class="ml-1" *ngIf="sortField() === 'groupId'" [ngClass]="getSortIcon('groupId')"></i>
+            </th>
+            <th (click)="sortBy('groupName')">
+              Poster Name
+              <i class="ml-1" *ngIf="sortField() === 'groupName'" [ngClass]="getSortIcon('groupName')"></i>
+            </th>
+            <th *ngFor="let i of [0,1,2,3,4,5]" (click)="sortBy('answers[' + i + ']')">
+              Score {{ i + 1 }}
+              <i class="ml-1" *ngIf="sortField() === ('answers[' + i + ']')" [ngClass]="getSortIcon('answers[' + i + ']')"></i>
+            </th>
+            <th (click)="sortBy('total')">
+              Total
+              <i class="ml-1" *ngIf="sortField() === 'total'" [ngClass]="getSortIcon('total')"></i>
+            </th>
+            <th (click)="sortBy('answers[6]')">
+              Additional Comments
+              <i class="ml-1" *ngIf="sortField() === 'answers[6]'" [ngClass]="getSortIcon('answers[6]')"></i>
+            </th>
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let s of surveys()">
+          <tr *ngFor="let s of sortedRows">
             <td>
               <a [routerLink]="['/poster', s.groupId]">{{ s.groupId }}</a>
             </td>
             <td>{{ s.groupName }}</td>
-            <td>{{ s.answers[0] }}</td>
-            <td>{{ s.answers[1] }}</td>
-            <td>{{ s.answers[2] }}</td>
-            <td>{{ s.answers[3] }}</td>
-            <td>{{ s.answers[4] }}</td>
-            <td>{{ s.answers[5] }}</td>
+            <td *ngFor="let a of s.answers.slice(0, 6)">{{ a }}</td>
             <td>{{ s.total }}</td>
             <td>{{ s.answers[6] }}</td>
           </tr>
-          <tr *ngIf="surveys().length === 0">
+          <tr *ngIf="sortedRows.length === 0">
             <td colspan="10" class="text-center text-muted">No surveys found for this judge.</td>
           </tr>
           </tbody>

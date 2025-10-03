@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -13,23 +13,22 @@ import { JudgeSummary } from '../../models/judge.model';
   styleUrls: ['./judge-list.component.scss']
 })
 export class JudgeListComponent implements OnInit {
-  judges: JudgeSummary[] = [];
-
-  searchValue = '';
-  orderField: 'name' | 'surveyLength' = 'name';
-  orderReverse = false;
+  judges = signal<JudgeSummary[]>([]);
+  searchValue = signal('');
+  sortField = signal<'name' | 'surveyLength'>('name');
+  sortDir = signal<'asc' | 'desc'>('asc');
 
   constructor(private pouchdb: PouchdbService) {}
 
   async ngOnInit(): Promise<void> {
-    this.judges = await this.pouchdb.getJudges();
-
+    const list = await this.pouchdb.getJudges();
+    this.judges.set(list);
   }
 
-  getFilteredJudges(): JudgeSummary[] {
-    const needle = this.searchValue.toLowerCase();
+  get sortedFilteredJudges(): JudgeSummary[] {
+    const needle = this.searchValue().toLowerCase();
 
-    const filtered = this.judges.filter(j => {
+    const filtered = this.judges().filter(j => {
       const haystack =
         (j.name ?? '') +
         ' ' +
@@ -37,30 +36,28 @@ export class JudgeListComponent implements OnInit {
       return haystack.toLowerCase().includes(needle);
     });
 
-    filtered.sort((a, b) => {
+    return filtered.sort((a, b) => {
       let cmp = 0;
-      if (this.orderField === 'name') {
+      if (this.sortField() === 'name') {
         cmp = a.name.localeCompare(b.name);
       } else {
-        // surveyLength
         cmp = a.surveyLength - b.surveyLength;
       }
-      return this.orderReverse ? -cmp : cmp;
+      return this.sortDir() === 'asc' ? cmp : -cmp;
     });
-
-    return filtered;
   }
 
-  toggleOrder(): void {
-    this.orderReverse = !this.orderReverse;
-  }
-
-  setOrder(field: 'name' | 'surveyLength'): void {
-    if (this.orderField === field) {
-      this.toggleOrder();
+  sortBy(field: 'name' | 'surveyLength'): void {
+    if (this.sortField() === field) {
+      this.sortDir.set(this.sortDir() === 'asc' ? 'desc' : 'asc');
     } else {
-      this.orderField = field;
-      this.orderReverse = false;
+      this.sortField.set(field);
+      this.sortDir.set('asc');
     }
+  }
+
+  getSortIcon(field: string): string {
+    if (this.sortField() !== field) return '';
+    return this.sortDir() === 'asc' ? 'ion-arrow-up-b' : 'ion-arrow-down-b';
   }
 }

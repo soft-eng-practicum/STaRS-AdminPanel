@@ -8,15 +8,16 @@ import { PosterComponent } from './components/poster/poster.component';
 import { JudgeListComponent } from './components/judge-list/judge-list.component';
 import { JudgeComponent } from './components/judge/judge.component';
 import { FinalReportComponent } from './components/final-report/final-report.component';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'posters', component: PosterListComponent },
-  { path: 'poster/:id', component: PosterComponent },
-  { path: 'judges', component: JudgeListComponent },
-  { path: 'judge/:id', component: JudgeComponent },
-  { path: 'final-report', component: FinalReportComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'posters', component: PosterListComponent, canActivate: [AuthGuard] },
+  { path: 'poster/:id', component: PosterComponent, canActivate: [AuthGuard] },
+  { path: 'judges', component: JudgeListComponent, canActivate: [AuthGuard] },
+  { path: 'judge/:id', component: JudgeComponent, canActivate: [AuthGuard] },
+  { path: 'final-report', component: FinalReportComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' }
 ];
 
