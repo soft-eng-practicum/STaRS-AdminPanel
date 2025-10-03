@@ -23,6 +23,7 @@ export class PouchdbService {
     this.localDB = new PouchDB('conf');  // Local IndexedDB
     const remoteURL = `${environment.couch.protocol}://${environment.couch.username}:${environment.couch.password}@${environment.couch.host}:${environment.couch.port}/${environment.couch.confDB}`;
     this.remoteDB = new PouchDB(remoteURL);
+
     this.startConfSync();
 
     //judges
@@ -39,15 +40,28 @@ export class PouchdbService {
       .on('paused', (err: any) => console.log('Sync paused:', err))
       .on('active', () => console.log('Syn active/resumed'))
       .on('error', (err: any) => console.error('Sync error:', err));
+
   }
 
-  async getPosters(): Promise<PosterList[]> {
-    try {
-      const doc = await this.localDB.get(environment.configurationDocId);
-      const postersJson = doc['posters_json'];
+  private startJudgesSync(): void {
+    this.judgesLocalDB.sync(this.judgesRemoteDB, { live: true, retry: true })
+      .on('change', (info: any) => console.log('Judges Sync change:', info))
+      .on('paused', (err: any) => console.log('Judges Sync paused:', err))
+      .on('active', () => console.log('Judges Sync active/resumed'))
+      .on('error', (err: any) => console.error('Judges Sync error:', err));
+    this.judgesLocalDB.info().then(console.log);
+
+  }
+
+
+  async getPosters(retry = 3): Promise<PosterList[]> {
+    for (let i = 0; i < retry; i++) {
+      try {
+        const doc = await this.localDB.get(environment.configurationDocId);
+        const postersJson = doc['posters_json'];
 
       if (!Array.isArray(postersJson)) {
-        console.warn('[getPosters] posters_json is invalid.');
+        console.warn('getPosters posters_json is invalid.');
         return [];
       }
 
@@ -67,19 +81,18 @@ export class PouchdbService {
         }));
     } catch (err: any) {
       console.error(`Posters Failed to load '${environment.configurationDocId}' from local DB.`, err);
-      return [];
+        if (i < retry - 1) {
+          await new Promise(res => setTimeout(res, 1000 * (i + 1))); // backoff
+        } else {
+          console.error(`Sync Failed after ${retry} attempts.`);
+          return [];
+        }
+      }
     }
+
+    return [];
   }
 
-  private startJudgesSync(): void {
-    this.judgesLocalDB.sync(this.judgesRemoteDB, { live: true, retry: true })
-      .on('change', (info: any) => console.log('Judges Sync change:', info))
-      .on('paused', (err: any) => console.log('Judges Sync paused:', err))
-      .on('active', () => console.log('Judges Sync active/resumed'))
-      .on('error', (err: any) => console.error('Judges Sync error:', err));
-    this.judgesLocalDB.info().then(console.log);
-
-  }
 
   async getJudges(): Promise<JudgeSummary[]> {
     try {

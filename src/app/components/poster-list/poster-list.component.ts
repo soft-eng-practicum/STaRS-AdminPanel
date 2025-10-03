@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PosterList } from '../../models/poster.model';
 import { FormsModule } from '@angular/forms';
@@ -13,34 +13,44 @@ import { PouchdbService } from '../../services/pouchdb.service';
   styleUrls: ['./poster-list.component.scss']
 })
 export class PosterListComponent implements OnInit {
-  posters: PosterList[] = [];
+  posters = signal<PosterList[]>([]);
   searchValue = '';
-  orderField: keyof PosterList = 'id';
-  orderReverse = true;
+  sortField: keyof PosterList = 'id';
+  sortDir: 'asc' | 'desc' = 'asc';
 
   constructor(private pouchdb: PouchdbService) {}
 
   async ngOnInit(): Promise<void> {
-    this.posters = await this.pouchdb.getPosters();
-
+    const list = await this.pouchdb.getPosters();
+    this.posters.set(list);
   }
 
-  getFilteredPosters(): PosterList[] {
-    return this.posters
+  get filteredPosters(): PosterList[] {
+    return this.posters()
       .filter(p =>
         (p.group + p.students + p.advisor)
           .toLowerCase()
           .includes(this.searchValue.toLowerCase())
       )
       .sort((a, b) => {
-        const valA = a[this.orderField] ?? '';
-        const valB = b[this.orderField] ?? '';
-        const comparison = String(valA).localeCompare(String(valB), undefined, { numeric: true });
-        return this.orderReverse ? -comparison : comparison;
+        const valA = a[this.sortField] ?? '';
+        const valB = b[this.sortField] ?? '';
+        const cmp = String(valA).localeCompare(String(valB), undefined, { numeric: true });
+        return this.sortDir === 'asc' ? cmp : -cmp;
       });
   }
 
-  toggleOrder(): void {
-    this.orderReverse = !this.orderReverse;
+  sortBy(field: keyof PosterList): void {
+    if (this.sortField === field) {
+      this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortField = field;
+      this.sortDir = 'asc';
+    }
+  }
+
+  getSortIcon(field: keyof PosterList): string {
+    if (this.sortField !== field) return '';
+    return this.sortDir === 'asc' ? 'ion-arrow-up-b' : 'ion-arrow-down-b';
   }
 }

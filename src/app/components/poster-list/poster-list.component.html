@@ -13,50 +13,52 @@
           [(ngModel)]="searchValue"
         />
         <label for="search">Search: Poster, Student, or Judge</label>
-        <p> Found {{ getFilteredPosters().length }} posters. </p>
-        <p>
-          Order by: {{ orderField }}
-          <button
-            type="button"
-            class="btn btn-primary btn-sm"
-            (click)="toggleOrder()"
-          >
-            Reverse
-          </button>
-        </p>
+        <p> Found {{ filteredPosters.length }} posters. </p>
       </div>
 
-      <table class="table table-bordered">
-        <thead>
-        <tr>
-          <th class = "th"><a (click)="orderField = 'id'">ID</a></th>
-          <th class = "th"><a (click)="orderField = 'group'">Poster</a></th>
-          <th class = "th"><a (click)="orderField = 'students'">Students</a></th>
-          <th class = "th"><a (click)="orderField = 'advisor'">Advisor</a></th>
-          <th class = "th"><a (click)="orderField = 'countJudges'">Number of Surveys</a></th>
-          <th class = "th"><a (click)="orderField = 'score'">Score</a></th>
-          <th class = "th"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let poster of getFilteredPosters()">
-        <td>{{ poster.id }}</td>
-          <td>{{ poster.group }}</td>
-          <td>{{ poster.students }}</td>
-          <td>{{ poster.advisor }}</td>
-          <td>{{ poster.countJudges }}</td>
-          <td>{{ poster.score }}</td>
-          <td>
-            <a
-              [routerLink]="['/poster', poster.id]"
-              class="btn btn-primary btn-sm"
-            >
-              View
-            </a>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-bordered table-sm table-hover">
+          <thead>
+          <tr>
+            <th (click)="sortBy('id')">
+              ID <i *ngIf="sortField === 'id'" class="ml-1" [ngClass]="getSortIcon('id')"></i>
+            </th>
+            <th (click)="sortBy('group')">
+              Poster <i *ngIf="sortField === 'group'" class="ml-1" [ngClass]="getSortIcon('group')"></i>
+            </th>
+            <th (click)="sortBy('students')">
+              Students <i *ngIf="sortField === 'students'" class="ml-1" [ngClass]="getSortIcon('students')"></i>
+            </th>
+            <th (click)="sortBy('advisor')">
+              Advisor <i *ngIf="sortField === 'advisor'" class="ml-1" [ngClass]="getSortIcon('advisor')"></i>
+            </th>
+            <th (click)="sortBy('countJudges')">
+              Number of Surveys <i *ngIf="sortField === 'countJudges'" class="ml-1" [ngClass]="getSortIcon('countJudges')"></i>
+            </th>
+            <th (click)="sortBy('score')">
+              Score <i *ngIf="sortField === 'score'" class="ml-1" [ngClass]="getSortIcon('score')"></i>
+            </th>
+            <th></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr *ngFor="let poster of filteredPosters">
+            <td>{{ poster.id }}</td>
+            <td>{{ poster.group }}</td>
+            <td>{{ poster.students }}</td>
+            <td>{{ poster.advisor }}</td>
+            <td>{{ poster.countJudges }}</td>
+            <td>{{ poster.score }}</td>
+            <td>
+              <a [routerLink]="['/poster', poster.id]" class="btn btn-primary btn-sm">
+                View
+              </a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

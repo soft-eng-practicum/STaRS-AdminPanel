@@ -75,3 +75,42 @@ export function exportJSurveyCSV(filename: string, surveys: any[], title: string
   URL.revokeObjectURL(url);
 }
 
+export function exportFinalReportCSV(filename: string, surveys: any[]): void {
+  const header = [
+    'Judge Name',
+    'Poster ID',
+    'Poster Name',
+    'Statement of Problem',
+    'Methodology',
+    'Results/Solution',
+    'Oral Presentation',
+    'Poster Layout',
+    'Impact',
+    'Additional Comments'
+  ];
+
+  const rows = surveys.map(r => [
+    r.judgeName,
+    r.groupId,
+    r.groupName,
+    r.answers[0] ?? '',
+    r.answers[1] ?? '',
+    r.answers[2] ?? '',
+    r.answers[3] ?? '',
+    r.answers[4] ?? '',
+    r.answers[5] ?? '',
+    `"${String(r.answers[6] ?? '').replace(/"/g, '""')}"`
+  ]);
+
+  const csv = [header, ...rows].map(cols => cols.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${filename}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
