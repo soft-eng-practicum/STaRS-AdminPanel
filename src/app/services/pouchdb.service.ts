@@ -5,9 +5,14 @@ import { environment } from '../../environments/environment';
 import { PosterList } from '../models/poster.model';
 import { JudgeSummary } from '../models/judge.model';
 import { AuthService } from './auth.service';
+import { signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class PouchdbService {
+
+  syncingMessage = signal<string | null>(null);
+  syncingStatus = signal<'syncing' | 'complete' | null>(null);
+
   //for posters
   private localDB: any;
   private remoteDB: any;
@@ -17,39 +22,69 @@ export class PouchdbService {
   private judgesRemoteDB: any;
   private judgesDBName = environment.couch.judgesDB;
 
-  constructor(private auth: AuthService) {
+  constructor(private auth: AuthService) {}
+  initDatabases(): void {
     const user = this.auth.username;
     const pass = this.auth.password;
-    //posters
+
     this.localDB = new PouchDB('conf');
     const remoteURL = `http://${user}:${pass}@${environment.couch.host}:${environment.couch.port}/${environment.couch.confDB}`;
     this.remoteDB = new PouchDB(remoteURL);
 
     this.startConfSync();
 
-    //judges
-    this.judgesLocalDB = new PouchDB(this.judgesDBName);
+    this.judgesLocalDB = new PouchDB(environment.couch.judgesDB);
     const judgesURL = `http://${user}:${pass}@${environment.couch.host}:${environment.couch.port}/${environment.couch.judgesDB}`;
     this.judgesRemoteDB = new PouchDB(judgesURL);
-    this.startJudgesSync();
 
+    this.startJudgesSync();
   }
 
   private startConfSync(): void {
     this.localDB.sync(this.remoteDB, {live: true, retry: true})
-      .on('change', (info: any) => console.log('Sync change:', info))
-      .on('paused', (err: any) => console.log('Sync paused:', err))
+        .on('change', (info: any) => {
+          this.syncingMessage.set('Syncing data...');
+          this.syncingStatus.set('syncing');
+          this._clearMessage();
+        })
+        .on('paused', (err: any) => {
+          if (!err) {
+            this.syncingMessage.set('Sync complete.');
+            this.syncingStatus.set('complete');
+            this._clearMessage();
+          }
+        })
       .on('active', () => console.log('Syn active/resumed'))
-      .on('error', (err: any) => console.error('Sync error:', err));
+        .on('error', (err: any) => {
+          this.syncingMessage.set('DB connection error');
+          this.syncingStatus.set('syncing');
+          this._clearMessage();
+          console.error('Judges Sync error:', err);
+        });
 
   }
 
   private startJudgesSync(): void {
     this.judgesLocalDB.sync(this.judgesRemoteDB, { live: true, retry: true })
-      .on('change', (info: any) => console.log('Judges Sync change:', info))
-      .on('paused', (err: any) => console.log('Judges Sync paused:', err))
+        .on('change', (info: any) => {
+          this.syncingMessage.set('Syncing data...');
+          this.syncingStatus.set('syncing');
+          this._clearMessage();
+        })
+        .on('paused', (err: any) => {
+          if (!err) {
+            this.syncingMessage.set('Sync complete.');
+            this.syncingStatus.set('complete');
+            this._clearMessage();
+          }
+        })
       .on('active', () => console.log('Judges Sync active/resumed'))
-      .on('error', (err: any) => console.error('Judges Sync error:', err));
+      .on('error', (err: any) => {
+        this.syncingMessage.set('DB connection error');
+        this.syncingStatus.set('syncing');
+        this._clearMessage();
+        console.error('Judges Sync error:', err);
+      });
     this.judgesLocalDB.info().then(console.log);
 
   }
@@ -61,29 +96,48 @@ export class PouchdbService {
         const doc = await this.localDB.get(environment.configurationDocId);
         const postersJson = doc['posters_json'];
 
-      if (!Array.isArray(postersJson)) {
-        console.warn('getPosters posters_json is invalid.');
-        return [];
-      }
+        if (!Array.isArray(postersJson)) {
+          console.warn('[getPosters] posters_json is invalid.');
+          return [];
+        }
 
-      return postersJson
-        .filter((p: any) => p['Judged?'] === 'Yes')
-        .map((p: any) => ({
-          email: p['email'],
-          id: Number(p['id']),
-          judges: [],
-          countJudges: 0,
-          group: p['group'],
-          subject: p['subject'],
-          students: p['students'],
-          advisor: p['advisor'],
-          advisorEmail: p['advisorEmail'],
-          score: 0
-        }));
+        const judgeDocs = await this.judgesLocalDB.allDocs({ include_docs: true });
+        const allSurveys = judgeDocs.rows.flatMap((r: { doc: { surveys: any; }; }) =>
+            Array.isArray(r.doc?.surveys) ? r.doc.surveys : []
+        );
+
+        return postersJson
+            .filter((p: any) => p['Judged?'] === 'Yes')
+            .map((p: any) => {
+              const groupId = String(p['id']);
+              const surveys = allSurveys.filter((s: { groupId: any; }) => String(s.groupId) === groupId);
+
+              const scores = surveys.map((s: { answers: any; }) =>
+                  (s.answers ?? []).slice(0, 6)
+                      .map((v: any) => parseInt(v) || 0)
+                      .reduce((a: any, b: any) => a + b, 0)
+              );
+
+              const avgScore = scores.length
+                  ? Math.round(scores.reduce((a: any, b: any) => a + b, 0) / scores.length) : 0;
+
+              return {
+                email: p['email'],
+                id: Number(p['id']),
+                judges: [],
+                countJudges: surveys.length,
+                group: p['group'],
+                subject: p['subject'],
+                students: p['students'],
+                advisor: p['advisor'],
+                advisorEmail: p['advisorEmail'],
+                score: avgScore
+              };
+            });
     } catch (err: any) {
       console.error(`Posters Failed to load '${environment.configurationDocId}' from local DB.`, err);
         if (i < retry - 1) {
-          await new Promise(res => setTimeout(res, 1000 * (i + 1))); // backoff
+          await new Promise(res => setTimeout(res, 500 * (i + 1))); // backoff
         } else {
           console.error(`Sync Failed after ${retry} attempts.`);
           return [];
@@ -140,6 +194,11 @@ export class PouchdbService {
     }
   }
 
-
+  private _clearMessage(): void {
+    setTimeout(() => {
+      this.syncingMessage.set(null);
+      this.syncingStatus.set(null);
+    }, 2000);
+  }
 
 }

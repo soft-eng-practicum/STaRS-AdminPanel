@@ -19,8 +19,8 @@ export class PosterComponent implements OnInit {
   poster?: PosterList;
   exportFormat: 'csv' | 'pdf' = 'csv';
 
-  rawData = signal<SurveyResult[]>([]);
-  sortField = signal<string>('judgeName');
+  rawData = signal<SurveyResultWithTotal[]>([]);
+  sortField = signal<'judgeName' | `answers[${number}]` | 'total'>('judgeName');
   sortDir = signal<'asc' | 'desc'>('asc');
 
   constructor(
@@ -38,10 +38,21 @@ export class PosterComponent implements OnInit {
     if (!this.poster) return;
 
     const surveys = await this.posterService.getGroupSurveys(String(this.poster.id));
-    this.rawData.set(surveys);
+    const processed = surveys.map(s => {
+      const total = s.answers
+        .slice(0, 6)
+        .reduce((sum, val) => sum + (parseInt(val) || 0), 0);
+
+      return {
+        ...s,
+        total
+      };
+    });
+
+    this.rawData.set(processed);
   }
 
-  get sortedRows(): SurveyResult[] {
+  get sortedRows(): SurveyResultWithTotal[] {
     const field = this.sortField();
     const dir = this.sortDir();
     const data = [...this.rawData()];
@@ -56,7 +67,8 @@ export class PosterComponent implements OnInit {
     });
   }
 
-  private getFieldValue(row: SurveyResult, field: string): string | number {
+  private getFieldValue(row: SurveyResultWithTotal, field: string): string | number {
+    if (field === 'total') return row.total;
     if (field.startsWith('answers[')) {
       const idx = Number(field.match(/\d+/)?.[0] ?? -1);
       return row.answers[idx] ?? '';
@@ -64,7 +76,7 @@ export class PosterComponent implements OnInit {
     return (row as any)[field] ?? '';
   }
 
-  sortBy(field: string): void {
+  sortBy(field: 'judgeName' | `answers[${number}]` | 'total'): void {
     if (this.sortField() === field) {
       this.sortDir.set(this.sortDir() === 'asc' ? 'desc' : 'asc');
     } else {
@@ -73,9 +85,17 @@ export class PosterComponent implements OnInit {
     }
   }
 
-  getSortIcon(field: string): string {
+  getSortIcon(field: 'judgeName' | `answers[${number}]` | 'total'): string {
     if (this.sortField() !== field) return '';
     return this.sortDir() === 'asc' ? 'ion-arrow-up-b' : 'ion-arrow-down-b';
+  }
+
+  answerField(index: number): `answers[${number}]` {
+    return `answers[${index}]`;
+  }
+
+  sortAnswer(index: number): void {
+    this.sortBy(this.answerField(index));
   }
 
   export(): void {
@@ -90,8 +110,11 @@ export class PosterComponent implements OnInit {
       alert('PDF export not implemented yet.');
     }
   }
-
   email(): void {
     alert('Email functionality not yet implemented.');
   }
+}
+
+interface SurveyResultWithTotal extends SurveyResult {
+  total: number;
 }

@@ -24,4 +24,5 @@ export interface JudgeSummary {
 export interface SurveyResult {
   judgeName: string;
   answers: string[];
+  total: number;
 }

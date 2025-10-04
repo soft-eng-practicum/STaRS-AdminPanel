@@ -25,14 +25,15 @@
             <i class="ml-1" *ngIf="sortField() === 'judgeName'" [ngClass]="getSortIcon('judgeName')"></i>
           </th>
 
-          <th *ngFor="let idx of [0,1,2,3,4,5]" (click)="sortBy('answers[' + idx + ']')">
+          <th *ngFor="let idx of [0,1,2,3,4,5]" (click)="sortAnswer(idx)">
             Score {{ idx + 1 }}
-            <i class="ml-1" *ngIf="sortField() === ('answers[' + idx + ']')" [ngClass]="getSortIcon('answers[' + idx + ']')"></i>
+            <i class="ml-1" *ngIf="sortField() === answerField(idx)" [ngClass]="getSortIcon(answerField(idx))"></i>
           </th>
 
-          <th (click)="sortBy('answers[7]')">
+
+          <th (click)="sortBy('total')">
             Total
-            <i class="ml-1" *ngIf="sortField() === 'answers[7]'" [ngClass]="getSortIcon('answers[7]')"></i>
+            <i class="ml-1" *ngIf="sortField() === 'total'" [ngClass]="getSortIcon('total')"></i>
           </th>
 
           <th (click)="sortBy('answers[6]')">
@@ -45,7 +46,7 @@
         <tr *ngFor="let survey of sortedRows">
           <td>{{ survey.judgeName }}</td>
           <td *ngFor="let score of survey.answers.slice(0, 6)">{{ score }}</td>
-          <td>{{ survey.answers[7] }}</td>
+          <td>{{ survey.total }}</td>
           <td>{{ survey.answers[6] }}</td>
         </tr>
         </tbody>

@@ -1,8 +1,9 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
+import { PouchdbService } from './services/pouchdb.service';
 
 @Component({
   selector: 'app-root',
@@ -12,14 +13,16 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  constructor(private auth: AuthService,
-              private router: Router) {}
-
+  private pouch = inject(PouchdbService);
+  syncingMessage = computed(() => this.pouch.syncingMessage());
+  syncingStatus = computed(() => this.pouch.syncingStatus());
   isAuth = computed(() => this.auth.isLoggedIn());
+  constructor(private auth: AuthService, private router: Router) {}
 
   logout(): void {
     this.auth.logout();
     this.router.navigate(['/']);
   }
+
 
 }

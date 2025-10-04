@@ -33,6 +33,7 @@ export class AuthService {
       this._username.set(username);
       this._password.set(password);
       this._isLoggedIn.set(true);
+       await testDB.close();
       return true;
     } catch (err) {
       console.error('Login failed:', err);
