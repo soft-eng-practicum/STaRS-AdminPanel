@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import {Component, effect, OnInit, signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -18,9 +18,19 @@ export class JudgeListComponent implements OnInit {
   sortField = signal<'name' | 'surveyLength'>('name');
   sortDir = signal<'asc' | 'desc'>('asc');
 
-  constructor(private pouchdb: PouchdbService) {}
+  constructor(private pouchdb: PouchdbService) {
+    effect(() => {
+      const _ = this.pouchdb.dbUpdated();
+      this.loadJudges();
+    });
+  }
 
   async ngOnInit(): Promise<void> {
+    await this.loadJudges();
+
+  }
+
+  private async loadJudges(): Promise<void> {
     const list = await this.pouchdb.getJudges();
     this.judges.set(list);
   }

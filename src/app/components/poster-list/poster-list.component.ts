@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import {Component, OnInit, signal, computed, effect} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PosterList } from '../../models/poster.model';
 import { FormsModule } from '@angular/forms';
@@ -18,11 +18,22 @@ export class PosterListComponent implements OnInit {
   sortField: keyof PosterList = 'id';
   sortDir: 'asc' | 'desc' = 'asc';
 
-  constructor(private pouchdb: PouchdbService) {}
+  constructor(private pouchdb: PouchdbService) {
+    effect(() => {
+      const _ = this.pouchdb.dbUpdated();
+      this.reloadData();
+    });
+  }
 
   async ngOnInit(): Promise<void> {
     const list = await this.pouchdb.getPosters();
     this.posters.set(list);
+
+  }
+
+  private async reloadData(): Promise<void> {
+    const updatedList = await this.pouchdb.getPosters();
+    this.posters.set(updatedList);
   }
 
   get filteredPosters(): PosterList[] {

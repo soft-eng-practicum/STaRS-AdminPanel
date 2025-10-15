@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import {Component, effect, OnInit, signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PouchdbService } from '../../services/pouchdb.service';
@@ -25,9 +25,19 @@ export class FinalReportComponent implements OnInit {
   sortField = signal<keyof SurveyRow | `answers[${number}]` | ''>('judgeName');
   sortDir = signal<'asc' | 'desc'>('asc');
 
-  constructor(private pouchdb: PouchdbService) {}
+  constructor(private pouchdb: PouchdbService) {
+    effect(() => {
+      const _ = this.pouchdb.dbUpdated();
+      this.loadFinalData();
+    });
+  }
 
   async ngOnInit(): Promise<void> {
+    await this.loadFinalData();
+
+  }
+
+  private async loadFinalData(): Promise<void> {
     const docs = await this.pouchdb.getJudgesRaw();
 
     const allSurveys: SurveyRow[] = [];

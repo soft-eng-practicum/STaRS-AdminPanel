@@ -10,6 +10,7 @@ import { signal } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class PouchdbService {
 
+  dbUpdated = signal<number>(0);
   syncingMessage = signal<string | null>(null);
   syncingStatus = signal<'syncing' | 'complete' | null>(null);
 
@@ -38,6 +39,7 @@ export class PouchdbService {
     this.judgesRemoteDB = new PouchDB(judgesURL);
 
     this.startJudgesSync();
+    this.initChangeWatchers();
   }
 
   private startConfSync(): void {
@@ -201,4 +203,24 @@ export class PouchdbService {
     }, 2000);
   }
 
+  initChangeWatchers(): void {
+    // Posters
+    if (this.localDB) {
+      this.localDB
+        .changes({ since: 'now', live: true, include_docs: true })
+        .on('change', () => this.onDatabaseChange());
+    }
+
+    // Judges
+    if (this.judgesLocalDB) {
+      this.judgesLocalDB
+        .changes({ since: 'now', live: true, include_docs: true })
+        .on('change', () => this.onDatabaseChange());
+    }
+  }
+
+  private onDatabaseChange(): void {
+    //  Notify the rest of the app
+    this.dbUpdated.set(Date.now());
+  }
 }

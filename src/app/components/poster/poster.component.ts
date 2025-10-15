@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import {Component, effect, OnInit, signal} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -27,9 +27,19 @@ export class PosterComponent implements OnInit {
     private route: ActivatedRoute,
     private pouchdb: PouchdbService,
     private posterService: PosterService
-  ) {}
+  ) {
+    effect(() => {
+      const _ = this.pouchdb.dbUpdated(); // watch for DB updates
+      this.loadPosterData();
+    });
+  }
 
   async ngOnInit(): Promise<void> {
+    await this.loadPosterData();
+
+  }
+
+  private async loadPosterData(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
 
@@ -43,10 +53,7 @@ export class PosterComponent implements OnInit {
         .slice(0, 6)
         .reduce((sum, val) => sum + (parseInt(val) || 0), 0);
 
-      return {
-        ...s,
-        total
-      };
+      return { ...s, total };
     });
 
     this.rawData.set(processed);

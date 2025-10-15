@@ -1,10 +1,11 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import {Component, OnInit, signal, computed, effect} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { JudgeSummary } from '../../models/judge.model';
 import { exportJSurveyCSV } from '../../../utils/csv-export.util';
 import { JudgeService } from '../../services/judge.service';
+import {PouchdbService} from '../../services/pouchdb.service';
 
 type SurveyRow = {
   groupId: string;
@@ -31,12 +32,23 @@ export class JudgeComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private pouch: JudgeService
-  ) {}
+    private pouch: JudgeService,
+    private pouchdb: PouchdbService,
+  ) {
+    effect(() => {
+      const _ = this.pouchdb.dbUpdated();
+      this.loadJudgeData();
+    });
+  }
 
   judgeTitle = computed(() => this.judge()?.name ?? 'Judge');
 
   async ngOnInit(): Promise<void> {
+    await this.loadJudgeData();
+
+  }
+
+  private async loadJudgeData(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
 

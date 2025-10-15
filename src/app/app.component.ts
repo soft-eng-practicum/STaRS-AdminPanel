@@ -19,6 +19,13 @@ export class AppComponent {
   isAuth = computed(() => this.auth.isLoggedIn());
   constructor(private auth: AuthService, private router: Router) {}
 
+  ngOnInit(): void {
+    //if session restored, start sync automatically
+    if (this.auth.isLoggedIn()) {
+      this.pouch.initDatabases();
+    }
+  }
+
   logout(): void {
     this.auth.logout();
     this.router.navigate(['/']);
