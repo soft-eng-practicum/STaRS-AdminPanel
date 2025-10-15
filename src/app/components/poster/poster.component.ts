@@ -7,6 +7,8 @@ import { PouchdbService } from '../../services/pouchdb.service';
 import { PosterService } from '../../services/poster.service';
 import { SurveyResult } from '../../models/judge.model';
 import { exportPosterCsv } from '../../../utils/csv-export.util';
+import { EmailService } from '../../services/email.service';
+
 
 @Component({
   selector: 'app-poster-detail',
@@ -26,7 +28,8 @@ export class PosterComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private pouchdb: PouchdbService,
-    private posterService: PosterService
+    private posterService: PosterService,
+    private emailService: EmailService
   ) {
     effect(() => {
       const _ = this.pouchdb.dbUpdated(); // watch for DB updates
@@ -117,8 +120,14 @@ export class PosterComponent implements OnInit {
       alert('PDF export not implemented yet.');
     }
   }
-  email(): void {
-    alert('Email functionality not yet implemented.');
+
+  async email(): Promise<void> {
+    if (!this.poster || !this.rawData().length) {
+      alert('No data to email.');
+      return;
+    }
+
+    await this.emailService.sendPosterResultsEmail(this.poster, this.rawData());
   }
 }
 

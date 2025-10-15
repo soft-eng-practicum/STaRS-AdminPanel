@@ -1,10 +1,11 @@
 export function exportPosterCsv(
   groupTitle: string,
   surveys: { judgeName: string; answers: string[] }[],
-  filename: string
-): void {
+  filename: string,
+  returnString = false
+): string | void {
   if (!surveys || surveys.length === 0) {
-    console.warn('[CSV Export] No surveys to export.');
+    console.warn('No surveys to export.');
     return;
   }
 
@@ -24,6 +25,7 @@ export function exportPosterCsv(
   const csvContent = [headers, ...rows]
     .map(e => e.join(','))
     .join('\n');
+  if (returnString) return csvContent;
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
