@@ -6,13 +6,16 @@ import { exportPosterCsv } from '../../utils/csv-export.util';
 
 @Injectable({ providedIn: 'root' })
 export class EmailService {
-  private apiUrl = '/api/send-email';
+  private apiUrl = 'http://localhost:3000/api/send-email';
 
   constructor(private http: HttpClient) {}
 
+  /**
+   * Sends judging results via email for a given poster.
+   */
   async sendPosterResultsEmail(poster: PosterList, surveys: SurveyResult[]): Promise<void> {
     if (!poster.email && !poster.advisorEmail) {
-      alert('No valid recipient email found.');
+      alert('No recipient email found for this poster.');
       return;
     }
 
@@ -33,16 +36,10 @@ Sincerely,
 STARS Judging Support
 `;
 
-    // Generate CSV content for attachment
-    const csvContent = exportPosterCsv(poster.group, surveys, 'results', true);
+    // Use exportPosterCsv to get CSV text content
+    const csvContent = exportPosterCsv(poster.group, surveys, 'results', true) as string;
 
     const payload = {
-      server: 'smtp-relay.brevo.com',
-      port: 587,
-      senderName: 'STARS Judging Support',
-      senderEmail: 'cgunay@ggc.edu',
-      username: 'cengique@gmail.com',
-      password: 'YOUR_SMTP_PASSWORD',
       to: recipients,
       subject: 'STaRS Judging Results and Feedback',
       text: message,
@@ -57,8 +54,8 @@ STARS Judging Support
     try {
       await this.http.post(this.apiUrl, payload).toPromise();
       alert('Email sent successfully!');
-    } catch (err) {
-      console.error('Email send failed:', err);
+    } catch (error) {
+      console.error('Email send failed:', error);
       alert('Failed to send email.');
     }
   }

@@ -15,7 +15,7 @@ router.post('/send-email', async (req, res) => {
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.BREVO_SERVER,
-      port: parseInt(process.env.BREVO_PORT, 10),
+      port: Number(process.env.BREVO_PORT),
       secure: false,
       auth: {
         user: process.env.BREVO_USER,
