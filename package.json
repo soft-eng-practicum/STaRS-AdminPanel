@@ -1,12 +1,15 @@
 {
   "name": "admin-panel",
   "version": "0.0.0",
+  "private": true,
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "start:frontend": "ng serve",
+    "start:backend": "npm run start --prefix server",
+    "start": "concurrently -n FRONTEND,BACKEND -c cyan,green \"npm run start:frontend\" \"npm run start:backend\""
   },
   "prettier": {
     "printWidth": 100,
@@ -20,7 +23,6 @@
       }
     ]
   },
-  "private": true,
   "dependencies": {
     "@angular/common": "^20.2.0",
     "@angular/compiler": "^20.2.0",
@@ -47,6 +49,7 @@
     "@types/jasmine": "~5.1.0",
     "@types/node": "^24.5.2",
     "@types/pouchdb": "",
+    "concurrently": "^8.2.2",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

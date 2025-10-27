@@ -29,15 +29,14 @@ router.post('/send-email', async (req, res) => {
       to,
       subject,
       text,
-      attachments
+      // attachments // backup
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log(' Email sent:', info.messageId);
-
+    console.log('Email sent:', info.messageId);
     res.status(200).send({ success: true, messageId: info.messageId });
   } catch (err) {
-    console.error(' Email sending failed:', err);
+    console.error('Email sending failed:', err);
     res.status(500).send({ success: false, error: err.message });
   }
 });
