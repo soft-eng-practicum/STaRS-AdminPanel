@@ -113,7 +113,6 @@
               </button>
             </div>
           </div>
-
         </div>
 
         <!-- Subject -->
@@ -122,26 +121,19 @@
           <input [(ngModel)]="emailSubject" class="form-control" />
         </div>
 
-        <!-- Body -->
+        <!-- Body (already includes labeled results text) -->
         <div class="form-group mt-3">
           <label>Body</label>
           <textarea [(ngModel)]="emailBody" class="form-control" rows="10"></textarea>
         </div>
 
-        <!-- Attachments preview (just label) -->
-<!--        <div class="form-group">-->
-<!--          <label>Attachment</label>-->
-<!--          <div><code>{{ attachmentName }}</code> (CSV)</div>-->
-<!--        </div>-->
-
-        <!-- Email content preview label -->
+        <!-- Info about content -->
         <div class="form-group">
           <label>Email Content Preview</label>
           <div class="text-muted small">
-            This message will include a summary of results (labeled text format) directly in the email body.
+            This message includes a labeled summary of results directly in the email body.
           </div>
         </div>
-
 
       </div>
 
