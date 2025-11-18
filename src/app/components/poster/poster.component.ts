@@ -22,6 +22,15 @@ export class PosterComponent implements OnInit, AfterViewInit {
   poster?: PosterList;
   exportFormat: 'csv' | 'pdf' = 'csv';
 
+  criteriaLabels = [
+    'Statement of Problem',
+    'Methodology',
+    'Results/Solution',
+    'Oral Presentation',
+    'Poster Layout',
+    'Impact'
+  ];
+
   rawData = signal<SurveyResultWithTotal[]>([]);
   sortField = signal<'judgeName' | `answers[${number}]` | 'total'>('judgeName');
   sortDir = signal<'asc' | 'desc'>('asc');

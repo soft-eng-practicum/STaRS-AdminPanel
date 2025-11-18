@@ -68,7 +68,7 @@ export class EmailService {
         successCount++;
       } catch (err) {
         console.error('Bulk email failure on one item:', err);
-        // continue with the rest
+
       }
     }
 

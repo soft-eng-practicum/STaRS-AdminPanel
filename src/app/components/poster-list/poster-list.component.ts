@@ -23,8 +23,7 @@ export class PosterListComponent implements OnInit {
   sortField: keyof PosterList = 'id';
   sortDir: 'asc' | 'desc' = 'asc';
 
-  // ---- Email Multiple modal state ----
-  showSelector = false;
+  // ---- Email Multiple state ----
   selectedPosters: PosterList[] = [];
 
   globalToList: string[] = [];
@@ -59,6 +58,8 @@ export class PosterListComponent implements OnInit {
   private async reloadData(): Promise<void> {
     const updatedList = await this.pouchdb.getPosters();
     this.posters.set(updatedList);
+
+    // keep selected posters that still exist after reload
     this.selectedPosters = this.selectedPosters
       .map(sel => updatedList.find(p => p.id === sel.id))
       .filter((p): p is PosterList => !!p);
@@ -93,31 +94,14 @@ export class PosterListComponent implements OnInit {
     return this.sortDir === 'asc' ? 'ion-arrow-up-b' : 'ion-arrow-down-b';
   }
 
+  // checkbox handler from template
   onPosterCheckboxChange(event: Event, poster: PosterList): void {
-    const input = event.target as HTMLInputElement;
+    const input = event.target as HTMLInputElement | null;
+    if (!input) return;
     this.togglePoster(poster, input.checked);
   }
 
-
-  // ---- Selection helpers ----
-  openMultiEmailModal(): void {
-    this.emailError = '';
-    this.showSelector = true;
-    $('#multiEmailModal').modal('show');
-  }
-
-  closeMultiEmailModal(): void {
-    $('#multiEmailModal').modal('hide');
-    setTimeout(() => {
-      $('.modal-backdrop').remove();
-      $('body').removeClass('modal-open').css('padding-right', '').css('overflow', 'auto');
-    }, 50);
-  }
-
-  toggleSelector(): void {
-    this.showSelector = !this.showSelector;
-  }
-
+  // ---- selection helpers ----
   isSelected(p: PosterList): boolean {
     return this.selectedPosters.some(sel => sel.id === p.id);
   }
@@ -138,6 +122,33 @@ export class PosterListComponent implements OnInit {
     this.selectedPosters = [];
   }
 
+  // ---- bulk actions entry point ----
+  onBulkEmail(): void {
+    this.emailError = '';
+    if (!this.selectedPosters.length) {
+      this.showToast('Please select at least one poster first.', true);
+      return;
+    }
+    this.openMultiEmailModal();
+  }
+
+  openMultiEmailModal(): void {
+    this.emailError = '';
+    $('#multiEmailModal').modal('show');
+  }
+
+  closeMultiEmailModal(): void {
+    $('#multiEmailModal').modal('hide');
+    setTimeout(() => {
+      $('.modal-backdrop').remove();
+      $('body')
+        .removeClass('modal-open')
+        .css('padding-right', '')
+        .css('overflow', 'auto');
+    }, 50);
+  }
+
+  // ---- global recipients ----
   addGlobalRecipient(): void {
     const v = (this.newGlobalRecipient || '').trim();
     if (!v) return;
@@ -169,7 +180,6 @@ export class PosterListComponent implements OnInit {
     this.emailError = '';
 
     try {
-
       const items: Array<{
         to: string[];
         subject: string;
@@ -183,7 +193,6 @@ export class PosterListComponent implements OnInit {
       for (const poster of this.selectedPosters) {
         const surveys = await this.posterSvc.getGroupSurveys(String(poster.id));
         const csvString = exportPosterCsv(poster.group, surveys, 'results', true) as string;
-
 
         const judgesCount = surveys.length;
         const header =
@@ -200,10 +209,10 @@ export class PosterListComponent implements OnInit {
         const perPosterRecipients = [poster.email, poster.advisorEmail]
           .filter((e): e is string => !!e && !!e.trim());
 
-        // Merge global recipient
-        const mergedRecipients = Array.from(new Set([...perPosterRecipients, ...this.globalToList]));
+        const mergedRecipients = Array.from(
+          new Set([...perPosterRecipients, ...this.globalToList])
+        );
 
-        // Skip if nobody to send to
         if (!mergedRecipients.length) continue;
 
         items.push({
@@ -254,6 +263,4 @@ export class PosterListComponent implements OnInit {
     setTimeout(() => (toast.style.opacity = '0'), 2200);
     setTimeout(() => toast.remove(), 2500);
   }
-
-  protected readonly HTMLInputElement = HTMLInputElement;
 }

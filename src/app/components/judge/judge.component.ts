@@ -24,6 +24,15 @@ type SurveyRow = {
 export class JudgeComponent implements OnInit {
   exportFormat: 'csv' | 'pdf' = 'csv';
 
+  criteriaLabels = [
+    'Statement of Problem',
+    'Methodology',
+    'Results/Solution',
+    'Oral Presentation',
+    'Poster Layout',
+    'Impact'
+  ];
+
   judge = signal<JudgeSummary | null>(null);
   rawData = signal<SurveyRow[]>([]);
 

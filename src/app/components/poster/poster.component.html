@@ -35,9 +35,11 @@
             <i class="ml-1" *ngIf="sortField() === 'judgeName'" [ngClass]="getSortIcon('judgeName')"></i>
           </th>
 
-          <th *ngFor="let idx of [0,1,2,3,4,5]" (click)="sortAnswer(idx)">
-            Score {{ idx + 1 }}
-            <i class="ml-1" *ngIf="sortField() === answerField(idx)" [ngClass]="getSortIcon(answerField(idx))"></i>
+          <th *ngFor="let label of criteriaLabels; let idx = index" (click)="sortAnswer(idx)">
+            {{ label }}
+            <i class="ml-1"
+               *ngIf="sortField() === answerField(idx)"
+               [ngClass]="getSortIcon(answerField(idx))"></i>
           </th>
 
           <th (click)="sortBy('total')">

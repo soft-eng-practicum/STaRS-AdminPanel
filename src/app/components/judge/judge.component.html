@@ -31,10 +31,14 @@
               Poster Name
               <i class="ml-1" *ngIf="sortField() === 'groupName'" [ngClass]="getSortIcon('groupName')"></i>
             </th>
-            <th *ngFor="let i of [0,1,2,3,4,5]" (click)="sortBy('answers[' + i + ']')">
-              Score {{ i + 1 }}
-              <i class="ml-1" *ngIf="sortField() === ('answers[' + i + ']')" [ngClass]="getSortIcon('answers[' + i + ']')"></i>
+            <th *ngFor="let label of criteriaLabels; let i = index"
+                (click)="sortBy('answers[' + i + ']')">
+              {{ label }}
+              <i class="ml-1"
+                 *ngIf="sortField() === ('answers[' + i + ']')"
+                 [ngClass]="getSortIcon('answers[' + i + ']')"></i>
             </th>
+
             <th (click)="sortBy('total')">
               Total
               <i class="ml-1" *ngIf="sortField() === 'total'" [ngClass]="getSortIcon('total')"></i>
