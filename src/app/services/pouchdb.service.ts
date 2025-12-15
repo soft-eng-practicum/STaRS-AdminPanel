@@ -29,13 +29,13 @@ export class PouchdbService {
     const pass = this.auth.password;
 
     this.localDB = new PouchDB('conf');
-    const remoteURL = `http://${user}:${pass}@${environment.couch.host}:${environment.couch.port}/${environment.couch.confDB}`;
+    const remoteURL = `${environment.couch.protocol}://${user}:${pass}@${environment.couch.host}:${environment.couch.port}/${environment.couch.confDB}`;
     this.remoteDB = new PouchDB(remoteURL);
 
     this.startConfSync();
 
     this.judgesLocalDB = new PouchDB(environment.couch.judgesDB);
-    const judgesURL = `http://${user}:${pass}@${environment.couch.host}:${environment.couch.port}/${environment.couch.judgesDB}`;
+    const judgesURL = `${environment.couch.protocol}://${user}:${pass}@${environment.couch.host}:${environment.couch.port}/${environment.couch.judgesDB}`;
     this.judgesRemoteDB = new PouchDB(judgesURL);
 
     this.startJudgesSync();

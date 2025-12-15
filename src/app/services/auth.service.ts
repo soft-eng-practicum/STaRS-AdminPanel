@@ -29,7 +29,7 @@ export class AuthService {
       return false;
     }
 
-    const url = `http://${username}:${password}@${environment.couch.host}:${environment.couch.port}/${environment.couch.judgesDB}`;
+    const url = `${environment.couch.protocol}://${username}:${password}@${environment.couch.host}:${environment.couch.port}/${environment.couch.judgesDB}`;
 
     try {
       const testDB = new PouchDB(url);
