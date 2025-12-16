@@ -124,8 +124,43 @@ export const environment = {
     confDB: 'DBname',
   },
 
-  configurationDocId: 'DBname'
+  configurationDocId: 'DBname',
+  
+    // Email backend (dev)
+  emailApiUrl: 'http://localhost:3000/api/send-email',
 };
+
+
+~~~
+
+
+---
+
+## Environment Configuration For production (Frontend)
+
+Create a **\`environment.prod.ts\`** file inside the **/src/app/environments** folder:
+
+~~~bash
+export const environment = {
+  production: true,
+
+  couch: {
+    protocol: 'connection string protocol',
+    host: 'host',
+    port: 'port',
+    username: '', // left blank; filled in after login
+    password: '', // left blank; filled in after login
+
+    judgesDB: 'DBname',
+    confDB: 'DBname',
+  },
+
+  configurationDocId: 'DBname',
+
+  // Email backend (prod)
+  emailApiUrl: 'emailHostingUrl',
+};
+
 
 
 ~~~
