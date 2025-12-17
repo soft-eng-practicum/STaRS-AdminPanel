@@ -168,6 +168,23 @@ export const environment = {
 
 ---
 
+## If Deploying with Netlify
+### If using drag and drop feature
+Under dist/STaRS-judgin_app/browser add ```bash_redirects``` file with the following contents:
+```bash/*  /index.html  200```
+This is to avoid refreshing problems and drop the browser folder into Netlify to deploy
+### If Deploying on Netlify using GitHub
+Before building on the root folder add a ```bashnetlify.toml``` file with the following contents:
+~~~bash
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200 
+~~~
+Netlify will reference this file to allow Angular to take command of routing when refreshing no _redirects file needed in this case
+
+---
+
 ## Functionality
 
 - Poster report details can be exported to **CSV** (PDF optional later)
