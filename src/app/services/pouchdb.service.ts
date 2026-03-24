@@ -95,20 +95,14 @@ export class PouchdbService {
   async getPosters(retry = 3): Promise<PosterList[]> {
     for (let i = 0; i < retry; i++) {
       try {
-        const doc = await this.localDB.get(environment.configurationDocId);
-        const postersJson = doc['posters_json'];
-
-        if (!Array.isArray(postersJson)) {
-          console.warn('[getPosters] posters_json is invalid.');
-          return [];
-        }
+        let posterDocs = await new PouchDB(`${environment.couch.protocol}://${environment.couch.username}:${environment.couch.password}@${environment.couch.host}:${environment.couch.port}/${environment.couch.postersDB}`).allDocs({ include_docs: true });
 
         const judgeDocs = await this.judgesLocalDB.allDocs({ include_docs: true });
         const allSurveys = judgeDocs.rows.flatMap((r: { doc: { surveys: any; }; }) =>
             Array.isArray(r.doc?.surveys) ? r.doc.surveys : []
         );
 
-        return postersJson
+        return posterDocs.rows.map((r: any) => r.doc)
             .filter((p: any) => p['Judged?'] === 'Yes')
             .map((p: any) => {
               const groupId = String(p['id']);

@@ -121,6 +121,7 @@ export const environment = {
     password: '', // left blank; filled in after login
 
     judgesDB: 'DBname',
+    postersDB: 'DBname',
     confDB: 'DBname',
   },
 
