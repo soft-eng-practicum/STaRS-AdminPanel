@@ -1,8 +1,3 @@
-@import "./lib/Ionicons/css/ionicons.css";
-@import "./lib/MDBootstrap/css/bootstrap.css";
-@import "./lib/MDBootstrap/css/mdb.css";
-@import "./css/w3.css";
-
 .ggc-green {
   background-color: #00704a !important;
 }
@@ -19,7 +14,7 @@ header {
   color: #fff !important;
 }
 * {
-	font-family: 'Ubuntu Condensed', sans-serif !important;
+  font-family: 'Ubuntu Condensed', sans-serif !important;
 }
 .list-group-divider {
   border-left: 0.15rem solid #00704a;
@@ -34,14 +29,15 @@ header {
   text-align: center;
 }
 .ui-grid-header-cell-label, .ui-grid-header-cell {
-    display:inline-block;
-    white-space:initial;
-    float: none;
-    font-size: 12px;
-    padding: 0 !important;
+  display:inline-block;
+  white-space:initial;
+  float: none;
+  font-size: 12px;
+  padding: 0 !important;
 }
+.ui-grid-header-cell {}
 .ui-grid, .ui-grid-viewport {
-    height: auto !important;
+  height: auto !important;
 }
 .ui-grid-cell-contents {
   white-space: nowrap;
@@ -54,4 +50,16 @@ thead {
 }
 li.left {
   text-align: left;
+}
+.navbar-nav .nav-link {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+.white-text {
+  color: white !important;
+}
+
+.th {
+  background-color: #00704a !important;
+  color: #fff !important;
 }

@@ -1,0 +1,236 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header ggc-green white-text py-2">
+      Poster Reports: Please select one of the following posters to continue
+    </div>
+
+    <div class="card-body">
+      <div class="md-form mb-3">
+        <i class="ion-search prefix"></i>
+        <input
+          type="text"
+          id="search"
+          class="form-control"
+          [(ngModel)]="searchValue"
+        />
+        <label for="search">Search: Poster, Student, or Judge</label>
+        <p>Found {{ filteredPosters.length }} posters.</p>
+
+        <!-- Bulk actions toolbar -->
+        <div class="d-flex align-items-center mt-2">
+          <!-- Bulk actions dropdown -->
+          <div class="dropdown mr-2">
+            <button
+              class="btn btn-secondary btn-sm dropdown-toggle"
+              type="button"
+              id="bulkActionsBtn"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Bulk actions
+            </button>
+            <div class="dropdown-menu" aria-labelledby="bulkActionsBtn">
+              <button class="dropdown-item" (click)="onBulkEmail()">
+                Email multiple
+              </button>
+            </div>
+          </div>
+
+          <!-- Select / clear -->
+          <button
+            class="btn btn-outline-secondary btn-sm mr-2"
+            (click)="selectAll()"
+          >
+            Select all
+          </button>
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            (click)="clearAll()"
+          >
+            Clear
+          </button>
+
+          <span class="ml-3 text-muted small">
+            Selected: <b>{{ selectedPosters.length }}</b>
+          </span>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-sm table-hover">
+          <thead>
+          <tr>
+            <!-- New checkbox column -->
+            <th style="width: 40px;"></th>
+
+            <th (click)="sortBy('id')">
+              ID
+              <i *ngIf="sortField === 'id'" class="ml-1" [ngClass]="getSortIcon('id')"></i>
+            </th>
+            <th (click)="sortBy('group')">
+              Poster
+              <i *ngIf="sortField === 'group'" class="ml-1" [ngClass]="getSortIcon('group')"></i>
+            </th>
+            <th (click)="sortBy('students')">
+              Students
+              <i *ngIf="sortField === 'students'" class="ml-1" [ngClass]="getSortIcon('students')"></i>
+            </th>
+            <th (click)="sortBy('advisor')">
+              Advisor
+              <i *ngIf="sortField === 'advisor'" class="ml-1" [ngClass]="getSortIcon('advisor')"></i>
+            </th>
+            <th (click)="sortBy('countJudges')">
+              Number of Surveys
+              <i *ngIf="sortField === 'countJudges'" class="ml-1" [ngClass]="getSortIcon('countJudges')"></i>
+            </th>
+            <th (click)="sortBy('score')">
+              Score
+              <i *ngIf="sortField === 'score'" class="ml-1" [ngClass]="getSortIcon('score')"></i>
+            </th>
+            <th></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr *ngFor="let poster of filteredPosters">
+            <!-- Row checkbox tied to selection -->
+            <td>
+              <input
+                type="checkbox"
+                [checked]="isSelected(poster)"
+                (change)="onPosterCheckboxChange($event, poster)"
+              />
+            </td>
+
+            <td>{{ poster.id }}</td>
+            <td>{{ poster.group }}</td>
+            <td>{{ poster.students }}</td>
+            <td>{{ poster.advisor }}</td>
+            <td>{{ poster.countJudges }}</td>
+            <td>{{ poster.score }}</td>
+            <td>
+              <a [routerLink]="['/poster', poster.id]" class="btn btn-primary btn-sm">
+                View
+              </a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Email Multiple Modal -->
+<div
+  class="modal fade"
+  id="multiEmailModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="multiEmailModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="multiEmailModalLabel">Email Multiple Posters</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+          (click)="closeMultiEmailModal()"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p class="text-muted">
+          Results for each selected poster will be emailed to their respective student/advisor
+          addresses (when available).
+          You can also add optional recipients who will receive <b>all</b> selected posters’ results.
+        </p>
+
+        <p class="small mb-3">
+          <b>{{ selectedPosters.length }}</b> poster(s) currently selected.
+        </p>
+
+        <!-- multiple recipients -->
+        <div class="form-group">
+          <label class="d-block">Also send a copy to (optional)</label>
+
+          <div class="mb-2">
+            <span *ngFor="let r of globalToList; let i = index" class="badge badge-pill badge-primary mr-1">
+              {{ r }}
+              <a
+                href="#"
+                (click)="removeGlobalRecipient(i); $event.preventDefault();"
+                class="text-white ml-1"
+              >
+                ×
+              </a>
+            </span>
+            <span *ngIf="globalToList.length === 0" class="text-muted">None</span>
+          </div>
+
+          <div class="input-group mb-2">
+            <input
+              [(ngModel)]="newGlobalRecipient"
+              class="form-control"
+              placeholder="Add email address"
+            />
+            <div class="input-group-append">
+              <button class="btn btn-outline-primary" (click)="addGlobalRecipient()">Add</button>
+            </div>
+          </div>
+          <small class="text-muted">
+            These recipients will receive results for all selected posters.
+          </small>
+        </div>
+
+        <!-- Subject & Body template -->
+        <div class="form-group mt-3">
+          <label>Subject</label>
+          <input [(ngModel)]="emailSubject" class="form-control" />
+        </div>
+
+        <div class="form-group mt-3">
+          <label>Body (preview template)</label>
+          <textarea
+            [(ngModel)]="emailBodyTemplate"
+            class="form-control"
+            rows="7"
+          ></textarea>
+          <small class="text-muted d-block mt-1">
+            The full labeled results for each selected poster will be added to the body automatically when sent.
+          </small>
+        </div>
+
+        <div class="text-danger" *ngIf="emailError">{{ emailError }}</div>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          [disabled]="sending"
+          (click)="closeMultiEmailModal()"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="sending"
+          (click)="sendMultipleEmails()"
+        >
+          {{ sending ? 'Sending…' : 'Send Emails' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

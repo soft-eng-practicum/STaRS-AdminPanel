@@ -1,34 +1,65 @@
 <header>
-  <nav class="navbar navbar-dark ggc-green" ng-controller="NavbarCtrl">
-    <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#navbar-stars">
-      <i class="ion-navicon-round"></i>
-    </button>
+
+  <nav class="navbar navbar-expand-md navbar-dark ggc-green">
     <div class="container">
-      <div class="collapse navbar-toggleable-xs" id="navbar-stars">
-        <a class="navbar-brand" [routerLink]="['/home']">GGC STaRS</a>
-        <ul class="nav navbar-nav">
+      <a class="navbar-brand pl-3" routerLink="/dashboard">STaRS</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbar-stars"
+        aria-controls="navbar-stars"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbar-stars" *ngIf="isAuth()">
+        <ul class="navbar-nav ml-auto pl-3">
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/posterlist']">Poster Reports</a>
+            <a class="nav-link" routerLink="/dashboard">Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/judgelist']">Judge Reports</a>
+            <a class="nav-link" routerLink="/posters">Poster Reports</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/finalReport']">Combined Reports</a>
+            <a class="nav-link" routerLink="/judges">Judge Reports</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/logout']">Logout</a>
+            <a class="nav-link" routerLink="/final-report">Combined Reports</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" (click)="logout()">Logout</a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
 </header>
-<body>
-  <main>
-    <div ui-view></div>
-  </main>
-  <div style="padding-top: 50px">
-    <router-outlet></router-outlet>
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 70%; right: 1rem; transform: translateY(-50%); z-index: 1080;">
+  <div class="toast show" *ngIf="syncingStatus() === 'syncing'" role="alert" [class.bg-info]="true" data-autohide="true">
+    <div class="toast-header text-white bg-info">
+      <i class="ion-loop mr-2"></i>
+      <strong class="mr-auto">Syncing</strong>
+    </div>
+    <div class="toast-body">
+      {{ syncingMessage() }}
+    </div>
   </div>
-</body>
+
+  <div class="toast show" *ngIf="syncingStatus() === 'complete'" role="alert" [class.bg-success]="true" data-autohide="true">
+    <div class="toast-header text-white bg-success">
+      <i class="ion-checkmark-circled mr-2"></i>
+      <strong class="mr-auto">Synced</strong>
+    </div>
+    <div class="toast-body">
+      {{ syncingMessage() }}
+    </div>
+  </div>
+</div>
+
+
+<main class="container mt-4">
+  <router-outlet></router-outlet>
+</main>

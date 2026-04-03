@@ -1,49 +1,61 @@
 {
-  "name": "sta-rs-admin",
+  "name": "admin-panel",
   "version": "0.0.0",
+  "private": true,
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
+    "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "start:frontend": "ng serve",
+    "start:backend": "npm run start --prefix server",
+    "start": "concurrently -n FRONTEND,BACKEND -c cyan,green \"npm run start:frontend\" \"npm run start:backend\""
   },
-  "private": true,
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
+  },
   "dependencies": {
-    "@angular/animations": "~10.0.14",
-    "@angular/common": "~10.0.14",
-    "@angular/compiler": "~10.0.14",
-    "@angular/core": "~10.0.14",
-    "@angular/forms": "~10.0.14",
-    "@angular/platform-browser": "~10.0.14",
-    "@angular/platform-browser-dynamic": "~10.0.14",
-    "@angular/router": "~10.0.14",
-    "pouchdb": "^7.2.2",
-    "pouchdb-find": "^7.2.2",
-    "rxjs": "~6.5.5",
-    "tslib": "^2.0.0",
-    "zone.js": "~0.10.3"
+    "@angular/common": "^20.2.0",
+    "@angular/compiler": "^20.2.0",
+    "@angular/core": "^20.2.0",
+    "@angular/forms": "^20.2.0",
+    "@angular/material": "^20.2.7",
+    "@angular/platform-browser": "^20.2.0",
+    "@angular/router": "^20.2.0",
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.8",
+    "pouchdb": "",
+    "pouchdb-adapter-http": "^9.0.0",
+    "pouchdb-adapter-idb": "^9.0.0",
+    "pouchdb-browser": "^9.0.0",
+    "pouchdb-core": "^9.0.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.1000.8",
-    "@angular/cli": "~10.0.8",
-    "@angular/compiler-cli": "~10.0.14",
-    "@types/jasmine": "~3.5.0",
-    "@types/jasminewd2": "~2.0.3",
-    "@types/node": "^12.11.1",
-    "@types/pouchdb": "^6.4.0",
-    "codelyzer": "^6.0.0",
-    "jasmine-core": "~3.5.0",
-    "jasmine-spec-reporter": "~5.0.0",
-    "karma": "~5.0.0",
-    "karma-chrome-launcher": "~3.1.0",
-    "karma-coverage-istanbul-reporter": "~3.0.2",
-    "karma-jasmine": "~3.3.0",
-    "karma-jasmine-html-reporter": "^1.5.0",
-    "protractor": "~7.0.0",
-    "ts-node": "~8.3.0",
-    "tslint": "~6.1.0",
-    "typescript": "~3.9.5"
+    "@angular/build": "^20.2.0",
+    "@angular/cli": "^20.2.0",
+    "@angular/compiler-cli": "^20.2.0",
+    "@types/jasmine": "~5.1.0",
+    "@types/node": "^24.5.2",
+    "@types/pouchdb": "",
+    "concurrently": "^8.2.2",
+    "jasmine-core": "~5.9.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "~5.9.2"
   }
 }

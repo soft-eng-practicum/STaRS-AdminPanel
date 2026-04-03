@@ -1,65 +1,221 @@
-# STaRSAdmin
+# STaRS-Web
+
+A web client to support the STaRS mobile application. Used to analyze and export results from judging events.
+
+---
 
 ## Team
 
 * **Team Polaris** - Fall 2019
-* **Comet Watchers** - Fall 2020
+1. **Nancy Sardar** — *Project Manager & Client Liaison* :zap:
+2. **Juan Linares** — *Lead Programmer & Testing Lead* :ghost:
+3. **Andrew Plourde** — *Documentation & Data Modeler* :thought_balloon:
+4. **Jacob Weekley** — *UI/UX Designer & Lead Programmer* :ice_hockey:
 
-## Repo Location URL
+* **Internship** - Fall 2025
+1. **David Flores** — *Developer* :rocket:
 
-* [Github](https://github.com/soft-eng-practicum/STaRS)
+---
 
-## Progess tracking tool
+## Repository Location
 
-* [Jira](https://jira.ggc.edu/projects/SJCWC/summary)
+**GitHub:**  
+🔗 https://github.com/soft-eng-practicum/STaRS
 
-## Communication tool
+---
+
+## Progress Tracking
+
+*To be announced.*
+
+---
+
+## Communication Tool
 
 * [Discord](https://discordapp.com/)
 
-## Members
+---
 
-* Fall 2019
+## Installation
 
-1. **Nancy Sardar** : *Project Manager & Client Liason* :tada: 
-2. **Juan Linares** : *Lead Programmer & Testing Lead* :ghost:
-3. **Andrew Plourde** : *Documentation Lead & Data Modeler* :thought_balloon:
-4. **Jacob Weekley**: *UI/UX Designer & Lead Programmer* :ice_hockey:
+### Prerequisites
+- Node.js (v18+ recommended)
+- npm 
+- Angular CLI globally installed
 
-* Fall 2020
+---
 
-1. **Matt LaFayette**: *Project Manager & Testing Lead* :sleeping:
-2. **Gabriella Pujada**: *Data Modeler & Client Liaison* :lion: 
-3. **Greg Dagnan**: *Lead Programmer & Testing & Scrum Master* :eyes:
-4. **Dakota Norris**: *UI/UX Designer & Documentation & Lead Programmer* :thinking:
+### Steps
 
-## License Information
+#### Frontend
+1. Clone the repository:
+   ~~~bash
+   git clone https://github.com/soft-eng-practicum/STaRS.git
+   ~~~
+2. Navigate into the project folder:
+   ~~~bash
+   cd STaRS-AdminPanel
+   ~~~
+3. Install dependencies:
+   ~~~bash
+   npm install
+   ~~~
 
-**Attribution-ShareAlike 4.0 International (CC BY 4.0):** [Legal implications](https://creativecommons.org/licenses/by/4.0/)
+#### Backend (Email Service)
+1. Navigate into the \`server\` folder:
+   ~~~bash
+   cd server
+   ~~~
+2. Install backend dependencies:
+   ~~~bash
+   npm install
+   ~~~
+
+---
+
+## How to Run
+
+### Run the Angular Frontend
+1. From the root folder:
+   ~~~bash
+   npm start
+   ~~~
+2. Open your browser and go to:  
+    http://localhost:4200
+
+### Run the Node Backend (Email Service)
+1. From the \`server\` folder:
+   ~~~bash
+   npm run start
+   ~~~
+2. The backend runs at:  
+    http://localhost:3000
+
+---
+
+## Environment Configuration (Backend)
+
+Create a **\`.env\`** file inside the **/server** folder:
+* If Brevo account:
+~~~bash
+BREVO_SERVER=smtp-relay.brevo.com
+BREVO_PORT=587
+BREVO_USER=user@email
+BREVO_PASS=your_brevo_password
+BREVO_FROM="STARS Judging Support <your@email>"
+
+~~~
+## Environment Configuration (Frontend)
+
+Create a **\`environment.ts\`** file inside the **/src/app/environments** folder:
+
+~~~bash
+export const environment = {
+  production: false,
+
+  couch: {
+    protocol: 'connection string protocol',
+    host: 'host',
+    port: 'port',
+    username: '', // left blank; filled in after login
+    password: '', // left blank; filled in after login
+
+    judgesDB: 'DBname',
+    confDB: 'DBname',
+  },
+
+  configurationDocId: 'DBname',
+  
+    // Email backend (dev)
+  emailApiUrl: 'http://localhost:3000/api/send-email',
+};
 
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.8.
+~~~
 
-## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+---
 
-## Code scaffolding
+## Environment Configuration For production (Frontend)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Create a **\`environment.prod.ts\`** file inside the **/src/app/environments** folder:
 
-## Build
+~~~bash
+export const environment = {
+  production: true,
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+  couch: {
+    protocol: 'connection string protocol',
+    host: 'host',
+    port: 'port',
+    username: '', // left blank; filled in after login
+    password: '', // left blank; filled in after login
 
-## Running unit tests
+    judgesDB: 'DBname',
+    confDB: 'DBname',
+  },
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+  configurationDocId: 'DBname',
 
-## Running end-to-end tests
+  // Email backend (prod)
+  emailApiUrl: 'emailHostingUrl',
+};
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
-## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+~~~
+
+
+---
+
+## If Deploying with Netlify
+### If using drag and drop feature
+Under dist/STaRS-judgin_app/browser add ```bash_redirects``` file with the following contents:
+```bash/*  /index.html  200```
+This is to avoid refreshing problems and drop the browser folder into Netlify to deploy
+### If Deploying on Netlify using GitHub
+Before building on the root folder add a ```bashnetlify.toml``` file with the following contents:
+~~~bash
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200 
+~~~
+Netlify will reference this file to allow Angular to take command of routing when refreshing no _redirects file needed in this case
+
+---
+
+## Functionality
+
+- Poster report details can be exported to **CSV** (PDF optional later)
+- Judge survey results can be reviewed, sorted, and exported
+- Combined report shows all judging data in one place
+- **Email service** allows sending judging feedback directly to students and advisors
+
+---
+
+## Security Notes
+
+- Credentials are stored in \`.env\` only (never in frontend code)
+- CORS enabled for \`http://localhost:4200\`
+- SMTP connection uses TLS
+
+---
+
+## Screenshots
+
+### Login
+![login](public/screenshots/login-2019.PNG)
+
+### Dashboard
+![dashboard](public/screenshots/dashboard-2019.PNG)
+
+### Poster Reports
+![poster-reports](public/screenshots/poster-reports-2019.PNG)
+
+### Judge Reports
+![judge-reports](public/screenshots/judge-reports-2019.PNG)
+
+### Combined Reports
+![combined-reports](public/screenshots/combined-reports-2019.PNG)
+`;

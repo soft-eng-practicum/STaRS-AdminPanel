@@ -1,0 +1,90 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header ggc-green white-text">
+      Final Reports for Judges and Posters
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="mr-2">Export format:</label>
+        <select [(ngModel)]="exportFormat" class="form-control d-inline-block w-auto">
+          <option value="csv">CSV</option>
+          <option value="pdf">PDF</option>
+        </select>
+        <button (click)="export()" class="btn btn-primary btn-sm ml-2">Export</button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-sm table-hover">
+          <thead>
+          <tr>
+            <th (click)="sortBy('judgeName')">
+              Judge Name
+              <i *ngIf="sortField() === 'judgeName'" class="ml-1" [ngClass]="getSortIcon('judgeName')"></i>
+            </th>
+
+            <th (click)="sortBy('groupId')">
+              Poster ID
+              <i *ngIf="sortField() === 'groupId'" class="ml-1" [ngClass]="getSortIcon('groupId')"></i>
+            </th>
+
+            <th (click)="sortBy('groupName')">
+              Poster Name
+              <i *ngIf="sortField() === 'groupName'" class="ml-1" [ngClass]="getSortIcon('groupName')"></i>
+            </th>
+
+            <th (click)="sortBy('answers[0]')">
+              Statement of Problem
+              <i *ngIf="sortField() === 'answers[0]'" class="ml-1" [ngClass]="getSortIcon('answers[0]')"></i>
+            </th>
+
+            <th (click)="sortBy('answers[1]')">
+              Methodology
+              <i *ngIf="sortField() === 'answers[1]'" class="ml-1" [ngClass]="getSortIcon('answers[1]')"></i>
+            </th>
+
+            <th (click)="sortBy('answers[2]')">
+              Results/Solution
+              <i *ngIf="sortField() === 'answers[2]'" class="ml-1" [ngClass]="getSortIcon('answers[2]')"></i>
+            </th>
+
+            <th (click)="sortBy('answers[3]')">
+              Oral Presentation
+              <i *ngIf="sortField() === 'answers[3]'" class="ml-1" [ngClass]="getSortIcon('answers[3]')"></i>
+            </th>
+
+            <th (click)="sortBy('answers[4]')">
+              Poster Layout
+              <i *ngIf="sortField() === 'answers[4]'" class="ml-1" [ngClass]="getSortIcon('answers[4]')"></i>
+            </th>
+
+            <th (click)="sortBy('answers[5]')">
+              Impact
+              <i *ngIf="sortField() === 'answers[5]'" class="ml-1" [ngClass]="getSortIcon('answers[5]')"></i>
+            </th>
+
+            <th (click)="sortBy('answers[6]')">
+              Additional Comments
+              <i *ngIf="sortField() === 'answers[6]'" class="ml-1" [ngClass]="getSortIcon('answers[6]')"></i>
+            </th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr *ngFor="let row of sortedRows">
+            <td>{{ row.judgeName }}</td>
+            <td>{{ row.groupId }}</td>
+            <td>{{ row.groupName }}</td>
+            <td>{{ row.answers[0] }}</td>
+            <td>{{ row.answers[1] }}</td>
+            <td>{{ row.answers[2] }}</td>
+            <td>{{ row.answers[3] }}</td>
+            <td>{{ row.answers[4] }}</td>
+            <td>{{ row.answers[5] }}</td>
+            <td>{{ row.answers[6] }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
