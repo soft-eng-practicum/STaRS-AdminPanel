@@ -117,11 +117,6 @@ export const environment = {
     protocol: 'connection string protocol',
     host: 'host',
     port: 'port',
-    username: '', // left blank; filled in after login
-    password: '', // left blank; filled in after login
-
-    judgesDB: 'DBname',
-    postersDB: 'DBname',
     confDB: 'DBname',
   },
 

@@ -14,28 +14,29 @@ export class PouchdbService {
   syncingMessage = signal<string | null>(null);
   syncingStatus = signal<'syncing' | 'complete' | null>(null);
 
-  //for posters
-  private localDB: any;
-  private remoteDB: any;
+  // for config
+  private confLocalDB: any;
+  private confRemoteDB: any;
+  private confDoc: any;
 
-  //for judges
+  // for judges
   private judgesLocalDB: any;
   private judgesRemoteDB: any;
-  private judgesDBName = environment.couch.judgesDB;
 
   constructor(private auth: AuthService) {}
-  initDatabases(): void {
+  async initDatabases(): Promise<void> {
     const user = this.auth.username;
     const pass = this.auth.password;
 
-    this.localDB = new PouchDB('conf');
+    this.confLocalDB = new PouchDB('conf');
     const remoteURL = `${environment.couch.protocol}://${user}:${pass}@${environment.couch.host}:${environment.couch.port}/${environment.couch.confDB}`;
-    this.remoteDB = new PouchDB(remoteURL);
+    this.confRemoteDB = new PouchDB(remoteURL);
 
     this.startConfSync();
+    this.confDoc = await this.confRemoteDB.get(environment.configurationDocId);
 
-    this.judgesLocalDB = new PouchDB(environment.couch.judgesDB);
-    const judgesURL = `${environment.couch.protocol}://${user}:${pass}@${environment.couch.host}:${environment.couch.port}/${environment.couch.judgesDB}`;
+    this.judgesLocalDB = new PouchDB(this.confDoc.judgesDB);
+    const judgesURL = `${environment.couch.protocol}://${user}:${pass}@${environment.couch.host}:${environment.couch.port}/${this.confDoc.judgesDB}`;
     this.judgesRemoteDB = new PouchDB(judgesURL);
 
     this.startJudgesSync();
@@ -43,7 +44,7 @@ export class PouchdbService {
   }
 
   private startConfSync(): void {
-    this.localDB.sync(this.remoteDB, {live: true, retry: true})
+    this.confLocalDB.sync(this.confRemoteDB, {live: true, retry: true})
         .on('change', (info: any) => {
           this.syncingMessage.set('Syncing data...');
           this.syncingStatus.set('syncing');
@@ -63,7 +64,6 @@ export class PouchdbService {
           this._clearMessage();
           console.error('Judges Sync error:', err);
         });
-
   }
 
   private startJudgesSync(): void {
@@ -95,7 +95,7 @@ export class PouchdbService {
   async getPosters(retry = 3): Promise<PosterList[]> {
     for (let i = 0; i < retry; i++) {
       try {
-        let posterDocs = await new PouchDB(`${environment.couch.protocol}://${environment.couch.username}:${environment.couch.password}@${environment.couch.host}:${environment.couch.port}/${environment.couch.postersDB}`).allDocs({ include_docs: true });
+        let posterDocs = await new PouchDB(`${environment.couch.protocol}://${(environment.couch as any).username}:${(environment.couch as any).password}@${environment.couch.host}:${environment.couch.port}/${this.confDoc.postersDB}`).allDocs({ include_docs: true });
 
         const judgeDocs = await this.judgesLocalDB.allDocs({ include_docs: true });
         const allSurveys = judgeDocs.rows.flatMap((r: { doc: { surveys: any; }; }) =>
@@ -199,8 +199,8 @@ export class PouchdbService {
 
   initChangeWatchers(): void {
     // Posters
-    if (this.localDB) {
-      this.localDB
+    if (this.confLocalDB) {
+      this.confLocalDB
         .changes({ since: 'now', live: true, include_docs: true })
         .on('change', () => this.onDatabaseChange());
     }

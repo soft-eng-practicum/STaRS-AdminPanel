@@ -26,7 +26,7 @@ export class HomeComponent {
 
     const success = await this.auth.attemptLogin(this.username, this.password);
     if (success) {
-      this.pouchdb.initDatabases();
+      await this.pouchdb.initDatabases();
       this.router.navigate(['/dashboard']);
     }
 
