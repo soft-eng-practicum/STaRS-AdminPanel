@@ -8,14 +8,15 @@ declare let PouchDB: any;
 export class JudgeService {
   private localDB: any;
 
-  constructor() {
-    const dbName = environment.couch.judgesDB;
-    this.localDB = new PouchDB(dbName);
-  }
   /**
    * Returns all surveys submitted for a given judge.
    */
   async getJudgeById(id: string): Promise<JudgeSummary | null> {
+    if (!this.localDB) {
+        let confDoc = await new PouchDB('conf').get(environment.configurationDocId);
+        this.localDB = new PouchDB(confDoc.judgesDB);
+    }
+
     try {
       const doc = await this.localDB.get(id) as JudgeDoc;
       const surveys = Array.isArray(doc.surveys) ? doc.surveys : [];

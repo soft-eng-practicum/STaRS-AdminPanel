@@ -29,7 +29,7 @@ export class AuthService {
       return false;
     }
 
-    const url = `${environment.couch.protocol}://${username}:${password}@${environment.couch.host}:${environment.couch.port}/${environment.couch.judgesDB}`;
+    const url = `${environment.couch.protocol}://${username}:${password}@${environment.couch.host}:${environment.couch.port}/${environment.couch.confDB}`;
 
     try {
       const testDB = new PouchDB(url);
@@ -48,6 +48,8 @@ export class AuthService {
         timestamp: Date.now()
       }));
 
+      (environment.couch as any).username = username;
+      (environment.couch as any).password = password;
       return true;
     } catch (err) {
       console.error('Login failed:', err);
