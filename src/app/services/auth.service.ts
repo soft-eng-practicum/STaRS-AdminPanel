@@ -48,6 +48,8 @@ export class AuthService {
         timestamp: Date.now()
       }));
 
+      (environment.couch as any).username = username;
+      (environment.couch as any).password = password;
       return true;
     } catch (err) {
       console.error('Login failed:', err);
