@@ -145,6 +145,18 @@ export class PouchdbService {
   }
 
 
+  async setPosters(posters: PosterList[]): Promise<boolean> {
+      try {
+        const postersDB: PouchDB.Database = new PouchDB(`${environment.couch.protocol}://${(environment.couch as any).username}:${(environment.couch as any).password}@${environment.couch.host}:${environment.couch.port}/${this.confDoc.postersDB}`);
+        await postersDB.bulkDocs(posters);
+        return true;
+      } catch (err: any) {
+        console.log(err);
+        return false;
+      }
+  }
+
+
   async getJudges(): Promise<JudgeSummary[]> {
     try {
       const res = await this.judgesLocalDB.allDocs({ include_docs: true });
