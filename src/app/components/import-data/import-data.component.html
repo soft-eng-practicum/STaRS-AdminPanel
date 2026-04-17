@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="card">
+        <div class="card-header ggc-green white-text py-2">
+            Import Data
+        </div>
+
+        <div class="card-body d-flex flex-column">
+            <input type="file" accept=".csv" (change)="onFileSelected($event)" />
+            @if (file()) {
+            <hr />
+            <div class="d-flex flex-column gap-2">
+                @for (column of columns(); track $index) {
+                <div>
+                    <span class="me-2">Column "{{ column }}":</span>
+                    <select [value]="selections[column]" (change)="onSelectionChanged($event, column)">
+                        <option value="">[Ignore Column]</option>
+                        <option value="id">Poster ID #</option>
+                        <option value="email">Student Email</option>
+                        <option value="group">Poster Title</option>
+                        <option value="subject">Subject(s)</option>
+                        <option value="students">Student Name(s)</option>
+                        <option value="advisor">Faculty Supervisor Name(s)</option>
+                        <option value="advisorEmail">Primary Faculty Supervisor Email</option>
+                        <option value="Judged?">Judge Poster?</option>
+                    </select>
+                </div>
+                }
+            </div>
+            <hr />
+            @if (autoMapped()) {
+            <span class="mb-1 text-muted">Some columns have been automatically mapped for you. Review the column
+                mappings, and when you are ready to upload, click the button below.</span>
+            }
+            <button [disabled]="cantUpload() || uploadedSuccessfully()" (click)="uploadData()" class="btn btn-primary btn-sm" style="width: fit-content;">Upload to Database</button>
+            @if (uploadedSuccessfully()) {
+            <span class="mt-1 text-muted">Successfully uploaded {{data().length}} posters to database.</span>
+            } @else if (uploadedSuccessfully() === false) {
+            <span class="mt-1 text-muted">Failed to upload data to database.</span>
+            }
+            }
+        </div>
+    </div>
+</div>
