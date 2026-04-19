@@ -145,9 +145,15 @@ export class PouchdbService {
   }
 
 
-  async setPosters(posters: PosterList[]): Promise<boolean> {
+  async setPosters(posters: PosterList[], overwrite: boolean): Promise<boolean> {
       try {
         const postersDB: PouchDB.Database = new PouchDB(`${environment.couch.protocol}://${(environment.couch as any).username}:${(environment.couch as any).password}@${environment.couch.host}:${environment.couch.port}/${this.confDoc.postersDB}`);
+        
+        if (overwrite) {
+            const posters = await postersDB.allDocs({ include_docs: true });
+            postersDB.bulkDocs(posters.rows.map(row => ({ _id: row.id, _rev: row.doc?._rev, _deleted: true })));
+        }
+
         await postersDB.bulkDocs(posters);
         return true;
       } catch (err: any) {
