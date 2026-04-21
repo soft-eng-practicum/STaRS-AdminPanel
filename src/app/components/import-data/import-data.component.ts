@@ -13,18 +13,35 @@ import Papa from 'papaparse';
     styleUrls: ['./import-data.component.scss']
 })
 export class ImportDataComponent {
+    fileName = signal<string | null>(null);
     file = signal<string>("");
     data = signal<any[]>([]);
+    dataTable = signal<any[]>([]);
     columns = signal<string[]>([]);
     cantUpload = signal<boolean>(true);
     autoMapped = signal<boolean>(false);
     uploadedSuccessfully = signal<boolean | null>(null);
+    currentPosters = signal<any[]>([]);
+    currentPostersTable = signal<any[]>([]);
+    mappedColumnArray = signal<[string, string][]>([]);
     selections: any = {};
+    overwrite: boolean = false;
+    mappedColumns = {
+        "id": "Poster ID #",
+        "email": "Student Email",
+        "group": "Poster Title",
+        "subject": "Subject(s)",
+        "students": "Student Name(s)",
+        "advisor": "Faculty Supervisor Name(s)",
+        "advisorEmail": "Primary Faculty Supervisor Email",
+        "Judged?": "Judge Poster?"
+    } as const;
 
     constructor(private pouchdb: PouchdbService) {
         effect(() => {
             const _ = this.pouchdb.dbUpdated();
         });
+        this.mappedColumnArray.set(Object.entries(this.mappedColumns));
     }
 
     async onFileSelected(e: Event) {
@@ -34,6 +51,7 @@ export class ImportDataComponent {
             return;
         }
 
+        this.fileName.set(file.name);
         const fileText = await file.text();
         this.file.set(fileText);
         const { data } = Papa.parse(fileText, { header: true });
@@ -45,9 +63,11 @@ export class ImportDataComponent {
             columns.forEach(c => this.selections[c] = this.tryMapColumn(c));
             this.columns.set(columns);
         }
-        
+
         this.autoMapped.set(Object.values(this.selections).some(v => v !== ""));
         this.cantUpload.set(new Set(Object.values(this.selections).filter(v => v !== "")).size < 8);
+        this.uploadedSuccessfully.set(null);
+        this.mapPosters();
     }
 
     tryMapColumn(column: string) {
@@ -66,15 +86,21 @@ export class ImportDataComponent {
     onSelectionChanged(e: Event, column: string) {
         this.selections[column] = (e.target as HTMLSelectElement).value;
         this.cantUpload.set(new Set(Object.values(this.selections).filter(v => v !== "")).size < 8);
+        this.mapPosters();
     }
 
-    async uploadData() {
-        const posters = this.data().map(row => {
+    mapPosters() {
+        this.dataTable.set(this.data().map(p => Object.values(p)).slice(0, 3));
+        this.currentPosters.set(this.data().map(row => {
             const newRow: any = {};
             Object.keys(row).filter(k => this.selections[k] !== "").forEach(k => newRow[this.selections[k]] = row[k]);
             return newRow;
-        });
+        }));
+        this.currentPostersTable.set(this.currentPosters().map(p => Object.values(p)).slice(0, 3));
+    }
 
-        this.uploadedSuccessfully.set(await this.pouchdb.setPosters(posters));
+    async uploadData() {
+        this.mapPosters();
+        this.uploadedSuccessfully.set(await this.pouchdb.setPosters(this.currentPosters(), this.overwrite));
     }
 }

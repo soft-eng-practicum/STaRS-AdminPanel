@@ -5,14 +5,23 @@
         </div>
 
         <div class="card-body d-flex flex-column">
-            <input type="file" accept=".csv" (change)="onFileSelected($event)" />
+            <div class="input-group" style="max-width: 25rem;">
+                <div class="custom-file">
+                    <input type="file" accept=".csv" style="cursor: pointer;" class="custom-file-input"
+                        (change)="onFileSelected($event)">
+                    <label class="custom-file-label">{{fileName() ?? "Select CSV File"}}</label>
+                </div>
+            </div>
             @if (file()) {
             <hr />
             <div class="d-flex flex-column gap-2">
                 @for (column of columns(); track $index) {
                 <div>
-                    <span class="me-2">Column "{{ column }}":</span>
-                    <select [value]="selections[column]" (change)="onSelectionChanged($event, column)">
+                    <span class="me-2">Map CSV Column <span class="px-1 pe-2 mx-1"
+                            style="padding-block: 0.125rem; border: 1px solid #d6d6d6; color: #5a5a5a; border-radius: 0.25rem;">{{
+                            column }}</span> to Database Column</span>
+                    <select [value]="selections[column]" class="custom-select custom-select-sm"
+                        style="width: fit-content; font-size: 1rem;" (change)="onSelectionChanged($event, column)">
                         <option value="">[Ignore Column]</option>
                         <option value="id">Poster ID #</option>
                         <option value="email">Student Email</option>
@@ -27,11 +36,63 @@
                 }
             </div>
             <hr />
+            <h3 class="mb-0">First 3 CSV Rows</h3>
+            <span class="text-muted mb-2">This CSV file contains a total of {{data().length}} rows.</span>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        @for (column of columns(); track $index) {
+                        <th scope="col">{{column}}</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (row of dataTable(); track $index) {
+                    <tr>
+                        @for (cell of row; track $index) {
+                        <td>{{cell}}</td>
+                        }
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            @if (!cantUpload()) {
+            <h3>First 3 Mapped Rows</h3>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        @for (column of mappedColumnArray(); track $index) {
+                        <th scope="col">{{column[1]}}</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (row of currentPostersTable(); track $index) {
+                    <tr>
+                        @for (cell of row; track $index) {
+                        <td>{{cell}}</td>
+                        }
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            }
+            <hr />
             @if (autoMapped()) {
             <span class="mb-1 text-muted">Some columns have been automatically mapped for you. Review the column
                 mappings, and when you are ready to upload, click the button below.</span>
             }
-            <button [disabled]="cantUpload() || uploadedSuccessfully()" (click)="uploadData()" class="btn btn-primary btn-sm" style="width: fit-content;">Upload to Database</button>
+            <div class="d-flex align-items-center gap-3">
+                <button [disabled]="cantUpload() || uploadedSuccessfully()" (click)="uploadData()"
+                    class="btn btn-primary btn-sm" style="width: fit-content;">Upload to Database</button>
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="overwritePosters"
+                        (change)="overwrite = $event.target.checked">
+                    <label class="custom-control-label" for="overwritePosters" data-toggle="tooltip"
+                        title="If checked, replaces the posters in the database with the posters in the CSV file. If unchecked, appends the posters in the CSV file to those already in the database.">Overwrite
+                        existing posters</label>
+                </div>
+            </div>
             @if (uploadedSuccessfully()) {
             <span class="mt-1 text-muted">Successfully uploaded {{data().length}} posters to database.</span>
             } @else if (uploadedSuccessfully() === false) {
