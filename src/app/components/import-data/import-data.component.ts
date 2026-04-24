@@ -62,7 +62,7 @@ export class ImportDataComponent {
         this.fileName.set(file.name);
         const fileText = await file.text();
         this.file.set(fileText);
-        const { data } = Papa.parse(fileText, { header: true });
+        const { data } = Papa.parse(fileText, { header: true, skipEmptyLines: "greedy", dynamicTyping: false });
         this.data.set(data);
 
         if (data.length > 0) {

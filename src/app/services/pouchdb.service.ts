@@ -95,7 +95,7 @@ export class PouchdbService {
   async getPosters(retry = 3): Promise<PosterList[]> {
     for (let i = 0; i < retry; i++) {
       try {
-        let posterDocs = await new PouchDB(`${environment.couch.protocol}://${(environment.couch as any).username}:${(environment.couch as any).password}@${environment.couch.host}:${environment.couch.port}/${this.confDoc.postersDB}`).allDocs({ include_docs: true });
+        const posterDocs = await new PouchDB(`${environment.couch.protocol}://${this.auth.username}:${this.auth.password}@${environment.couch.host}:${environment.couch.port}/${this.confDoc.postersDB}`).allDocs({ include_docs: true });
 
         const judgeDocs = await this.judgesLocalDB.allDocs({ include_docs: true });
         const allSurveys = judgeDocs.rows.flatMap((r: { doc: { surveys: any; }; }) =>
@@ -147,7 +147,7 @@ export class PouchdbService {
 
   async setPosters(posters: PosterList[], overwrite: boolean): Promise<boolean> {
       try {
-        const postersDB: PouchDB.Database = new PouchDB(`${environment.couch.protocol}://${(environment.couch as any).username}:${(environment.couch as any).password}@${environment.couch.host}:${environment.couch.port}/${this.confDoc.postersDB}`);
+        const postersDB: PouchDB.Database = new PouchDB(`${environment.couch.protocol}://${this.auth.username}:${this.auth.password}@${environment.couch.host}:${environment.couch.port}/${this.confDoc.postersDB}`);
         
         if (overwrite) {
             const posters = await postersDB.allDocs({ include_docs: true });

@@ -68,7 +68,7 @@ export class PosterListComponent implements OnInit {
   get filteredPosters(): PosterList[] {
     return this.posters()
       .filter(p =>
-        (p.group + p.students + p.advisor)
+        (p.group + p.students + p.advisor + p.id)
           .toLowerCase()
           .includes(this.searchValue.toLowerCase())
       )
