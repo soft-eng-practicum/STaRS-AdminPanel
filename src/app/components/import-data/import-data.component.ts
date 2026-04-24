@@ -23,7 +23,7 @@ export class ImportDataComponent {
     uploadedSuccessfully = signal<boolean | null>(null);
     currentPosters = signal<any[]>([]);
     currentPostersTable = signal<any[]>([]);
-    mappedColumnArray = signal<[string, string][]>([]);
+    mappedColumnArray = signal<[keyof typeof this.mappedColumns, string][]>([]);
     selections: any = {};
     overwrite: boolean = false;
     mappedColumns = {
@@ -36,12 +36,20 @@ export class ImportDataComponent {
         "advisorEmail": "Primary Faculty Supervisor Email",
         "Judged?": "Judge Poster?"
     } as const;
+    columnTooltips = {
+        "id": "The poster's ID number.",
+        "email": "The primary student email for the poster.",
+        "group": "The title of the poster.",
+        "subject": "The subject(s) of the poster (e.g., Information Technology, Chemistry, etc.)",
+        "students": "The names of the students for the poster.",
+        "advisor": "The names of the faculty advisors for the poster.",
+        "advisorEmail": "The primary faculty advisor email for the poster.",
+        "Judged?": "Whether the poster should be judged."
+    } as const;
 
     constructor(private pouchdb: PouchdbService) {
-        effect(() => {
-            const _ = this.pouchdb.dbUpdated();
-        });
-        this.mappedColumnArray.set(Object.entries(this.mappedColumns));
+        effect(() => void this.pouchdb.dbUpdated());
+        this.mappedColumnArray.set(Object.entries(this.mappedColumns) as [keyof typeof this.mappedColumns, string][]);
     }
 
     async onFileSelected(e: Event) {
@@ -58,16 +66,15 @@ export class ImportDataComponent {
         this.data.set(data);
 
         if (data.length > 0) {
-            let columns = Object.keys(data[0] as object);
+            const columns = Object.keys(data[0] as object);
             this.selections = {};
-            columns.forEach(c => this.selections[c] = this.tryMapColumn(c));
+            Object.keys(this.mappedColumns).forEach(c => this.selections[c] = columns.find(d => this.tryMapColumn(d) === c) ?? "");
             this.columns.set(columns);
         }
 
         this.autoMapped.set(Object.values(this.selections).some(v => v !== ""));
-        this.cantUpload.set(new Set(Object.values(this.selections).filter(v => v !== "")).size < 8);
+        this.updateMapping();
         this.uploadedSuccessfully.set(null);
-        this.mapPosters();
     }
 
     tryMapColumn(column: string) {
@@ -83,17 +90,21 @@ export class ImportDataComponent {
         return "";
     }
 
+    updateMapping() {
+        this.cantUpload.set(Object.values(this.selections).some(s => s === ""));
+        this.mapPosters();
+    }
+
     onSelectionChanged(e: Event, column: string) {
         this.selections[column] = (e.target as HTMLSelectElement).value;
-        this.cantUpload.set(new Set(Object.values(this.selections).filter(v => v !== "")).size < 8);
-        this.mapPosters();
+        this.updateMapping();
     }
 
     mapPosters() {
         this.dataTable.set(this.data().map(p => Object.values(p)).slice(0, 3));
         this.currentPosters.set(this.data().map(row => {
             const newRow: any = {};
-            Object.keys(row).filter(k => this.selections[k] !== "").forEach(k => newRow[this.selections[k]] = row[k]);
+            Object.keys(this.mappedColumns).filter(k => this.selections[k] !== "").forEach(k => newRow[k] = row[this.selections[k]]);
             return newRow;
         }));
         this.currentPostersTable.set(this.currentPosters().map(p => Object.values(p)).slice(0, 3));

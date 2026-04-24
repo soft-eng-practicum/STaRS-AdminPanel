@@ -3,3 +3,30 @@
     text-decoration-style: dashed;
     text-decoration-color: #969696;
 }
+
+.chip {
+    padding: 0.15rem;
+    border: 1px solid #d6d6d6;
+    background-color: white;
+    color: #5a5a5a;
+    border-radius: 0.25rem;
+}
+
+.mapping-table {
+    border-radius: 0.25rem;
+    overflow: hidden;
+    width: fit-content;
+    background-color: #f0f0f0;
+
+    & th:first-child {
+        padding-left: 0.4rem;
+    }
+
+    & th:last-child {
+        padding-right: 0.4rem;
+    }
+
+    & td {
+        padding: 0.25rem;
+    }
+}
