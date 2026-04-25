@@ -68,7 +68,7 @@ export class PosterListComponent implements OnInit {
   get filteredPosters(): PosterList[] {
     return this.posters()
       .filter(p =>
-        (p.group + p.students + p.advisor)
+        (p.group + p.students + p.advisor + p.id)
           .toLowerCase()
           .includes(this.searchValue.toLowerCase())
       )
@@ -87,6 +87,11 @@ export class PosterListComponent implements OnInit {
       this.sortField = field;
       this.sortDir = 'asc';
     }
+  }
+
+  sortByDir(field: keyof PosterList, dir: "desc" | "asc") {
+    this.sortField = field;
+    this.sortDir = dir;
   }
 
   getSortIcon(field: string): string {

@@ -14,27 +14,32 @@
             </div>
             @if (file()) {
             <hr />
-            <div class="d-flex flex-column gap-2">
-                @for (column of columns(); track $index) {
-                <div>
-                    <span class="me-2">Map CSV Column <span class="px-1 pe-2 mx-1"
-                            style="padding-block: 0.125rem; border: 1px solid #d6d6d6; color: #5a5a5a; border-radius: 0.25rem;">{{
-                            column }}</span> to Database Column</span>
-                    <select [value]="selections[column]" class="custom-select custom-select-sm"
-                        style="width: fit-content; font-size: 1rem;" (change)="onSelectionChanged($event, column)">
-                        <option value="">[Ignore Column]</option>
-                        <option value="id">Poster ID #</option>
-                        <option value="email">Student Email</option>
-                        <option value="group">Poster Title</option>
-                        <option value="subject">Subject(s)</option>
-                        <option value="students">Student Name(s)</option>
-                        <option value="advisor">Faculty Supervisor Name(s)</option>
-                        <option value="advisorEmail">Primary Faculty Supervisor Email</option>
-                        <option value="Judged?">Judge Poster?</option>
-                    </select>
-                </div>
-                }
-            </div>
+            <h3>Map Data</h3>
+            <table class="mapping-table">
+                <thead>
+                    <tr>
+                        <th>Database Column</th>
+                        <th>CSV Column</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (column of mappedColumnArray(); track $index) {
+                    <tr>
+                        <td class="me-2"><span class="px-1 pe-2 mx-1" class="chip" data-toggle="tooltip" title="{{columnTooltips[column[0]]}}">{{ column[1] }}</span></td>
+                        <td>
+                            <select class="custom-select custom-select-sm"
+                                style="width: fit-content; font-size: 1rem;"
+                                (change)="onSelectionChanged($event, column[0])">
+                                <option value="">[No column selected]</option>
+                                @for (col of columns(); track $index) {
+                                <option [selected]="selections[column[0]] == col" [value]="col">{{ col }}</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
             <hr />
             <h3 class="mb-0">First 3 CSV Rows</h3>
             <span class="text-muted mb-2">This CSV file contains a total of {{data().length}} rows.</span>
@@ -56,7 +61,6 @@
                     }
                 </tbody>
             </table>
-            @if (!cantUpload()) {
             <h3>First 3 Mapped Rows</h3>
             <table class="table table-bordered table-striped">
                 <thead>
@@ -76,14 +80,13 @@
                     }
                 </tbody>
             </table>
-            }
             <hr />
             @if (autoMapped()) {
             <span class="mb-1 text-muted">Some columns have been automatically mapped for you. Review the column
                 mappings, and when you are ready to upload, click the button below.</span>
             }
             <div class="d-flex align-items-center gap-3">
-                <button [disabled]="cantUpload() || uploadedSuccessfully()" (click)="uploadData()"
+                <button [disabled]="uploadedSuccessfully()" (click)="uploadData()"
                     class="btn btn-primary btn-sm" style="width: fit-content;">Upload to Database</button>
                 <div class="custom-control custom-checkbox">
                     <input type="checkbox" class="custom-control-input" id="overwritePosters"
@@ -93,6 +96,9 @@
                         existing posters</label>
                 </div>
             </div>
+            @if (warnUpload()) {
+            <span class="mt-1 text-danger">Warning: Some database columns do not have a CSV column selected as their data source.</span>
+            }
             @if (uploadedSuccessfully()) {
             <span class="mt-1 text-muted">Successfully uploaded {{data().length}} posters to database.</span>
             } @else if (uploadedSuccessfully() === false) {
