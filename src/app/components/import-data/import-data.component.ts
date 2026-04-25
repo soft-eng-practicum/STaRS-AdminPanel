@@ -18,7 +18,7 @@ export class ImportDataComponent {
     data = signal<any[]>([]);
     dataTable = signal<any[]>([]);
     columns = signal<string[]>([]);
-    cantUpload = signal<boolean>(true);
+    warnUpload = signal<boolean>(true);
     autoMapped = signal<boolean>(false);
     uploadedSuccessfully = signal<boolean | null>(null);
     currentPosters = signal<any[]>([]);
@@ -46,6 +46,13 @@ export class ImportDataComponent {
         "advisorEmail": "The primary faculty advisor email for the poster.",
         "Judged?": "Whether the poster should be judged."
     } as const;
+    columnDefaults = {
+        "group": "Untitled Poster",
+        "subject": "",
+        "students": "Anonymous",
+        "advisor": "",
+        "Judged?": "Yes"
+    } as any;
 
     constructor(private pouchdb: PouchdbService) {
         effect(() => void this.pouchdb.dbUpdated());
@@ -91,7 +98,7 @@ export class ImportDataComponent {
     }
 
     updateMapping() {
-        this.cantUpload.set(Object.values(this.selections).some(s => s === ""));
+        this.warnUpload.set(Object.values(this.selections).some(s => s === ""));
         this.mapPosters();
     }
 
@@ -104,7 +111,7 @@ export class ImportDataComponent {
         this.dataTable.set(this.data().map(p => Object.values(p)).slice(0, 3));
         this.currentPosters.set(this.data().map(row => {
             const newRow: any = {};
-            Object.keys(this.mappedColumns).filter(k => this.selections[k] !== "").forEach(k => newRow[k] = row[this.selections[k]]);
+            Object.keys(this.mappedColumns).forEach(k => newRow[k] = this.selections[k] ? row[this.selections[k]] : this.columnDefaults[k]);
             return newRow;
         }));
         this.currentPostersTable.set(this.currentPosters().map(p => Object.values(p)).slice(0, 3));

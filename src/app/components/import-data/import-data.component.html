@@ -61,7 +61,6 @@
                     }
                 </tbody>
             </table>
-            @if (!cantUpload()) {
             <h3>First 3 Mapped Rows</h3>
             <table class="table table-bordered table-striped">
                 <thead>
@@ -81,14 +80,13 @@
                     }
                 </tbody>
             </table>
-            }
             <hr />
             @if (autoMapped()) {
             <span class="mb-1 text-muted">Some columns have been automatically mapped for you. Review the column
                 mappings, and when you are ready to upload, click the button below.</span>
             }
             <div class="d-flex align-items-center gap-3">
-                <button [disabled]="cantUpload() || uploadedSuccessfully()" (click)="uploadData()"
+                <button [disabled]="uploadedSuccessfully()" (click)="uploadData()"
                     class="btn btn-primary btn-sm" style="width: fit-content;">Upload to Database</button>
                 <div class="custom-control custom-checkbox">
                     <input type="checkbox" class="custom-control-input" id="overwritePosters"
@@ -98,8 +96,8 @@
                         existing posters</label>
                 </div>
             </div>
-            @if (cantUpload()) {
-            <span class="mt-1 text-danger">Every database column must have a CSV column selected as its data source.</span>
+            @if (warnUpload()) {
+            <span class="mt-1 text-danger">Warning: Some database columns do not have a CSV column selected as their data source.</span>
             }
             @if (uploadedSuccessfully()) {
             <span class="mt-1 text-muted">Successfully uploaded {{data().length}} posters to database.</span>
