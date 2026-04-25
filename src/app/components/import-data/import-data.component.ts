@@ -75,7 +75,7 @@ export class ImportDataComponent {
         if (data.length > 0) {
             const columns = Object.keys(data[0] as object);
             this.selections = {};
-            Object.keys(this.mappedColumns).forEach(c => this.selections[c] = columns.find(d => this.tryMapColumn(d) === c) ?? "");
+            Object.keys(this.mappedColumns).forEach(c => this.selections[c] = columns.find(d => this.tryMapColumn(d, data.slice(0, 10).map(r => (r as any)[d])) === c) ?? "");
             this.columns.set(columns);
         }
 
@@ -84,16 +84,19 @@ export class ImportDataComponent {
         this.uploadedSuccessfully.set(null);
     }
 
-    tryMapColumn(column: string) {
+    tryMapColumn(column: string, cells: string[]) {
+        cells = cells.map(i => i.toLowerCase());
         const c = column.toLowerCase();
         if (c.includes("title")) return "group";
         if (c.includes("poster") && (c.includes("#") || c.includes("number") || c.match(/\bid\b/) || c.match(/\bno\.?\b/))) return "id";
         if (c.includes("faculty") && c.includes("email")) return "advisorEmail";
-        if (c.includes("faculty")) return "advisor";
+        if (c.includes("faculty") && c.includes("name")) return "advisor";
         if (c.includes("email")) return "email";
         if (c.includes("student")) return "students";
-        if (c.includes("discipline") || c.includes("subject")) return "subject";
-        if (c.includes("judged")) return "Judged?";
+        if (c.includes("discipline") || c.includes("subject") || cells.some(i => ["biology", "chemistry", "information technology"].includes(i))) return "subject";
+        if (c.includes("judged") || cells.every(i => ["yes", "no"].includes(i))) return "Judged?";
+        if (c.includes("faculty")) return "advisor";
+        if (c.match(/\bid\b/)) return "id";
         return "";
     }
 

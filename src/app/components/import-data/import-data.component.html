@@ -25,10 +25,10 @@
                 <tbody>
                     @for (column of mappedColumnArray(); track $index) {
                     <tr>
-                        <td class="me-2"><span class="px-1 pe-2 mx-1" class="chip" data-toggle="tooltip" title="{{columnTooltips[column[0]]}}">{{ column[1] }}</span></td>
+                        <td class="me-2"><span class="px-1 pe-2 mx-1" class="chip" data-toggle="tooltip"
+                                title="{{columnTooltips[column[0]]}}">{{ column[1] }}</span></td>
                         <td>
-                            <select class="custom-select custom-select-sm"
-                                style="width: fit-content; font-size: 1rem;"
+                            <select [classList]="'custom-select custom-select-sm' + (selections[column[0]] === '' ? ' unmapped' : '')" style="width: fit-content; font-size: 1rem;"
                                 (change)="onSelectionChanged($event, column[0])">
                                 <option value="">[No column selected]</option>
                                 @for (col of columns(); track $index) {
@@ -47,7 +47,7 @@
                 <thead>
                     <tr>
                         @for (column of columns(); track $index) {
-                        <th scope="col">{{column}}</th>
+                        <th scope="col">{{ column.length > 60 ? column.substring(0, 57) + "..." : column }}</th>
                         }
                     </tr>
                 </thead>
@@ -86,8 +86,8 @@
                 mappings, and when you are ready to upload, click the button below.</span>
             }
             <div class="d-flex align-items-center gap-3">
-                <button [disabled]="uploadedSuccessfully()" (click)="uploadData()"
-                    class="btn btn-primary btn-sm" style="width: fit-content;">Upload to Database</button>
+                <button [disabled]="uploadedSuccessfully()" (click)="uploadData()" class="btn btn-primary btn-sm"
+                    style="width: fit-content;">Upload to Database</button>
                 <div class="custom-control custom-checkbox">
                     <input type="checkbox" class="custom-control-input" id="overwritePosters"
                         (change)="overwrite = $event.target.checked">
@@ -97,7 +97,8 @@
                 </div>
             </div>
             @if (warnUpload()) {
-            <span class="mt-1 text-danger">Warning: Some database columns do not have a CSV column selected as their data source.</span>
+            <span class="mt-1 text-danger">Warning: Some database columns do not have a CSV column selected as their
+                data source.</span>
             }
             @if (uploadedSuccessfully()) {
             <span class="mt-1 text-muted">Successfully uploaded {{data().length}} posters to database.</span>

@@ -29,4 +29,14 @@
     & td {
         padding: 0.25rem;
     }
+
+    & select {
+        max-width: 40rem;
+        text-overflow: ellipsis;
+
+        &.unmapped {
+            color: gray;
+            font-style: italic;
+        }
+    }
 }
