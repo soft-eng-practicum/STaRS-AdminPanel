@@ -89,6 +89,11 @@ export class PosterListComponent implements OnInit {
     }
   }
 
+  sortByDir(field: keyof PosterList, dir: "desc" | "asc") {
+    this.sortField = field;
+    this.sortDir = dir;
+  }
+
   getSortIcon(field: string): string {
     if (this.sortField !== (field as keyof PosterList)) return '';
     return this.sortDir === 'asc' ? 'ion-arrow-up-b' : 'ion-arrow-down-b';
