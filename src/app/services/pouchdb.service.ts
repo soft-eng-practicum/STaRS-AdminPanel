@@ -175,6 +175,7 @@ export class PouchdbService {
 
 
   async getJudges(): Promise<JudgeSummary[]> {
+    await this.dbInitComplete;
     try {
       const res = await this.judgesLocalDB.allDocs({ include_docs: true });
 
@@ -210,11 +211,12 @@ export class PouchdbService {
   }
 
   async getJudgesRaw(): Promise<any[]> {
+    await this.dbInitComplete;
     try {
       const res = await this.judgesLocalDB.allDocs({ include_docs: true });
       return res.rows.map((r: { doc: any; }) => r.doc);
     } catch (err) {
-      console.error(' Failed to load judge');
+      console.error('Failed to load judges.');
       return [];
     }
   }
