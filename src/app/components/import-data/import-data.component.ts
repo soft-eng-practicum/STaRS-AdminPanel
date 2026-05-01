@@ -112,9 +112,10 @@ export class ImportDataComponent {
 
     mapPosters() {
         this.dataTable.set(this.data().map(p => Object.values(p)).slice(0, 3));
-        this.currentPosters.set(this.data().map(row => {
+        const maxId = this.selections.id ? this.data().map(row => row[this.selections.id]).reduce((a, b) => a > b ? a : b, 0) : 0;
+        this.currentPosters.set(this.data().map((row, i) => {
             const newRow: any = {};
-            Object.keys(this.mappedColumns).forEach(k => newRow[k] = this.selections[k] ? row[this.selections[k]] : this.columnDefaults[k]);
+            Object.keys(this.mappedColumns).forEach(k => newRow[k] = this.selections[k] && row[this.selections[k]] ? row[this.selections[k]] : (k == "id" ? (maxId + i + 1).toString() : this.columnDefaults[k]));
             return newRow;
         }));
         this.currentPostersTable.set(this.currentPosters().map(p => Object.values(p)).slice(0, 3));

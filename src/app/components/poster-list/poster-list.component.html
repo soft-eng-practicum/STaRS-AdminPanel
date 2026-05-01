@@ -34,6 +34,9 @@
               <button class="dropdown-item" (click)="onBulkEmail()">
                 Email multiple
               </button>
+              <button class="dropdown-item" (click)="toggleJudgedForSelected()">
+                Toggle "Judge Poster?"
+              </button>
             </div>
           </div>
 
@@ -95,6 +98,10 @@
               Score
               <i *ngIf="sortField === 'score'" class="ml-1" [ngClass]="getSortIcon('score')"></i>
             </th>
+            <th (click)="sortBy('judged')">
+                Judge Poster?
+                <i *ngIf="sortField === 'score'" class="ml-1" [ngClass]="getSortIcon('score')"></i>
+            </th>
             <th></th>
           </tr>
           </thead>
@@ -117,6 +124,7 @@
             <td>{{ poster.advisor }}</td>
             <td>{{ poster.countJudges }}</td>
             <td>{{ poster.score }}</td>
+            <td>{{ poster.judged }}</td>
             <td>
               <a [routerLink]="['/poster', poster.id]" class="btn btn-primary btn-sm">
                 View

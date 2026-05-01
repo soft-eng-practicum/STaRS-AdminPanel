@@ -1,6 +1,6 @@
 import { Component, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PosterList } from '../../models/poster.model';
+import { Poster } from '../../models/poster.model';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PouchdbService } from '../../services/pouchdb.service';
@@ -18,13 +18,13 @@ declare const $: any;
   styleUrls: ['./poster-list.component.scss']
 })
 export class PosterListComponent implements OnInit {
-  posters = signal<PosterList[]>([]);
+  posters = signal<Poster[]>([]);
   searchValue = '';
-  sortField: keyof PosterList = 'id';
+  sortField: keyof Poster = 'id';
   sortDir: 'asc' | 'desc' = 'asc';
 
   // ---- Email Multiple state ----
-  selectedPosters: PosterList[] = [];
+  selectedPosters: Poster[] = [];
 
   globalToList: string[] = [];
   newGlobalRecipient = '';
@@ -62,10 +62,10 @@ export class PosterListComponent implements OnInit {
     // keep selected posters that still exist after reload
     this.selectedPosters = this.selectedPosters
       .map(sel => updatedList.find(p => p.id === sel.id))
-      .filter((p): p is PosterList => !!p);
+      .filter((p): p is Poster => !!p);
   }
 
-  get filteredPosters(): PosterList[] {
+  get filteredPosters(): Poster[] {
     return this.posters()
       .filter(p =>
         (p.group + p.students + p.advisor + p.id)
@@ -80,7 +80,7 @@ export class PosterListComponent implements OnInit {
       });
   }
 
-  sortBy(field: keyof PosterList): void {
+  sortBy(field: keyof Poster): void {
     if (this.sortField === field) {
       this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
     } else {
@@ -89,29 +89,29 @@ export class PosterListComponent implements OnInit {
     }
   }
 
-  sortByDir(field: keyof PosterList, dir: "desc" | "asc") {
+  sortByDir(field: keyof Poster, dir: "desc" | "asc") {
     this.sortField = field;
     this.sortDir = dir;
   }
 
   getSortIcon(field: string): string {
-    if (this.sortField !== (field as keyof PosterList)) return '';
+    if (this.sortField !== (field as keyof Poster)) return '';
     return this.sortDir === 'asc' ? 'ion-arrow-up-b' : 'ion-arrow-down-b';
   }
 
   // checkbox handler from template
-  onPosterCheckboxChange(event: Event, poster: PosterList): void {
+  onPosterCheckboxChange(event: Event, poster: Poster): void {
     const input = event.target as HTMLInputElement | null;
     if (!input) return;
     this.togglePoster(poster, input.checked);
   }
 
   // ---- selection helpers ----
-  isSelected(p: PosterList): boolean {
+  isSelected(p: Poster): boolean {
     return this.selectedPosters.some(sel => sel.id === p.id);
   }
 
-  togglePoster(p: PosterList, checked: boolean): void {
+  togglePoster(p: Poster, checked: boolean): void {
     if (checked) {
       if (!this.isSelected(p)) this.selectedPosters.push(p);
     } else {
@@ -127,7 +127,16 @@ export class PosterListComponent implements OnInit {
     this.selectedPosters = [];
   }
 
-  // ---- bulk actions entry point ----
+  async toggleJudgedForSelected() {
+    if (this.selectedPosters.length === 0) {
+      this.showToast('Please select at least one poster first.', true);
+      return;
+    }
+
+    await this.pouchdb.updatePosters(this.selectedPosters.map(p => ({ "id": p.id, "Judged?": p.judged === "Yes" ? "No" : "Yes" })));
+    await this.reloadData();
+  }
+
   onBulkEmail(): void {
     this.emailError = '';
     if (!this.selectedPosters.length) {
