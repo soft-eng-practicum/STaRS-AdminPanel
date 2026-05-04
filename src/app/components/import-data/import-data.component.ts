@@ -116,6 +116,7 @@ export class ImportDataComponent {
         this.currentPosters.set(this.data().map((row, i) => {
             const newRow: any = {};
             Object.keys(this.mappedColumns).forEach(k => newRow[k] = this.selections[k] && row[this.selections[k]] ? row[this.selections[k]] : (k == "id" ? (maxId + i + 1).toString() : this.columnDefaults[k]));
+            newRow["Judged?"] = newRow["Judged?"].toLowerCase().startsWith("y") ? "Yes" : "No";
             return newRow;
         }));
         this.currentPostersTable.set(this.currentPosters().map(p => Object.values(p)).slice(0, 3));
