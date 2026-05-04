@@ -2,7 +2,7 @@ import { Component, effect, OnInit, signal, AfterViewInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PosterList } from '../../models/poster.model';
+import { Poster } from '../../models/poster.model';
 import { PouchdbService } from '../../services/pouchdb.service';
 import { PosterService } from '../../services/poster.service';
 import { SurveyResult } from '../../models/judge.model';
@@ -19,7 +19,7 @@ declare const $: any;
   styleUrls: ['./poster.component.scss']
 })
 export class PosterComponent implements OnInit, AfterViewInit {
-  poster?: PosterList;
+  poster?: Poster;
   exportFormat: 'csv' | 'pdf' = 'csv';
 
   criteriaLabels = [

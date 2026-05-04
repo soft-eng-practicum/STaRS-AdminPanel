@@ -2,7 +2,7 @@ declare let PouchDB: any;
 
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { PosterList } from '../models/poster.model';
+import { Poster } from '../models/poster.model';
 import { JudgeSummary } from '../models/judge.model';
 import { AuthService } from './auth.service';
 import { signal } from '@angular/core';
@@ -102,7 +102,7 @@ export class PouchdbService {
   }
 
 
-  async getPosters(retry = 3): Promise<PosterList[]> {
+  async getPosters(retry = 3): Promise<Poster[]> {
     await this.dbInitComplete;
     for (let i = 0; i < retry; i++) {
       try {
@@ -114,7 +114,6 @@ export class PouchdbService {
         );
 
         return posterDocs.rows.map((r: any) => r.doc)
-            .filter((p: any) => p['Judged?'] === 'Yes')
             .map((p: any) => {
               const groupId = String(p['id']);
               const surveys = allSurveys.filter((s: { groupId: any; }) => String(s.groupId) === groupId);
@@ -138,7 +137,8 @@ export class PouchdbService {
                 students: p['students'],
                 advisor: p['advisor'],
                 advisorEmail: p['advisorEmail'],
-                score: avgScore
+                score: avgScore,
+                judged: p['Judged?']
               };
             });
     } catch (err: any) {
@@ -156,7 +156,7 @@ export class PouchdbService {
   }
 
 
-  async setPosters(posters: PosterList[], overwrite: boolean): Promise<boolean> {
+  async setPosters(posters: Poster[], overwrite: boolean): Promise<boolean> {
       try {
         const postersDB: PouchDB.Database = new PouchDB(`${environment.couch.protocol}://${this.auth.username}:${this.auth.password}@${environment.couch.host}:${environment.couch.port}/${this.confDoc.postersDB}`);
         
@@ -171,6 +171,14 @@ export class PouchdbService {
         console.log(err);
         return false;
       }
+  }
+
+
+  async updatePosters(updates: any[]): Promise<void> {
+    const postersDB: PouchDB.Database = new PouchDB(`${environment.couch.protocol}://${this.auth.username}:${this.auth.password}@${environment.couch.host}:${environment.couch.port}/${this.confDoc.postersDB}`);
+    const posters: any[] = (await postersDB.allDocs({ include_docs: true })).rows.map(row => row.doc).filter((p: any) => updates.some((u: any) => u.id.toString() === p.id));
+    updates.forEach(u => Object.keys(u).forEach(k => posters.find((p: any) => u.id.toString() === p.id)[k] = u[k].toString()));
+    await postersDB.bulkDocs(posters);
   }
 
 
