@@ -10,6 +10,7 @@ import { JudgeComponent } from './components/judge/judge.component';
 import { FinalReportComponent } from './components/final-report/final-report.component';
 import { AuthGuard } from './guards/auth.guard';
 import { ImportDataComponent } from './components/import-data/import-data.component';
+import { ManageConfigComponent } from './components/manage-config/manage-config.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -20,6 +21,7 @@ export const routes: Routes = [
   { path: 'judge/:id', component: JudgeComponent, canActivate: [AuthGuard] },
   { path: 'final-report', component: FinalReportComponent, canActivate: [AuthGuard] },
   { path: 'import-data', component: ImportDataComponent, canActivate: [AuthGuard] },
+  { path: 'manage-config', component: ManageConfigComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' }
 ];
 
@@ -27,4 +29,4 @@ export const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
