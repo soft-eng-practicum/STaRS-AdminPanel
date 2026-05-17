@@ -1,5 +1,7 @@
-interface Config {
-    name: string,
+import { META_CONFIG_ID } from "../services/pouchdb.service"
+
+export interface Config {
+    name?: string,
     configName: string,
     logo?: string,
     judgesDB: string,
@@ -8,9 +10,9 @@ interface Config {
     secret: string
 }
 
-interface MetaConfig {
+export interface MetaConfig {
     configs: Config[],
     activeConfigName: string,
-    _id: "meta-config",
+    _id: typeof META_CONFIG_ID,
     _rev: string
 }

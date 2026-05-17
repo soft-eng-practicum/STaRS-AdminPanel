@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PouchdbService } from '../../services/pouchdb.service';
+import { Config, MetaConfig } from '../../models/config.model';
 
 @Component({
     selector: 'app-manage-config',
@@ -13,28 +14,26 @@ import { PouchdbService } from '../../services/pouchdb.service';
 })
 export class ManageConfigComponent {
     @ViewChild('closeModal') closeModal: ElementRef = null!;
-    currentConfig = signal<Config>(null!);
+    @ViewChild('closeEditModal') closeEditModal: ElementRef = null!;
+    editingConfig = signal<Config | null>(null);
     metaConfig = signal<MetaConfig>(null!);
-    loaded = computed(() => this.currentConfig() && this.metaConfig());
+    loaded = computed(() => this.metaConfig());
     file = signal<File | undefined>(undefined);
     submittingModal = signal<boolean>(false);
-    configKeyDisplayNames: { [key in keyof Config]: string } = {
+    configKeyDisplayNames: { [key: string]: string } = {
         configName: "Config Name",
-        postersDB: "Posters Database Name",
-        judgesDB: "Judges Database Name",
         secret: "Judging App Password",
         feedbackLink: "Judging App Feedback Link",
         name: "Event Name",
         logo: "Event Logo"
     };
     configTextKeys: (keyof Config)[] = Object.keys(this.configKeyDisplayNames).filter(k => k !== "logo") as (keyof Config)[];
-    requiredConfigKeys: (keyof Config)[] = ["configName", "postersDB", "judgesDB", "secret"];
-    tableConfigKeys: (keyof Config)[] = ["configName", "postersDB", "judgesDB", "secret", "name", "feedbackLink"];
+    requiredConfigKeys: (keyof Config)[] = ["configName", "secret"];
+    tableConfigKeys: (keyof Config)[] = ["configName", "secret", "name", "feedbackLink"];
     tableConfigHeaders: string[] = [...this.tableConfigKeys.map(k => (this.configKeyDisplayNames as any)[k]), "Actions"];
 
     constructor(private pouchdb: PouchdbService) {
         effect(async () => {
-            this.currentConfig.set(await pouchdb.getActiveConfig());
             this.metaConfig.set(await pouchdb.getMetaConfig());
         });
     }
@@ -45,8 +44,9 @@ export class ManageConfigComponent {
             const form = e.target as HTMLFormElement;
             const formData = Object.fromEntries(new FormData(form));
             Object.keys(formData).forEach(k => formData[k] = formData[k].toString().trim());
+            Object.keys(formData).filter(k => formData[k] === "").forEach(k => delete formData[k]);
             const imageId = crypto.randomUUID();
-            const newConfig = { ...formData, logo: this.file() ? imageId : undefined } as Config;
+            const newConfig = { ...formData, postersDB: this.pouchdb.generateDBName(), judgesDB: this.pouchdb.generateDBName(), logo: this.file() ? imageId : undefined } as Config;
 
             for (const requiredKey of this.requiredConfigKeys) {
                 if (!newConfig[requiredKey]?.trim()) {
@@ -74,25 +74,74 @@ export class ManageConfigComponent {
         }
     }
 
+    async onConfirmEditConfig(e: SubmitEvent) {
+        try {
+            this.submittingModal.set(true);
+            const form = e.target as HTMLFormElement;
+            const formData = Object.fromEntries(new FormData(form));
+            Object.keys(formData).forEach(k => formData[k] = formData[k].toString().trim());
+            Object.keys(formData).filter(k => formData[k] === "").forEach(k => delete formData[k]);
+            const newConfig: Config = { ...this.editingConfig()! };
+            Object.keys(formData).forEach(k => (newConfig as any)[k] = formData[k]);
+            
+            for (const requiredKey of this.requiredConfigKeys) {
+                if (!newConfig[requiredKey]?.trim()) {
+                    this.showToast(`Field "${this.configKeyDisplayNames[requiredKey]}" is required.`, "error");
+                    return;
+                }
+            }
+
+            const metaConfig = this.metaConfig();
+            if (metaConfig.configs.filter(c => c.configName !== this.editingConfig()!.configName).some(c => c.configName === newConfig.configName)) {
+                this.showToast("A config with that name already exists.", "error");
+                return;
+            }
+
+            metaConfig.configs[metaConfig.configs.findIndex(c => c.configName === this.editingConfig()!.configName)] = newConfig;
+            if (metaConfig.activeConfigName === this.editingConfig()!.configName) {
+                metaConfig.activeConfigName = newConfig.configName;
+            }
+
+            if (this.file()) {
+                if (this.editingConfig()!.logo) {
+                    await this.pouchdb.replaceLogo(metaConfig, this.file()!, this.editingConfig()!.logo!);
+                } else {
+                    await this.pouchdb.addLogo(metaConfig, this.file()!, crypto.randomUUID());
+                }
+            }
+            await this.pouchdb.updateMetaConfig(metaConfig);
+            this.metaConfig.set(metaConfig);
+
+            setTimeout(() => form.reset(), 150);
+            this.closeEditModal.nativeElement.click();
+            this.showToast(`Successfully edited config "${newConfig['configName']}".`, "success");
+        } finally {
+            this.submittingModal.set(false);
+        }
+    }
+
     onFileSelected(e: Event) {
         this.file.set((e.target as HTMLInputElement).files?.[0]);
     }
 
     async onActivateConfig(config: Config) {
         const metaConfig = this.metaConfig();
-        this.currentConfig.set(await this.pouchdb.setActiveConfig(config, metaConfig));
+        await this.pouchdb.setActiveConfig(config, metaConfig);
         this.metaConfig.set(metaConfig);
     }
 
     async onDeleteConfig(config: Config) {
-        if (!confirm(`Delete config "${config.configName}"?`)) {
+        if (!confirm(`Delete config "${config.configName}"? This will delete all posters and judges associated with this configuration.`)) {
             return;
         }
 
         const metaConfig = this.metaConfig();
-        metaConfig.configs = metaConfig.configs.filter(c => c.configName !== config.configName);
-        await this.pouchdb.updateMetaConfig(metaConfig);
+        await this.pouchdb.deleteConfig(metaConfig, config);
         this.metaConfig.set(metaConfig);
+    }
+
+    async onEditConfig(config: Config) {
+        this.editingConfig.set(config);
     }
 
     private showToast(message: string, type: "success" | "error"): void {

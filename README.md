@@ -119,8 +119,6 @@ export const environment = {
     port: 'port',
     confDB: 'DBname',
   },
-
-  configurationDocId: 'DBname',
   
     // Email backend (dev)
   emailApiUrl: 'http://localhost:3000/api/send-email',
@@ -150,8 +148,6 @@ export const environment = {
     judgesDB: 'DBname',
     confDB: 'DBname',
   },
-
-  configurationDocId: 'DBname',
 
   // Email backend (prod)
   emailApiUrl: 'emailHostingUrl',

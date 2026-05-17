@@ -1,4 +1,5 @@
 declare const PouchDB: any;
+export const META_CONFIG_ID = "meta-config";
 
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
@@ -6,6 +7,7 @@ import { Poster } from '../models/poster.model';
 import { JudgeSummary } from '../models/judge.model';
 import { AuthService } from './auth.service';
 import { signal } from '@angular/core';
+import { Config, MetaConfig } from '../models/config.model';
 
 @Injectable({ providedIn: 'root' })
 export class PouchdbService {
@@ -19,7 +21,7 @@ export class PouchdbService {
   private confDoc: any;
 
   // for judges
-  private judgesLocalDB: PouchDB.Database = null!;
+  public judgesLocalDB: PouchDB.Database = null!;
   private judgesRemoteDB: PouchDB.Database = null!;
 
   private dbInitComplete: Promise<void> = null!;
@@ -31,16 +33,21 @@ export class PouchdbService {
     return new PouchDB(`${environment.couch.protocol}://${this.auth.username}:${this.auth.password}@${environment.couch.host}:${environment.couch.port}/${databaseName}`);
   }
 
+  private getLocalDB(databaseName: string): PouchDB.Database {
+    return new PouchDB(databaseName);
+  }
+
   async initDatabases(): Promise<void> {
     this.dbInitComplete = new Promise(async (res, rej) => {
         try {
-          this.confLocalDB = new PouchDB('conf');
+          this.confLocalDB = this.getLocalDB('conf');
           this.confRemoteDB = this.getRemoteDB(environment.couch.confDB);
 
           this.startConfSync();
-          this.confDoc = await this.confRemoteDB.get(environment.configurationDocId);
+          const metaConfig = await this.getMetaConfig(true);
+          this.confDoc = metaConfig.configs.find(c => c.configName === metaConfig.activeConfigName);
 
-          this.judgesLocalDB = new PouchDB(this.confDoc.judgesDB);
+          this.judgesLocalDB = this.getLocalDB(this.confDoc.judgesDB);
           this.judgesRemoteDB = this.getRemoteDB(this.confDoc.judgesDB);
 
           this.startJudgesSync();
@@ -100,32 +107,18 @@ export class PouchdbService {
     this.judgesLocalDB.info().then(console.log);
   }
 
-  async getActiveConfig() {
-    await this.dbInitComplete;
-    const config = await this.confRemoteDB.get<Config>(environment.configurationDocId);
-    if (!config.feedbackLink && (config as any)['feedback_link']) {
-      config.feedbackLink = (config as any)['feedback_link'];
-      delete (config as any)['feedback_link'];
-      await this.confRemoteDB.put(config);
-    }
-    return config;
+  public generateDBName() {
+    return `db-${crypto.randomUUID()}`;
   }
 
-  async getMetaConfig(): Promise<MetaConfig> {
-    await this.dbInitComplete;
+  async getMetaConfig(init: boolean = false): Promise<MetaConfig> {
+    if (!init) await this.dbInitComplete;
     try {
-      return await this.confRemoteDB.get<MetaConfig>("meta-config");
+      return await this.confRemoteDB.get<MetaConfig>(META_CONFIG_ID);
     } catch (err: any) {
       if (err.status === 404) {
-        const config = await this.getActiveConfig();
-        let newConfig: any = {};
-        this.configProperties.forEach(k => newConfig[k] = (config as any)[k]);
-        const doc: MetaConfig = { _id: "meta-config", _rev: undefined!, configs: [{ configName: "Default", ...newConfig }], activeConfigName: "Default" };
+        const doc: MetaConfig = { _id: META_CONFIG_ID, _rev: undefined!, configs: [{ configName: "Default", postersDB: this.generateDBName(), judgesDB: this.generateDBName(), secret: crypto.randomUUID().split('-').at(-1)! }], activeConfigName: "Default" };
         doc._rev = (await this.confRemoteDB.put(doc)).rev;
-        if (config.logo && config._attachments && Object.values(config._attachments).length > 0) {
-          const fileData = await this.confRemoteDB.getAttachment(environment.configurationDocId, config.logo);
-          doc._rev = (await this.confRemoteDB.putAttachment(doc._id, config.logo, doc._rev, fileData, Object.values(config._attachments)[0].content_type)).rev;
-        }
         return doc;
       } else {
         throw err;
@@ -135,8 +128,21 @@ export class PouchdbService {
 
   async addLogo(metaConfig: MetaConfig, imageFile: File, id: string) {
     await this.dbInitComplete;
-    metaConfig._rev = (await this.confRemoteDB.putAttachment("meta-config", id, metaConfig._rev, imageFile, imageFile.type)).rev;
-    (metaConfig as any)._attachments = (await this.confRemoteDB.get<MetaConfig>("meta-config"))._attachments;
+    metaConfig._rev = (await this.confRemoteDB.putAttachment(META_CONFIG_ID, id, metaConfig._rev, imageFile, imageFile.type)).rev;
+    (metaConfig as any)._attachments = (await this.confRemoteDB.get<MetaConfig>(META_CONFIG_ID))._attachments;
+  }
+
+  async replaceLogo(metaConfig: MetaConfig, imageFile: File, id: string) {
+    await this.dbInitComplete;
+    metaConfig._rev = (await this.confRemoteDB.removeAttachment(META_CONFIG_ID, id, metaConfig._rev)).rev;
+    metaConfig._rev = (await this.confRemoteDB.putAttachment(META_CONFIG_ID, id, metaConfig._rev, imageFile, imageFile.type)).rev;
+    (metaConfig as any)._attachments = (await this.confRemoteDB.get<MetaConfig>(META_CONFIG_ID))._attachments;
+  }
+
+  async deleteConfig(metaConfig: MetaConfig, config: Config) {
+    metaConfig.configs = metaConfig.configs.filter((c: any) => c.configName !== config.configName);
+    await this.updateMetaConfig(metaConfig);
+    await Promise.all([this.getRemoteDB(config.postersDB), this.getLocalDB(config.judgesDB), this.getRemoteDB(config.judgesDB)].map(db => db.destroy()));
   }
 
   async updateMetaConfig(metaConfig: MetaConfig): Promise<void> {
@@ -144,22 +150,12 @@ export class PouchdbService {
     metaConfig._rev = (await this.confRemoteDB.put(metaConfig)).rev;
   }
 
-  async setActiveConfig(config: Config, metaConfig: MetaConfig): Promise<Config> {
+  async setActiveConfig(config: Config, metaConfig: MetaConfig) {
     await this.dbInitComplete;
-    const activeConfig = await this.getActiveConfig();
-    if (activeConfig.logo) try {
-      activeConfig._rev = (await this.confRemoteDB.removeAttachment(activeConfig._id, activeConfig.logo, activeConfig._rev)).rev;
-      delete activeConfig._attachments;
-    } catch {}
-    (["name", "logo", "judgesDB", "postersDB", "feedbackLink", "secret"] as const).forEach(k => activeConfig[k] = config[k]!);
-    activeConfig._rev = (await this.confRemoteDB.put(activeConfig)).rev;
     metaConfig.activeConfigName = config.configName;
     metaConfig._rev = (await this.confRemoteDB.put(metaConfig)).rev;
-    if (activeConfig.logo) {
-      const fileData = await this.confRemoteDB.getAttachment(metaConfig._id, activeConfig.logo);
-      activeConfig._rev = (await this.confRemoteDB.putAttachment(activeConfig._id, activeConfig.logo, activeConfig._rev, fileData, "image/png")).rev;
-    }
-    return activeConfig;
+    await this.initDatabases();
+    await this.dbInitComplete;
   }
 
   async getPosters(retry = 3): Promise<Poster[]> {
@@ -202,7 +198,7 @@ export class PouchdbService {
               };
             });
     } catch (err: any) {
-      console.error(`Posters Failed to load '${environment.configurationDocId}' from local DB.`, err);
+      console.error(`Failed to load posters from local DB.`, err);
         if (i < retry - 1) {
           await new Promise(res => setTimeout(res, 500 * (i + 1))); // backoff
         } else {
