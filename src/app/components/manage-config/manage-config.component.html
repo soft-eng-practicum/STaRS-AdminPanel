@@ -25,6 +25,11 @@
                             }
                             </td>
                         }
+                        <td>
+                            @if (config.logo) {
+                                <img [src]="logos()[config.logo]" style="width: 8rem;" />
+                            } @else {—}
+                        </td>
                         <td class="d-flex gap-3 justify-content-center">
                             @if (config.configName !== metaConfig().activeConfigName) {
                             <button class="btn-link" (click)="onActivateConfig(config)">Activate</button>
@@ -103,7 +108,7 @@
                                         {{ configKeyDisplayNames[key] }}@if (requiredConfigKeys.includes(key)) {*}
                                     </span>
                                 </div>
-                                <input type="text" class="form-control" [name]="key" [defaultValue]="editingConfig()?.[key] ?? ''">
+                                <input type="text" class="form-control" [disabled]="key === 'configName'" [name]="key" [defaultValue]="editingConfig()?.[key] ?? ''">
                             </div>
                             }
             

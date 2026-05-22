@@ -118,6 +118,7 @@ export const environment = {
     host: 'host',
     port: 'port',
     confDB: 'DBname',
+    metaConfigId: 'meta-config'
   },
   
     // Email backend (dev)

@@ -30,12 +30,23 @@ export class ManageConfigComponent {
     configTextKeys: (keyof Config)[] = Object.keys(this.configKeyDisplayNames).filter(k => k !== "logo") as (keyof Config)[];
     requiredConfigKeys: (keyof Config)[] = ["configName", "secret"];
     tableConfigKeys: (keyof Config)[] = ["configName", "secret", "name", "feedbackLink"];
-    tableConfigHeaders: string[] = [...this.tableConfigKeys.map(k => (this.configKeyDisplayNames as any)[k]), "Actions"];
+    tableConfigHeaders: string[] = [...this.tableConfigKeys.map(k => (this.configKeyDisplayNames as any)[k]), "Event Logo", "Actions"];
+    logos = signal<{ [key: string]: string }>({});
 
     constructor(private pouchdb: PouchdbService) {
         effect(async () => {
             this.metaConfig.set(await pouchdb.getMetaConfig());
         });
+
+        effect(async () => {
+            if (!this.metaConfig()) return;
+            this.logos.set(Object.fromEntries(await Promise.all(this.metaConfig().configs.filter(c => c.logo).map(async (c) => [c.logo!, await this.getLogoImage(c.logo!)]))));
+        });
+    }
+
+    async getLogoImage(id: string) {
+        const image = await this.pouchdb.getLogo(id);
+        return URL.createObjectURL(image as any);
     }
 
     async onCreateConfig(e: SubmitEvent) {
@@ -46,13 +57,24 @@ export class ManageConfigComponent {
             Object.keys(formData).forEach(k => formData[k] = formData[k].toString().trim());
             Object.keys(formData).filter(k => formData[k] === "").forEach(k => delete formData[k]);
             const imageId = crypto.randomUUID();
-            const newConfig = { ...formData, postersDB: this.pouchdb.generateDBName(), judgesDB: this.pouchdb.generateDBName(), logo: this.file() ? imageId : undefined } as Config;
+            const configName: string = formData["configName"] as string;
+            const newConfig = { ...formData, postersDB: this.pouchdb.generateDBName(configName, "posters"), judgesDB: this.pouchdb.generateDBName(configName, "judges"), logo: this.file() ? imageId : undefined } as Config;
 
             for (const requiredKey of this.requiredConfigKeys) {
                 if (!newConfig[requiredKey]?.trim()) {
                     this.showToast(`Field "${this.configKeyDisplayNames[requiredKey]}" is required.`, "error");
                     return;
                 }
+            }
+
+            if (newConfig.configName.length > 200) {
+                this.showToast("Config name cannot be longer than 200 characters.", "error");
+                return;
+            }
+
+            if (!newConfig.configName.match(/^[a-z][a-z0-9_/-]*$/)) {
+                this.showToast("Config name must start with a lowercase letter, and can only contain lowercase letters, numbers, or the special characters _, -, or /.", "error", 8000);
+                return;
             }
 
             const metaConfig = this.metaConfig();
@@ -80,10 +102,10 @@ export class ManageConfigComponent {
             const form = e.target as HTMLFormElement;
             const formData = Object.fromEntries(new FormData(form));
             Object.keys(formData).forEach(k => formData[k] = formData[k].toString().trim());
-            Object.keys(formData).filter(k => formData[k] === "").forEach(k => delete formData[k]);
+            Object.keys(formData).filter(k => k === "configName" || formData[k] === "").forEach(k => delete formData[k]);
             const newConfig: Config = { ...this.editingConfig()! };
             Object.keys(formData).forEach(k => (newConfig as any)[k] = formData[k]);
-            
+
             for (const requiredKey of this.requiredConfigKeys) {
                 if (!newConfig[requiredKey]?.trim()) {
                     this.showToast(`Field "${this.configKeyDisplayNames[requiredKey]}" is required.`, "error");
@@ -97,6 +119,10 @@ export class ManageConfigComponent {
                 return;
             }
 
+            if (this.file() && !this.editingConfig()!.logo) {
+                newConfig.logo = crypto.randomUUID();
+            }
+
             metaConfig.configs[metaConfig.configs.findIndex(c => c.configName === this.editingConfig()!.configName)] = newConfig;
             if (metaConfig.activeConfigName === this.editingConfig()!.configName) {
                 metaConfig.activeConfigName = newConfig.configName;
@@ -106,15 +132,15 @@ export class ManageConfigComponent {
                 if (this.editingConfig()!.logo) {
                     await this.pouchdb.replaceLogo(metaConfig, this.file()!, this.editingConfig()!.logo!);
                 } else {
-                    await this.pouchdb.addLogo(metaConfig, this.file()!, crypto.randomUUID());
+                    await this.pouchdb.addLogo(metaConfig, this.file()!, newConfig.logo!);
                 }
             }
             await this.pouchdb.updateMetaConfig(metaConfig);
-            this.metaConfig.set(metaConfig);
+            this.metaConfig.set({ ...metaConfig });
 
             setTimeout(() => form.reset(), 150);
             this.closeEditModal.nativeElement.click();
-            this.showToast(`Successfully edited config "${newConfig['configName']}".`, "success");
+            this.showToast(`Successfully edited config "${newConfig.configName}".`, "success");
         } finally {
             this.submittingModal.set(false);
         }
@@ -141,17 +167,20 @@ export class ManageConfigComponent {
     }
 
     async onEditConfig(config: Config) {
+        this.file.set(undefined);
         this.editingConfig.set(config);
     }
 
-    private showToast(message: string, type: "success" | "error"): void {
+    private showToast(message: string, type: "success" | "error", hideDelay: number = 3500): void {
+        document.querySelectorAll("div.toast-popup").forEach(d => d.remove());
         const toast = document.createElement("div");
+        toast.className = "toast-popup";
         toast.textContent = message;
         toast.style = `position: fixed; top: 5%; left: 50%; transform: translateX(-50%); z-index: 2000; background: ${type === "error" ? "#c0392b" : "#27ae60"}; color: white; padding: 10px 16px; border-radius: 6px; boxShadow: 0 2px 6px rgba(0, 0, 0, 0.2); font-size: 14px; transition: opacity 0.3s ease; opacity: 1;`;
         document.body.appendChild(toast);
         setTimeout(() => {
             toast.style.opacity = "0";
             setTimeout(() => toast.remove(), 300);
-        }, 3000);
+        }, hideDelay);
     }
 }

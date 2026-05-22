@@ -1,5 +1,5 @@
 declare const PouchDB: any;
-export const META_CONFIG_ID = "meta-config";
+export const META_CONFIG_ID = environment.metaConfigId;
 
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
@@ -107,8 +107,8 @@ export class PouchdbService {
     this.judgesLocalDB.info().then(console.log);
   }
 
-  public generateDBName() {
-    return `db-${crypto.randomUUID()}`;
+  public generateDBName(configName: string, dbName: string) {
+    return `${configName}-${dbName}-${crypto.randomUUID().split('-').at(-1)}`;
   }
 
   async getMetaConfig(init: boolean = false): Promise<MetaConfig> {
@@ -117,13 +117,18 @@ export class PouchdbService {
       return await this.confRemoteDB.get<MetaConfig>(META_CONFIG_ID);
     } catch (err: any) {
       if (err.status === 404) {
-        const doc: MetaConfig = { _id: META_CONFIG_ID, _rev: undefined!, configs: [{ configName: "Default", postersDB: this.generateDBName(), judgesDB: this.generateDBName(), secret: crypto.randomUUID().split('-').at(-1)! }], activeConfigName: "Default" };
+        const configName = "stars";
+        const doc: MetaConfig = { _id: META_CONFIG_ID, _rev: undefined!, configs: [{ configName, postersDB: this.generateDBName(configName, "posters"), judgesDB: this.generateDBName(configName, "judges"), secret: crypto.randomUUID().split('-').at(-1)! }], activeConfigName: configName };
         doc._rev = (await this.confRemoteDB.put(doc)).rev;
         return doc;
       } else {
         throw err;
       }
     }
+  }
+
+  async getLogo(id: string) {
+    return await this.confRemoteDB.getAttachment(META_CONFIG_ID, id);
   }
 
   async addLogo(metaConfig: MetaConfig, imageFile: File, id: string) {
