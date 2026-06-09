@@ -87,7 +87,7 @@ export class ManageConfigComponent {
             }
             metaConfig.configs.push(newConfig);
             await this.pouchdb.updateMetaConfig(metaConfig);
-            this.metaConfig.set(metaConfig);
+            this.metaConfig.set({ ...metaConfig });
             form.reset();
             this.closeModal.nativeElement.click();
             this.showToast(`Successfully created config "${formData['configName']}".`, "success");
@@ -163,7 +163,7 @@ export class ManageConfigComponent {
 
         const metaConfig = this.metaConfig();
         await this.pouchdb.deleteConfig(metaConfig, config);
-        this.metaConfig.set(metaConfig);
+        this.metaConfig.set({ ...metaConfig });
     }
 
     async onEditConfig(config: Config) {
