@@ -147,6 +147,9 @@ export class PouchdbService {
   async deleteConfig(metaConfig: MetaConfig, config: Config) {
     metaConfig.configs = metaConfig.configs.filter((c: any) => c.configName !== config.configName);
     await this.updateMetaConfig(metaConfig);
+    if (config.logo) {
+      metaConfig._rev = (await this.confRemoteDB.removeAttachment(META_CONFIG_ID, config.logo, metaConfig._rev)).rev;
+    }
     await Promise.all([this.getRemoteDB(config.postersDB), this.getLocalDB(config.judgesDB), this.getRemoteDB(config.judgesDB)].map(db => db.destroy()));
   }
 
