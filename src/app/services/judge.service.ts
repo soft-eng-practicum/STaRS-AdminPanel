@@ -1,21 +1,17 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {JudgeDoc, JudgeSummary} from '../models/judge.model';
-import { environment } from '../../environments/environment';
-
-declare let PouchDB: any;
+import { PouchdbService } from './pouchdb.service';
 
 @Injectable({ providedIn: 'root' })
 export class JudgeService {
   private localDB: any;
+  private pouchdb = inject(PouchdbService);
 
   /**
    * Returns all surveys submitted for a given judge.
    */
   async getJudgeById(id: string): Promise<JudgeSummary | null> {
-    if (!this.localDB) {
-        let confDoc = await new PouchDB('conf').get(environment.configurationDocId);
-        this.localDB = new PouchDB(confDoc.judgesDB);
-    }
+    this.localDB ??= this.pouchdb.judgesLocalDB;
 
     try {
       const doc = await this.localDB.get(id) as JudgeDoc;
